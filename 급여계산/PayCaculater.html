@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.5/xlsx.full.min.js"></script>
+    <script src="./js/readInput.js"></script>
+    <script src="./js/calculate.js"></script>
+    <script src="./js/createTable.js"></script>
+    <!--    부트 스트랩      -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <title>급여 계산기</title>
+
+</head>
+<body>
+
+<div id="header" class="container position-relative mt-3" style="height: 10vh">
+    <div class="position-absolute top-50 start-50 translate-middle">
+        <h2>급여 계산기</h2>
+    </div>
+</div>
+
+<div id="input-container" class="container">
+    <div id="input-box" class="m-3">
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="commuteExcelInput">통근 정보</label>
+            <input type="file" multiple class="form-control" id="commuteExcelInput" onchange="readCommuteExcel()">
+        </div>
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="payInfoExcelInput">급여 정보</label>
+            <input type="file" multiple class="form-control" id="payInfoExcelInput" onchange="readPayInfoExcel()">
+        </div>
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="startDateInput">시작 일자</label>
+            <input type="date" class="form-control" id="startDateInput" onchange="readStartDate()">
+        </div>
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="endDateInput">종료 일자</label>
+            <input type="date" class="form-control" id="endDateInput" onchange="readEndDate()">
+        </div>
+    </div>
+
+    <div>
+        <button type="button" class="btn btn-success position-relative top-50 start-50 translate-middle mt-3"
+                id="calculate-button" onclick="startCalculate()"> 계산 시작
+        </button>
+    </div>
+</div>
+
+<div id="result-container" class="container" style="display:none">
+    <div id="result-table-box" class="table-responsive m-1">
+        <table id="result-table" class="table table-striped align-middle text-center">
+            <thead>
+            <tr></tr>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">이름</th>
+                <th scope="col">근무</th>
+                <th scope="col">정상 근무</th>
+                <th scope="col">휴일 근무</th>
+                <th scope="col">근무 시간</th>
+                <th scope="col">주간 시간</th>
+                <th scope="col">야간 시간</th>
+                <th scope="col">주간 연장</th>
+                <th scope="col">야간 연장</th>
+                <th scope="col">시급</th>
+                <th scope="col">급여</th>
+                <th scope="col">식대</th>
+                <th scope="col">차량유류비</th>
+                <th scope="col">노동절수당</th>
+                <th scope="col">특별수당</th>
+            </tr>
+            </thead>
+            <tbody id="result-tbody">
+            </tbody>
+        </table>
+    </div>
+    <button type="button" class="btn" onclick="clickDetail()">상세정보 보기</button>
+    <div id="detail-table-box" class="table-responsive m-1" style="display:none">
+        <table id="detail-table" class="table table-striped align-middle text-center">
+            <thead>
+            <tr>
+                <th scope="col">근무일</th>
+                <th scope="col">출퇴근 비정상</th>
+                <th scope="col">근무 종류</th>
+                <th scope="col">휴일 근무</th>
+                <th scope="col">지각 여부</th>
+                <th scope="col">근무 시작</th>
+                <th scope="col">근무 종료</th>
+                <th scope="col">근무 시간</th>
+                <th scope="col">주간 시간</th>
+                <th scope="col">야간 시간</th>
+                <th scope="col">주간 연장</th>
+                <th scope="col">야간 연장</th>
+                <th scope="col">일일 급여</th>
+            </tr>
+            </thead>
+            <tbody id="detail-tbody">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- 콘솔찍기 메뉴-->
+<!--    <br>-->
+<!--    <button onclick="consoleCommuteExcelMemory()">통근 정보 입력 메모리</button>-->
+<!--    <br>-->
+<!--    <button onclick="consolePayInfoExcelMemory()">급여 정보 입력 메모리</button>-->
+<!--    <br>-->
+<!--    <button onclick="consoleTransCommute()">급여 변환 메모리</button>-->
+<!--    <br>-->
+<!--    <button onclick="consoleResultMemory()">결과 메모리</button>-->
+<!--    <br>-->
+</body>
+
+<script>
+    let commuteExcelMemory = new Map();
+    let payExcelMemory = new Map();
+
+    let startInputDate;
+    let endInputDate;
+
+    let commuteExcelCheck = false;
+    let payExcelCheck = false;
+    let startDateCheck = false;
+    let endDateCheck = false;
+
+    let transCommuteMemory = new Map();
+    let holidayDate = [
+        20210101, 20210211, 20210212, 20210213, 20210301, 20210505, 20210519, 20210606, 20210815, 20210816, 20210920, 20210921, 20210922, 20211003, 20211004, 20211009, 20211011, 20211225,
+        20220101, 20220131, 20220201, 20220202, 20220301, 20220309, 20220505, 20220508, 20220601, 20220606, 20220815, 20220909, 20220910, 20220911, 20220912, 20221003, 20221009, 20221010, 20221225];
+
+    let resultMemory = new Map();
+
+    const startCalculate = function () {
+        if (commuteExcelCheck && payExcelCheck && startDateCheck && endDateCheck) {
+            transFormCommute();
+            calculatePayment();
+            createResultTable();
+            afterCalculateChange();
+        } else {
+            alert("모든 항목을 입력해주세요");
+        }
+    }
+
+    let checkDetailTable = false;
+    let checkCreateDetailTable = true;
+
+    const clickDetail = function () {
+        let detailBox = document.getElementById("detail-table-box");
+        if (!checkDetailTable) {
+            detailBox.style.display = "";
+            checkDetailTable = true;
+        } else {
+            detailBox.style.display = "none";
+            checkDetailTable = false;
+        }
+        if(checkCreateDetailTable){
+            createDetailTable();
+            checkCreateDetailTable= false;
+        }
+    }
+
+</script>
+</html>

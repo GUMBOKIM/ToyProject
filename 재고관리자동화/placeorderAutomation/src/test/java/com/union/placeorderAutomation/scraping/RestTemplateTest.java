@@ -1,6 +1,7 @@
 package com.union.placeorderAutomation.scraping;
 
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,13 +60,18 @@ public class RestTemplateTest {
                 String.class
         );
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        String result = response.getBody()
+//                .replace("rows", "\"rows\"")
+//                .replace("//","")
+//                .replace("data=", "")
+//                .replace("id", "\"id\"")
+//                .replace("data", "\"data\"")
+//                .replace("value:", "")
+//                .replace("{\"", "\"")
+//                .replace("\"}", "\"")
+                ;
+        System.out.println("jsonResult = " + result);
 
-        String result = response.getBody().replace("data=", "").replace("rows:","").replace("id","\"id\"").replace("data","\"data\"").replace("value:", "").replace("{\"","\"").replace("\"}","\"");
-        System.out.println(result);
-        List<Map<String, Object>>  jsonResult  = objectMapper.readValue(result, new TypeReference<ArrayList<Map<String, Object>>>() {
-        });
-        System.out.println("jsonResult = " + jsonResult);
         assertThat(response.getStatusCode().equals(HttpStatus.OK));
 
 

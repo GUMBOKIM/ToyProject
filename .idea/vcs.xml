@@ -2,5 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/재고관리자동화/ltl" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/재고관리자동화/ltl/ltl" vcs="Git" />
   </component>
 </project>

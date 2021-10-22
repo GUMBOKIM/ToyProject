@@ -18,7 +18,9 @@ const readCommuteExcel = async function () {
                         let time = new Date(row.발생일자 + " " + row.발생시각);
                         let mode = row.모드;
 
-                        if (time.getHours() <= 4){
+                        if (time.getHours() <= 4) {
+                            date.setDate(date.getDate() - 1);
+                        } else if (mode == "퇴근" && time.getHours() < 8) {
                             date.setDate(date.getDate() - 1);
                         }
 

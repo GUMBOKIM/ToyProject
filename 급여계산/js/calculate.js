@@ -3,62 +3,55 @@ const transFormCommute = function () {
             let name = key;
             // 저장할 공간
             let transFormList = [];
-            let beforeMode = "퇴근"
-            let beforeData;
-            let date, start, end, holiday, error;
-
+            let beforeCommute = {
+                date: null,
+                time: null,
+                mode: "퇴근"
+            };
             value.forEach(commute => {
-                // 출근 인정 X Case
-                // 1. 출근 -> 출근
-                // 2. 퇴근 -> 퇴근
-                if (beforeMode == "출근" && commute.mode == "출근") {
-                    transFormList.push({
-                            date: beforeData.date,
-                            start: beforeData.time,
-                            end: null,
-                            holiday: null,
-                            error: true
-                        }
-                    );
-
-                    date = commute.date;
-                    start = commute.time;
-                    holiday = holidayCheck(date);
-                    beforeMode = "출근";
-
-                } else if (beforeMode == "퇴근" && commute.mode == "퇴근") {
-                    transFormList.push({
-                            date: commute.date,
-                            start: null,
-                            end: commute.time,
-                            holiday: null,
-                            error: true
-                        }
-                    );
-
-                    beforeMode = "퇴근";
-
-                    // 정상 케이스 출근
-                } else if (beforeMode == "퇴근" && commute.mode == "출근") {
-                    date = commute.date;
-                    start = commute.time;
-                    holiday = holidayCheck(date);
-                    beforeMode = "출근";
-                    // 정상 케이스 퇴근
-                } else if (beforeMode == "출근" && commute.mode == "퇴근") {
-                    if (beforeData.date.getDate() != commute.date.getDate()) {
-                        transFormList.push(
-                            {
-                                date: beforeData.date,
-                                start: beforeData.time,
+                    // 1. 출근 -> 출근 - 출근 인정 X
+                    if (beforeCommute.mode == "출근" && commute.mode == "출근") {
+                        transFormList.push({
+                                date: beforeCommute.date,
+                                start: beforeCommute.time,
                                 end: null,
                                 holiday: null,
                                 error: true
                             }
                         );
-                        let time = commute.date;
-                        if (commute)
+                        // 2. 퇴근 -> 퇴근 - 출근 인정 X
+                    } else if (beforeCommute.mode == "퇴근" && commute.mode == "퇴근") {
+                        transFormList.push({
+                                date: commute.date,
+                                start: null,
+                                end: commute.time,
+                                holiday: null,
+                                error: true
+                            }
+                        );
+                    }
+                    // 3. 정상 케이스 출퇴근
+                    else if (beforeCommute.mode == "출근" && commute.mode == "퇴근") {
+                        if (beforeCommute.date.getDate() == commute.date.getDate()) {
                             transFormList.push(
+                                {
+                                    date: beforeCommute.date,
+                                    start: beforeCommute.time,
+                                    end: commute.time,
+                                    holiday: holidayCheck(beforeCommute.date),
+                                    error: false
+                                }
+                            );
+                            // 4. 출근과 퇴근사이 간격 하루 - 출근 인정 X
+                        } else {
+                            transFormList.push(
+                                {
+                                    date: beforeCommute.date,
+                                    start: beforeCommute.time,
+                                    end: null,
+                                    holiday: null,
+                                    error: true
+                                },
                                 {
                                     date: commute.date,
                                     start: null,
@@ -66,20 +59,15 @@ const transFormCommute = function () {
                                     holiday: null,
                                     error: true
                                 }
-                            );
-                    } else {
-                        end = commute.time;
-                        error = false;
-                        transFormList.push({date, start, end, holiday, error});
+                            )
+                        }
                     }
-                    beforeMode = "퇴근";
+                    beforeCommute = commute;
                 }
-                beforeData = commute;
-            });
-
+            )
             transCommuteMemory.set(name, transFormList);
         }
-    )
+    );
 }
 
 
@@ -88,17 +76,23 @@ const holidayCheck = function (date) {
     if (date.getDay() == 6 || date.getDay() == 0) {
         return true;
     } else {
+        //공휴일 여부
+        let commuteStr = "" + date.getFullYear();
+        if (date.getMonth() < 9) {
+            commuteStr += "0";
+        }
+        commuteStr += (date.getMonth() + 1);
+        if (date.getDate() < 10) {
+            commuteStr += "0";
+        }
+        commuteStr += date.getDate();
+        for (let i = 0; i<holidayDate.length; i++) {
+            if (holidayDate[i] == commuteStr) {
+                return true;
+            }
+        }
         return false;
     }
-    //공휴일 여부
-    holidayDate.forEach(date => {
-        let holidayDate = new Date(date);
-        if (holidayDate.getFullYear() == commute.date.getFullYear()
-            && holidayDate.getMonth() == commute.date.getMonth()
-            && holidayDate.getDate() == commute.date.getDate()) {
-            return true;
-        }
-    });
 }
 
 const calculatePayment = function () {
@@ -198,11 +192,11 @@ const calculatePayment = function () {
 
                                 // 일한 시간 계산 (휴게시간 모두 주간임)
                                 totalWorkTime = (workEndMinutes - workStartMinutes) / 60;
-                                if ( totalWorkTime >= 4.5 && totalWorkTime < 9) {
+                                if (totalWorkTime >= 4.5 && totalWorkTime < 9) {
                                     totalWorkTime -= 0.5;
                                 } else if (totalWorkTime >= 9) {
                                     totalWorkTime -= 1;
-                                } else if (totalWorkTime < 0){
+                                } else if (totalWorkTime < 0) {
                                     totalWorkTime = 0
                                 }
 

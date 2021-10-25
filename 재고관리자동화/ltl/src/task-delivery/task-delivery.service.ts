@@ -1,14 +1,17 @@
 import {Injectable} from '@nestjs/common';
 import {HttpService} from "@nestjs/axios";
-import {map} from "rxjs";
+import {map, Observable} from "rxjs";
+import {response} from "express";
+import {stringify} from "ts-jest/dist/utils/json";
 
 @Injectable()
 export class TaskDeliveryService {
     constructor(private httpService: HttpService) {
     }
 
-    async getProductPlan(){
-        const response = await this.httpService.get("https://es-qms.borgwarner.com/qms/kqis9210__tt.query_data?p_companycd=00&p_x=1&p_plant=&p_produce_line=&p_workcenter=&p_part_no=",
+     getProductPlan(){
+        const productPlanUrl = "https://es-qms.borgwarner.com/qms/kqis9210__tt.query_data?p_companycd=00&p_x=1&p_plant=&p_produce_line=&p_workcenter=&p_part_no=";
+        return this.httpService.get( productPlanUrl,
             {
                 headers: {
                     'authority': "es-qms.borgwarner.com",
@@ -27,10 +30,7 @@ export class TaskDeliveryService {
                     'sec-fetch-site': "same-origin",
                     'user-agent': "XMLHttpRequest",
                 }
-
             }
-        );
-        let data = response.data;
-        return ;
+        ).pipe(map(response => response.data))
     }
 }

@@ -1,32 +1,24 @@
 package com.union.placeorderAutomation.scraping;
 
-
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.union.placeorderAutomation.JsonDto;
+import com.union.placeorderAutomation.ProductPlanDto;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.json.JsonParseException;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 
-import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RestTemplateTest {
+public class ProductPlaning {
 
     @Test
-    public void RestTemplateTest() throws JsonProcessingException, JSONException {
+    public void RestTemplateTest() {
         HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(
                 HttpClientBuilder.create().build());
         RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
@@ -51,7 +43,6 @@ public class RestTemplateTest {
 
         HttpEntity request = new HttpEntity(httpHeaders);
 
-
         String url = "https://es-qms.borgwarner.com/qms/kqis9210__tt.query_data?p_companycd=00&p_x=1&p_plant=&p_produce_line=&p_workcenter=&p_part_no=";
         ResponseEntity<String> response = restTemplate.exchange(
                 url,
@@ -59,22 +50,57 @@ public class RestTemplateTest {
                 request,
                 String.class
         );
+        String result = response.getBody();
+        Pattern pattern = Pattern.compile("(\\{value:\")(.*)(\"\\})", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(result);
 
-        String result = response.getBody()
-//                .replace("rows", "\"rows\"")
-//                .replace("//","")
-//                .replace("data=", "")
-//                .replace("id", "\"id\"")
-//                .replace("data", "\"data\"")
-//                .replace("value:", "")
-//                .replace("{\"", "\"")
-//                .replace("\"}", "\"")
-                ;
-        System.out.println("jsonResult = " + result);
-
+        int seq = 0;
+        ProductPlanDto plan = new ProductPlanDto();
+        List<ProductPlanDto> planList = new ArrayList<>();
+        while (matcher.find()) {
+            seq = (seq == 12) ? seq - 11 : seq + 1;
+            if (matcher.group(2) == null) break;
+            String temp = matcher.group(2).replace(",","");
+            switch (seq){
+                case 1:
+                    plan.setNo(Integer.parseInt(temp));
+                    break;
+                case 2:
+                    plan.setPlant(temp);
+                    break;
+                case 4 :
+                    plan.setWorkCenter(temp);
+                    break;
+                case 6:
+                    plan.setPartNo(temp);
+                    break;
+                case 7:
+                    plan.setTotalQTY(Integer.parseInt(temp));
+                    break;
+                case 8:
+                    plan.setDeliveredQTY(Integer.parseInt(temp));
+                    break;
+                case 9:
+                    plan.setRemainQTY(Integer.parseInt(temp));
+                    break;
+                case 10:
+                    // 고객사 오류로 인해서 자료형 String으로 넣음
+                    plan.setSeq(temp);
+                    break;
+                case 11:
+                    plan.setRTime(Integer.parseInt(temp));
+                    break;
+                case 12:
+                    plan.setTTime(Integer.parseInt(temp));
+                    if(!plan.getSeq().equals("0")) {
+                        planList.add(plan);
+                    }
+                    plan = new ProductPlanDto();
+                    break;
+            }
+        }
+        System.out.println("planList = " + planList);
         assertThat(response.getStatusCode().equals(HttpStatus.OK));
-
-
     }
 }
 

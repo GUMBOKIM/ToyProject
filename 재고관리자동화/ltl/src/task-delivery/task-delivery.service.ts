@@ -30,6 +30,7 @@ export class TaskDeliveryService {
 
             }
         );
-        return response.pipe(map(response => response.data));
+        let data = response.data;
+        return ;
     }
 }

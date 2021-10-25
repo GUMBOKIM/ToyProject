@@ -193,12 +193,12 @@
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
                                 <tr>
-                                    <th>회사</th>
-                                    <th>자재 번호</th>
-                                    <th>자재 이름</th>
-                                    <th>발주 번호</th>
-                                    <th>적입량</th>
-                                    <th>자재 위치</th>
+                                    <th class="col-1">회사</th>
+                                    <th class="col-2">자재 번호</th>
+                                    <th class="col-2">자재 이름</th>
+                                    <th class="col-1">발주 번호</th>
+                                    <th class="col-1">적입량</th>
+                                    <th class="col-1">자재 위치</th>
                                 </tr>
                                 </thead>
                                 <tfoot>
@@ -219,8 +219,8 @@
                                         while (parentNode.hasChildNodes()) {
                                             let child = parentNode.firstChild;
                                             let innerText = child.innerText;
-                                            if(innerText != undefined){
-                                            valueArr.push(innerText);
+                                            if (innerText != undefined) {
+                                                valueArr.push(innerText);
                                             }
                                             parentNode.removeChild(
                                                 parentNode.firstChild
@@ -229,46 +229,74 @@
                                         valueArr.forEach((value) => {
                                             let td = document.createElement("td");
                                             let input = document.createElement("input");
+                                            input.type = "text"
                                             input.value = value;
                                             td.append(input);
                                             parentNode.append(td)
                                         })
                                     }
 
-                                    function createModifyAndDeleteButton(parentNode) {
+                                    function createModifyAndDeleteButton(row, parentId) {
                                         let td1 = document.createElement("td");
                                         let modifyA = document.createElement("a");
-                                        modifyA.href='#';
+                                        modifyA.href = 'javascript:updateButtonClick(' + parentId + ');';
                                         modifyA.className = "btn btn-success btn-circle btn-sm";
                                         modifyA.innerHTML = `<i class="fas fa-check"></i>`;
                                         td1.append(modifyA);
 
                                         let td2 = document.createElement("td");
                                         let deleteA = document.createElement("a");
-                                        deleteA.href='#';
+                                        deleteA.href = 'javascript:deleteButtonClick(' + parentId + ');';
                                         deleteA.className = "btn btn-danger btn-circle btn-sm";
                                         deleteA.innerHTML = `<i class=\"fas fa-trash\"></i>`;
                                         td2.append(deleteA);
-                                        parentNode.append(td1, td2);
+                                        row.append(td1, td2);
                                     }
 
-                                    function removeAllChild(parentNode) {
-                                        while (parentNode.hasChildNodes()) {
-                                            parentNode.removeChild(
-                                                parentNode.firstChild
+                                    function updateButtonClick(parentId) {
+                                        let tr = document.getElementById(parentId);
+                                        let valueArr = new Array();
+
+                                        while (tr.hasChildNodes()) {
+                                            let input = tr.firstChild.firstChild;
+                                            let value = input.value;
+                                            if (value != undefined) {
+                                                valueArr.push(value);
+                                            }
+                                            tr.removeChild(
+                                                tr.firstChild
                                             );
                                         }
+                                        //TODO : AJAX 추가
+                                        valueArr.forEach((value) => {
+                                            let td = document.createElement("td");
+                                            td.innerText = value;
+                                            tr.append(td)
+                                        })
+                                        tr.onclick = 'modifyRow(this.id)';
                                     }
 
-                                    function modifyRow(id) {
+                                    function deleteButtonClick(parentId) {
+                                        console.log(parentId);
+                                        //TODO : AJAX 요청 추가
+                                        let tr = document.getElementById(parentId);
+                                        while (tr.hasChildNodes()) {
+                                            tr.removeChild(
+                                                tr.firstChild
+                                            );
+                                        }
+                                        tr.remove();
+                                    }
+
+                                    function rowClick(id) {
                                         let tr = document.getElementById(id);
                                         createPlaceHolder(tr);
-                                        createModifyAndDeleteButton(tr);
-                                        tr.onclick="";
+                                        createModifyAndDeleteButton(tr, id);
+                                        tr.onclick = null;
                                     }
                                 </script>
-                                <tr onclick="modifyRow(this.id)" id="1">
-                                    <td>Tiger Nixon</td>
+                                <tr onclick="rowClick(this.id)" id="1">
+                                    <td name="">Tiger Nixon</td>
                                     <td>System Architect</td>
                                     <td>Edinburgh</td>
                                     <td>61</td>

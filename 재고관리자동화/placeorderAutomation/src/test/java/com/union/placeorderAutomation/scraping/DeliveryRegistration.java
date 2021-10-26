@@ -61,6 +61,15 @@ public class DeliveryRegistration {
         body.add("p_po_no","1111");
 
 
+        body.add("p_partno","K170377");
+        body.add("p_menge","1");
+        body.add("p_lgpbe","LO2");
+        body.add("p_barco","N");
+        body.add("p_seqno","");
+        body.add("p_plant","01");
+        body.add("p_po_no","1111");
+
+
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body,httpHeaders);
 

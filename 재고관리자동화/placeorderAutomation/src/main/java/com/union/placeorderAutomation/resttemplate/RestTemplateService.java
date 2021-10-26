@@ -1,0 +1,328 @@
+package com.union.placeorderAutomation.resttemplate;
+
+import com.union.placeorderAutomation.dto.ProductInventoryDto;
+import com.union.placeorderAutomation.dto.ProductPlanDto;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.http.*;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+@Service
+public class RestTemplateService {
+
+    public void createDeliveryCard(String companyCode) {
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        setHeaderDeliveryCard(companyCode, httpHeaders);
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("p_companycd", "00");
+        body.add("p_dml_gubun", "1");
+        body.add("p_vendcd", "106076");
+        body.add("p_plant", "5300");
+        body.add("p_income_date", "20211026");
+
+        body.add("p_partno", "K171103A");
+        body.add("p_partnm", "SP");
+        body.add("p_order_no", "5500009744");
+        body.add("p_lotno", "QJK.L");
+        body.add("p_qty", "60");
+        body.add("p_qty_per_box", "60");
+        body.add("p_qty_box", "1");
+        body.add("p_remarks", "ROLI-1");
+
+        body.add("p_partno", "K171104A");
+        body.add("p_partnm", "SP");
+        body.add("p_order_no", "5500009746");
+        body.add("p_lotno", "QJI");
+        body.add("p_qty", "60");
+        body.add("p_qty_per_box", "60");
+        body.add("p_qty_box", "1");
+        body.add("p_remarks", "ROLI-1");
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, httpHeaders);
+
+        String url = "https://es-qms.borgwarner.com/qms/kqis91101.process";
+        ResponseEntity<String> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                request,
+                String.class
+        );
+    }
+
+    public void registryDelivery(String companyCode){
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        setHeaderRegistryDelivery(companyCode, httpHeaders);
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("p_companycd","00");
+        body.add("p_dml_gubun","1");
+        body.add("p_ym","20211026");
+        body.add("p_vendcd","106076");
+        body.add("p_time","09:00");
+
+        body.add("p_partno","K170377");
+        body.add("p_menge","1");
+        body.add("p_lgpbe","LO1");
+        body.add("p_barco","N");
+        body.add("p_seqno","");
+        body.add("p_plant","01");
+        body.add("p_po_no","1111");
+
+        body.add("p_partno","K170377");
+        body.add("p_menge","1");
+        body.add("p_lgpbe","LO2");
+        body.add("p_barco","N");
+        body.add("p_seqno","");
+        body.add("p_plant","01");
+        body.add("p_po_no","1111");
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body,httpHeaders);
+
+        String url = "https://es-qms.borgwarner.com/qms/MIS1150_t_new.PROCESS";
+        ResponseEntity<String> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                request,
+                String.class
+        );
+        String result = response.getBody();
+
+    }
+
+    public Object getProductPlanning(String companyCode){
+        HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(
+                HttpClientBuilder.create().build());
+        RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        setHeaderGetProductPlanning(companyCode, httpHeaders);
+
+        HttpEntity request = new HttpEntity(httpHeaders);
+
+        String url = "https://es-qms.borgwarner.com/qms/kqis9210__tt.query_data?p_companycd=00&p_x=1&p_plant=&p_produce_line=&p_workcenter=&p_part_no=";
+        ResponseEntity<String> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                request,
+                String.class
+        );
+        String result = response.getBody();
+        Pattern pattern = Pattern.compile("(\\{value:\")(.*)(\"\\})", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(result);
+
+        int seq = 0;
+        ProductPlanDto plan = new ProductPlanDto();
+        List<ProductPlanDto> planList = new ArrayList<>();
+        while (matcher.find()) {
+            seq = (seq == 12) ? seq - 11 : seq + 1;
+            if (matcher.group(2) == null) break;
+            String temp = matcher.group(2).replace(",","");
+            switch (seq){
+                case 1:
+                    plan.setNo(Integer.parseInt(temp));
+                    break;
+                case 2:
+                    plan.setPlant(temp);
+                    break;
+                case 4 :
+                    plan.setWorkCenter(temp);
+                    break;
+                case 6:
+                    plan.setPartNo(temp);
+                    break;
+                case 7:
+                    plan.setTotalQTY(Integer.parseInt(temp));
+                    break;
+                case 8:
+                    plan.setDeliveredQTY(Integer.parseInt(temp));
+                    break;
+                case 9:
+                    plan.setRemainQTY(Integer.parseInt(temp));
+                    break;
+                case 10:
+                    // 고객사 오류로 인해서 자료형 String으로 넣음
+                    plan.setSeq(temp);
+                    break;
+                case 11:
+                    plan.setRTime(Integer.parseInt(temp));
+                    break;
+                case 12:
+                    plan.setTTime(Integer.parseInt(temp));
+                    if(!plan.getSeq().equals("0")) {
+                        planList.add(plan);
+                    }
+                    plan = new ProductPlanDto();
+                    break;
+            }
+        }
+        return planList;
+    }
+
+    public Object getProductInventory(String companyCode){
+        HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(
+                HttpClientBuilder.create().build());
+        RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        setHeaderGetProductInvetory(companyCode, httpHeaders);
+
+        HttpEntity request = new HttpEntity(httpHeaders);
+
+        String url = "https://es-qms.borgwarner.com/qms/kqis9220.query_data?p_companycd=00&p_workcenter=CS&p_x=1&p_plant=&p_stor_loc=&p_part_no=";
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                request,
+                String.class
+        );
+        String result = response.getBody();
+        Pattern pattern = Pattern.compile("(\\{value:\")(.*)(\"\\})", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(result);
+
+        int seq = 0;
+        ProductInventoryDto inventory = new ProductInventoryDto();
+        List<ProductInventoryDto> inventoryList = new ArrayList<>();
+        while (matcher.find()) {
+            seq = (seq == 10) ? seq - 9 : seq + 1;
+            if (matcher.group(2) == null) break;
+            String temp = matcher.group(2).replace(".","");
+            switch (seq){
+                case 1:
+                    inventory.setNo(Integer.parseInt(temp));
+                    break;
+                case 2:
+                    inventory.setPlant(temp);
+                    break;
+                case 3 :
+                    inventory.setWhNo(temp);
+                    break;
+                case 4:
+                    inventory.setStorLoc(temp);
+                    break;
+                case 5:
+                    inventory.setPartNo(temp);
+                    break;
+                case 6:
+                    inventory.setStockQTY(Integer.parseInt(temp));
+                    break;
+                case 7:
+                    inventory.setUom(temp);
+                    break;
+                case 8:
+                    inventory.setRop(temp);
+                    break;
+                case 9:
+                    inventory.setLotMin(Integer.parseInt(temp));
+                    break;
+                case 10:
+                    inventory.setLotMax(Integer.parseInt(temp));
+                    inventoryList.add(inventory);
+                    inventory = new ProductInventoryDto();
+                    break;
+            }
+        }
+        return inventoryList;
+    }
+
+    private void setHeaderGetProductInvetory(String companyCode, HttpHeaders httpHeaders) {
+        httpHeaders.set("authority", "es-qms.borgwarner.com");
+        httpHeaders.set("method", "GET");
+        httpHeaders.set("path", "https://es-qms.borgwarner.com/qms/kqis9220.query_data?p_companycd=00&p_workcenter=CS&p_x=1&p_plant=&p_stor_loc=&p_part_no=");
+        httpHeaders.set("accept", "*/*");
+        httpHeaders.set("accept-encoding", "gzip, deflate, br");
+        httpHeaders.set("accept-language", "en,ko;q=0.9,fr;q=0.8");
+        httpHeaders.set("cookie", "SYSLANG=KO; SYSTYPE=1; SYSCOMP=00; SYSID="+companyCode+"; CCODE="+companyCode);
+        httpHeaders.set("referer", "https://es-qms.borgwarner.com/qms/kqis9220.query_data?p_companycd=00&p_workcenter=CS&p_x=1&p_plant=&p_stor_loc=&p_part_no="); // url이랑 동일
+        httpHeaders.set("sec-ch-ua", "\"Chromium\";v=\"94\", \"Google Chrome\";v=\"94\", \";Not A Brand\";v=\"99\"");
+        httpHeaders.set("sec-ch-ua-mobile", "?0");
+        httpHeaders.set("sec-ch-ua-platform", "\"Windows\"");
+        httpHeaders.set("sec-fetch-dest", "empty");
+        httpHeaders.set("sec-fetch-mode", "cors");
+        httpHeaders.set("sec-fetch-site", "same-origin");
+        httpHeaders.set("user-agent", "XMLHttpRequest");
+        httpHeaders.set(HttpHeaders.ACCEPT_ENCODING, "gzip");
+    }
+
+
+    private void setHeaderGetProductPlanning(String companyCode, HttpHeaders httpHeaders) {
+        httpHeaders.set("authority", "es-qms.borgwarner.com");
+        httpHeaders.set("method", "GET");
+        httpHeaders.set("path", "/qms/kqis9210__tt.query_data?p_companycd=00&p_x=1&p_plant=&p_produce_line=&p_workcenter=&p_part_no=");
+        httpHeaders.set("accept", "*/*");
+        httpHeaders.set("accept-encoding", "gzip, deflate, br");
+        httpHeaders.set("accept-language", "en,ko;q=0.9,fr;q=0.8");
+        httpHeaders.set("cookie", "SYSLANG=KO; SYSTYPE=1; SYSCOMP=00; SYSID="+companyCode+"; CCODE="+companyCode);
+        httpHeaders.set("referer", "https://es-qms.borgwarner.com/qms/kqis9210__tt.query?p_companycd=00&p_x=1&p_plant=&p_produce_line=&p_workcenter=&p_part_no="); // url이랑 동일
+        httpHeaders.set("sec-ch-ua", "\"Chromium\";v=\"94\", \"Google Chrome\";v=\"94\", \";Not A Brand\";v=\"99\"");
+        httpHeaders.set("sec-ch-ua-mobile", "?0");
+        httpHeaders.set("sec-ch-ua-platform", "\"Windows\"");
+        httpHeaders.set("sec-fetch-dest", "empty");
+        httpHeaders.set("sec-fetch-mode", "cors");
+        httpHeaders.set("sec-fetch-site", "same-origin");
+        httpHeaders.set("user-agent", "XMLHttpRequest");
+        httpHeaders.set(HttpHeaders.ACCEPT_ENCODING, "gzip");
+    }
+
+    private void setHeaderRegistryDelivery(String companyCode, HttpHeaders httpHeaders) {
+        httpHeaders.set("authority", "es-qms.borgwarner.com");
+        httpHeaders.set("method", "POST");
+        httpHeaders.set("path", "/qms/MIS1150_t_new.PROCESS");
+        httpHeaders.set("scheme", "https");
+        httpHeaders.set("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
+        httpHeaders.set("accept-encoding", "gzip, deflate, br");
+        httpHeaders.set("accept-language", "en,ko;q=0.9,fr;q=0.8");
+        httpHeaders.set("cache-control", "max-age=0");
+        httpHeaders.set("content-type", "application/x-www-form-urlencoded");
+        httpHeaders.set("cookie", "SYSLANG=KO; SYSTYPE=1; SYSCOMP=00; SYSID="+ companyCode +"; CCODE="+ companyCode);
+        httpHeaders.set("origin", "https://es-qms.borgwarner.com"); // url이랑 동일
+        httpHeaders.set("referer", "https://es-qms.borgwarner.com/qms/mis1150_t_new.control"); // url이랑 동일
+        httpHeaders.set("sec-ch-ua", "\"Chromium\";v=\"94\", \"Google Chrome\";v=\"94\", \";Not A Brand\";v=\"99\"");
+        httpHeaders.set("sec-ch-ua-mobile", "?0");
+        httpHeaders.set("sec-ch-ua-platform", "\"Windows\"");
+        httpHeaders.set("sec-fetch-dest", "iframe");
+        httpHeaders.set("sec-fetch-mode", "navigate");
+        httpHeaders.set("sec-fetch-site", "same-origin");
+        httpHeaders.set("sec-fetch-user", "?1");
+        httpHeaders.set("upgrade-insecure-requests", "1");
+        httpHeaders.set("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36");
+    }
+
+
+    private void setHeaderDeliveryCard(String companyCode, HttpHeaders httpHeaders) {
+        httpHeaders.set("authority", "es-qms.borgwarner.com");
+        httpHeaders.set("method", "POST");
+        httpHeaders.set("path", "/qms/kqis91101.process");
+        httpHeaders.set("scheme", "https");
+        httpHeaders.set("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
+        httpHeaders.set("accept-encoding", "gzip, deflate, br");
+        httpHeaders.set("accept-language", "en,ko;q=0.9,fr;q=0.8");
+        httpHeaders.set("cache-control", "max-age=0");
+        httpHeaders.set("cookie", "SYSLANG=KO; SYSTYPE=1; SYSCOMP=00; SYSID=" + companyCode + "; CCODE=" + companyCode);
+        httpHeaders.set("content-type", "multipart/form-data; boundary=----WebKitFormBoundaryea1qGVBFGzKiRrEa");
+        httpHeaders.set("referer", "https://es-qms.borgwarner.com/qms/kqis91101.crRec?p_companycd=00"); // url이랑 동일
+        httpHeaders.set("sec-ch-ua", "\"Chromium\";v=\"94\", \"Google Chrome\";v=\"94\", \";Not A Brand\";v=\"99\"");
+        httpHeaders.set("sec-ch-ua-mobile", "?0");
+        httpHeaders.set("sec-ch-ua-platform", "\"Windows\"");
+        httpHeaders.set("sec-fetch-dest", "empty");
+        httpHeaders.set("sec-fetch-mode", "navigate");
+        httpHeaders.set("sec-fetch-site", "same-origin");
+        httpHeaders.set("sec-fetch-user", "?1");
+        httpHeaders.set("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36");
+    }
+
+
+}

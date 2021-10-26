@@ -1,6 +1,6 @@
 package com.union.placeorderAutomation.scraping;
 
-import com.union.placeorderAutomation.ProductInventoryDto;
+import com.union.placeorderAutomation.dto.ProductInventoryDto;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.*;

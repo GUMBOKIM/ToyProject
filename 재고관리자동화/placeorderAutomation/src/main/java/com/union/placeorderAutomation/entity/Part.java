@@ -1,45 +1,56 @@
 package com.union.placeorderAutomation.entity;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
 
 
-@Data
+
+@Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Part {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long partId;
 
-    @ManyToOne
-    @JoinColumn(name = "companyId")
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @JoinColumn(name = "companyId", insertable = false, updatable = false, nullable = false)
     private Company company;
 
     @Column(unique = true, nullable = false)
-    private String name;
+    private String partName;
 
-    @Column(unique = true, nullable = false)
-    private String spCode;
-
+    // 보그워너 코드
     @Column(unique = true, nullable = false)
     private String bwCode;
 
-    @Column(nullable = false)
-    private String description;
-
+    // 공급자 코드
     @Column(unique = true, nullable = false)
-    private String poNumber;
+    private String spCode;
 
-    @Column(nullable = false)
-    private int loadingAmount;
+    // 발주 번호
+    @Column(unique = true, nullable = false)
+    private String poCode;
 
-    @Column(nullable = false)
+    //적입량
+    @Column()
+    private int loadAmount;
+
+    //SAP 위치
+    @Column()
     private String location;
+
+    //SP
+    @Column()
+    private String description;
 
     @OneToMany
     @JoinColumn(name = "partInventoryId")

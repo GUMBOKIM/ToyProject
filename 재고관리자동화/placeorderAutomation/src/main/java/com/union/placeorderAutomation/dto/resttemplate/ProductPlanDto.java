@@ -1,4 +1,4 @@
-package com.union.placeorderAutomation.dto;
+package com.union.placeorderAutomation.dto.resttemplate;
 
 import lombok.Data;
 

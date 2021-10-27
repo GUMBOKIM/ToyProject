@@ -1,6 +1,6 @@
 package com.union.placeorderAutomation.scraping;
 
-import com.union.placeorderAutomation.dto.ProductInventoryDto;
+import com.union.placeorderAutomation.dto.resttemplate.ProductInventoryDto;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.*;
@@ -71,7 +71,7 @@ public class ProductInventory {
                     inventory.setWhNo(temp);
                     break;
                 case 4:
-                    inventory.setStorLoc(temp);
+                    inventory.setStoreLocation(temp);
                     break;
                 case 5:
                     inventory.setPartNo(temp);

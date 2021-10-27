@@ -1,4 +1,4 @@
-package com.union.placeorderAutomation.dto;
+package com.union.placeorderAutomation.dto.resttemplate;
 
 import lombok.Data;
 
@@ -8,7 +8,7 @@ public class ProductInventoryDto {
     private int no;
     private String plant;
     private String whNo;
-    private String storLoc;
+    private String storeLocation;
     private String partNo;
     private int stockQTY;
     private String uom;

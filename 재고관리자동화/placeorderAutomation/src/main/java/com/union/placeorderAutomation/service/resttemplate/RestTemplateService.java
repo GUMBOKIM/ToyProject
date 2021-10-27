@@ -1,7 +1,7 @@
-package com.union.placeorderAutomation.resttemplate;
+package com.union.placeorderAutomation.service.resttemplate;
 
-import com.union.placeorderAutomation.dto.ProductInventoryDto;
-import com.union.placeorderAutomation.dto.ProductPlanDto;
+import com.union.placeorderAutomation.dto.resttemplate.ProductInventoryDto;
+import com.union.placeorderAutomation.dto.resttemplate.ProductPlanDto;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -211,7 +211,7 @@ public class RestTemplateService {
                     inventory.setWhNo(temp);
                     break;
                 case 4:
-                    inventory.setStorLoc(temp);
+                    inventory.setStoreLocation(temp);
                     break;
                 case 5:
                     inventory.setPartNo(temp);

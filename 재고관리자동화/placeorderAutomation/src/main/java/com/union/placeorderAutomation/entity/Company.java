@@ -1,18 +1,23 @@
 package com.union.placeorderAutomation.entity;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Company {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long companyId;
 
     @Column(unique = true, nullable = false)
@@ -23,5 +28,5 @@ public class Company {
 
     @OneToMany
     @JoinColumn(name = "partId")
-    private List<Part> parts;
+    private List<Part> parts = new ArrayList<Part>();
 }

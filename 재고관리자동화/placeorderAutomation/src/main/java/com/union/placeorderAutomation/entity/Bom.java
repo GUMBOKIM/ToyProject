@@ -1,12 +1,16 @@
 package com.union.placeorderAutomation.entity;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
 
-@Data
+@Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Bom {

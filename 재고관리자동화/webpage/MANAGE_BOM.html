@@ -103,8 +103,8 @@
                 <div class="bg-white py-2 collapse-inner rounded">
                     <div class="collapse-divider"></div>
                     <h6 class="collapse-header">품목 관리</h6>
-                    <a class="collapse-item active" href="MANAGE_PART_BOM.html">BOM</a>
-                    <a class="collapse-item" href="MANAGE_PART_MATERIAL.html">부품</a>
+                    <a class="collapse-item active" href="MANAGE_BOM.html">BOM</a>
+                    <a class="collapse-item" href="MANAGE_PART.html">부품</a>
                 </div>
             </div>
         </li>
@@ -186,122 +186,39 @@
                 <!-- DataTales Example -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h5 class="m-0 font-weight-bold text-primary">자재</h5>
+                        <h5 class="m-0 font-weight-bold text-primary">BOM</h5>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
                                 <tr>
-                                    <th class="col-1">회사</th>
-                                    <th class="col-2">자재 번호</th>
-                                    <th class="col-2">자재 이름</th>
-                                    <th class="col-1">발주 번호</th>
-                                    <th class="col-1">적입량</th>
-                                    <th class="col-1">자재 위치</th>
+                                    <th>순번</th>
+                                    <th>이름</th>
+                                    <th>PartNUMBER</th>
+                                    <th>Age</th>
+                                    <th>Start date</th>
+                                    <th>Salary</th>
                                 </tr>
                                 </thead>
                                 <tfoot>
                                 <tr>
-                                    <th>회사</th>
-                                    <th>자재 번호</th>
-                                    <th>자재 이름</th>
-                                    <th>발주 번호</th>
-                                    <th>적입량</th>
-                                    <th>자재 위치</th>
+                                    <th>Name</th>
+                                    <th>Position</th>
+                                    <th>Office</th>
+                                    <th>Age</th>
+                                    <th>Start date</th>
+                                    <th>Salary</th>
                                 </tr>
                                 </tfoot>
                                 <tbody>
-                                <script type="text/javascript">
-                                    function createPlaceHolder(parentNode) {
-                                        let valueArr = new Array();
-
-                                        while (parentNode.hasChildNodes()) {
-                                            let child = parentNode.firstChild;
-                                            let innerText = child.innerText;
-                                            if (innerText != undefined) {
-                                                valueArr.push(innerText);
-                                            }
-                                            parentNode.removeChild(
-                                                parentNode.firstChild
-                                            );
-                                        }
-                                        valueArr.forEach((value) => {
-                                            let td = document.createElement("td");
-                                            let input = document.createElement("input");
-                                            input.type = "text"
-                                            input.value = value;
-                                            td.append(input);
-                                            parentNode.append(td)
-                                        })
-                                    }
-
-                                    function createModifyAndDeleteButton(row, parentId) {
-                                        let td1 = document.createElement("td");
-                                        let modifyA = document.createElement("a");
-                                        modifyA.href = 'javascript:updateButtonClick(' + parentId + ');';
-                                        modifyA.className = "btn btn-success btn-circle btn-sm";
-                                        modifyA.innerHTML = `<i class="fas fa-check"></i>`;
-                                        td1.append(modifyA);
-
-                                        let td2 = document.createElement("td");
-                                        let deleteA = document.createElement("a");
-                                        deleteA.href = 'javascript:deleteButtonClick(' + parentId + ');';
-                                        deleteA.className = "btn btn-danger btn-circle btn-sm";
-                                        deleteA.innerHTML = `<i class=\"fas fa-trash\"></i>`;
-                                        td2.append(deleteA);
-                                        row.append(td1, td2);
-                                    }
-
-                                    function updateButtonClick(parentId) {
-                                        let tr = document.getElementById(parentId);
-                                        let valueArr = new Array();
-
-                                        while (tr.hasChildNodes()) {
-                                            let input = tr.firstChild.firstChild;
-                                            let value = input.value;
-                                            if (value != undefined) {
-                                                valueArr.push(value);
-                                            }
-                                            tr.removeChild(
-                                                tr.firstChild
-                                            );
-                                        }
-                                        //TODO : AJAX 추가
-                                        valueArr.forEach((value) => {
-                                            let td = document.createElement("td");
-                                            td.innerText = value;
-                                            tr.append(td)
-                                        })
-                                        tr.onclick = 'modifyRow(this.id)';
-                                    }
-
-                                    function deleteButtonClick(parentId) {
-                                        console.log(parentId);
-                                        //TODO : AJAX 요청 추가
-                                        let tr = document.getElementById(parentId);
-                                        while (tr.hasChildNodes()) {
-                                            tr.removeChild(
-                                                tr.firstChild
-                                            );
-                                        }
-                                        tr.remove();
-                                    }
-
-                                    function rowClick(id) {
-                                        let tr = document.getElementById(id);
-                                        createPlaceHolder(tr);
-                                        createModifyAndDeleteButton(tr, id);
-                                        tr.onclick = null;
-                                    }
-                                </script>
-                                <tr onclick="rowClick(this.id)" id="1">
-                                    <td name="">Tiger Nixon</td>
+                                <tr>
+                                    <td>Tiger Nixon</td>
                                     <td>System Architect</td>
                                     <td>Edinburgh</td>
                                     <td>61</td>
                                     <td>2011/04/25</td>
-                                    <td>$327,900</td>
+                                    <td>$320,800</td>
                                 </tr>
                                 <tr>
                                     <td>Garrett Winters</td>
@@ -309,7 +226,7 @@
                                     <td>Tokyo</td>
                                     <td>63</td>
                                     <td>2011/07/25</td>
-                                    <td>$327,900</td>
+                                    <td>$170,750</td>
                                 </tr>
                                 <tr>
                                     <td>Ashton Cox</td>
@@ -317,7 +234,7 @@
                                     <td>San Francisco</td>
                                     <td>66</td>
                                     <td>2009/01/12</td>
-                                    <td>$327,900</td>
+                                    <td>$86,000</td>
                                 </tr>
                                 <tr>
                                     <td>Cedric Kelly</td>
@@ -325,7 +242,7 @@
                                     <td>Edinburgh</td>
                                     <td>22</td>
                                     <td>2012/03/29</td>
-                                    <td>$327,900</td>
+                                    <td>$433,060</td>
                                 </tr>
                                 <tr>
                                     <td>Airi Satou</td>
@@ -333,7 +250,7 @@
                                     <td>Tokyo</td>
                                     <td>33</td>
                                     <td>2008/11/28</td>
-                                    <td>$327,900</td>
+                                    <td>$162,700</td>
                                 </tr>
                                 <tr>
                                     <td>Brielle Williamson</td>
@@ -341,7 +258,7 @@
                                     <td>New York</td>
                                     <td>61</td>
                                     <td>2012/12/02</td>
-                                    <td>$327,900</td>
+                                    <td>$372,000</td>
                                 </tr>
                                 <tr>
                                     <td>Herrod Chandler</td>
@@ -349,7 +266,7 @@
                                     <td>San Francisco</td>
                                     <td>59</td>
                                     <td>2012/08/06</td>
-                                    <td>$327,900</td>
+                                    <td>$137,500</td>
                                 </tr>
                                 <tr>
                                     <td>Rhona Davidson</td>

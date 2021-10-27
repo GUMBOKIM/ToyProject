@@ -26,7 +26,7 @@ public class Company {
     @Column(unique = true, nullable = false)
     private String code;
 
-    @OneToMany
-    @JoinColumn(name = "partId")
-    private List<Part> parts = new ArrayList<Part>();
+    @OneToMany(mappedBy = "company")
+    private List<Part> parts = new ArrayList<>();
+
 }

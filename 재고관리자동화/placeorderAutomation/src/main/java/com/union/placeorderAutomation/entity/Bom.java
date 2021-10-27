@@ -25,8 +25,7 @@ public class Bom {
     @Column(unique = true, nullable = false)
     private String bwCode;
 
-    @OneToMany
-    @JoinColumn(name = "materialId")
+    @OneToMany(mappedBy = "bom")
     private List<BomPart> bomParts;
 
 }

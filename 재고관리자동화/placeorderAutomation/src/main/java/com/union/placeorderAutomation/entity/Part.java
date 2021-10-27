@@ -21,8 +21,8 @@ public class Part {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long partId;
 
-    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-    @JoinColumn(name = "companyId", insertable = false, updatable = false, nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "companyId", nullable = false)
     private Company company;
 
     @Column(unique = true, nullable = false)
@@ -52,7 +52,6 @@ public class Part {
     @Column()
     private String description;
 
-    @OneToMany
-    @JoinColumn(name = "partInventoryId")
+    @OneToMany(mappedBy = "part")
     private List<PartInventory> partInventories;
 }

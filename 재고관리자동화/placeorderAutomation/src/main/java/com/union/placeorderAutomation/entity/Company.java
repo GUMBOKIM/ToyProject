@@ -21,12 +21,12 @@ public class Company {
     private Long companyId;
 
     @Column(unique = true, nullable = false)
-    private String name;
+    private String companyName;
 
     @Column(unique = true, nullable = false)
-    private String code;
+    private String companyCode;
 
-    @OneToMany(mappedBy = "company")
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     private List<Part> parts = new ArrayList<>();
 
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -25,7 +26,7 @@ public class Part {
     @JoinColumn(name = "companyId", nullable = false)
     private Company company;
 
-    @Column(unique = true, nullable = false)
+    @Column
     private String partName;
 
     // 보그워너 코드
@@ -41,16 +42,19 @@ public class Part {
     private String poCode;
 
     //적입량
-    @Column()
+    @Column(nullable = false)
     private int loadAmount;
 
     //SAP 위치
-    @Column()
+    @Column
     private String location;
 
     //SP
-    @Column()
+    @Column
     private String description;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<BomPart> bomParts = new ArrayList<>();
 
     @OneToMany(mappedBy = "part")
     private List<PartInventory> partInventories;

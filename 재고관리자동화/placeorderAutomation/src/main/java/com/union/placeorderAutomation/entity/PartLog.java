@@ -12,22 +12,22 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class PartInventory {
+public class PartLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long partInventoryId;
+    private Long partLogId;
 
-    @ManyToOne
-    @JoinColumn(name = "partId")
-    private Part part;
-
-    @Column(nullable = false)
-    private String lot;
+    //I => 입고, O => 출고, M => 보정
+    @Column(columnDefinition = "nvarchar(1) check (div in ('I','O','M')", nullable = false)
+    private String div;
 
     @Column(nullable = false)
-    private int stock;
+    private int amount;
 
-    @Column(columnDefinition = "nvarchar(1) default 'Y'")
-    private String useYn;
+    @Column
+    private String date;
+
+    @Column
+    private String time;
 }

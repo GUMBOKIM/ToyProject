@@ -18,11 +18,11 @@ public class BomPart {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long bomPartId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "bomId")
     private Bom bom;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "partId")
     private Part part;
 }

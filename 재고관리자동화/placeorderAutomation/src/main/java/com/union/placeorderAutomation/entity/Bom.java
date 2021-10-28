@@ -1,13 +1,12 @@
 package com.union.placeorderAutomation.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
+@Setter
 @Getter
 @Builder
 @AllArgsConstructor
@@ -20,12 +19,9 @@ public class Bom {
     private Long bomId;
 
     @Column(unique = true, nullable = false)
-    private String name;
-
-    @Column(unique = true, nullable = false)
     private String bwCode;
 
-    @OneToMany(mappedBy = "bom")
-    private List<BomPart> bomParts;
+    @OneToMany(mappedBy = "bom", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BomPart> bomParts = new ArrayList<>();
 
 }

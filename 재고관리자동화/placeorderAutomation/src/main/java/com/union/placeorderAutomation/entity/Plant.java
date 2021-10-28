@@ -14,7 +14,7 @@ import javax.persistence.*;
 public class Plant {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long plantId;
 
     @Column(unique = true, nullable = false)

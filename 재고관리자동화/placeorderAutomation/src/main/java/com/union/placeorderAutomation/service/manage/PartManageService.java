@@ -1,10 +1,9 @@
 package com.union.placeorderAutomation.service.manage;
 
-import com.union.placeorderAutomation.dto.manage.part.PartReqDto;
-import com.union.placeorderAutomation.dto.manage.part.PartResDto;
+import com.union.placeorderAutomation.dto.manage.PartReqDto;
+import com.union.placeorderAutomation.dto.manage.PartResDto;
 import com.union.placeorderAutomation.entity.Company;
 import com.union.placeorderAutomation.entity.Part;
-import com.union.placeorderAutomation.repository.CompanyRepository;
 import com.union.placeorderAutomation.repository.PartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -36,7 +36,7 @@ public class PartTaskController {
         return new ResponseEntity(partDetailStock, HttpStatus.OK);
     }
 
-    @PostMapping("/modfiy")
+    @PostMapping("/modify")
     public ResponseEntity modifyPartByBwCode(@RequestBody StockModifyBWDto request) {
         PartStockDetailDto partDetailStock = partTaskService.modifyPartByBwCode(request);
         return new ResponseEntity(partDetailStock, HttpStatus.OK);

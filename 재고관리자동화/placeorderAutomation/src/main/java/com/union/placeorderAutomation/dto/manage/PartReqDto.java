@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class PartReqDto {
-    private Long companyId;
-    private String partName;
     private String bwCode;
+    private String companyCode;
+    private String partName;
     private String spCode;
     private String poCode;
     private int loadAmount;

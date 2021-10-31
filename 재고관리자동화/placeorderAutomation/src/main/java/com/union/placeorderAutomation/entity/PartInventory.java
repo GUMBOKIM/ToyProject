@@ -1,12 +1,12 @@
 package com.union.placeorderAutomation.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
+@Setter
 @Getter
 @Builder
 @AllArgsConstructor
@@ -16,9 +16,9 @@ public class PartInventory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long partInventoryId;
+    private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "partId")
     private Part part;
 
@@ -28,6 +28,8 @@ public class PartInventory {
     @Column(nullable = false)
     private int stock;
 
-    @Column(columnDefinition = "nvarchar(1) default 'Y'")
+    @Column(length = 1)
+    @ColumnDefault("'Y'")
     private String useYn;
+
 }

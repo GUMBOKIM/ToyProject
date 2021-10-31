@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -18,9 +19,10 @@ import java.util.List;
 @Entity
 public class Part {
 
+    // 보그워너 코드
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long partId;
+    @Column(unique = true, nullable = false)
+    private String bwCode;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "companyId", nullable = false)
@@ -29,9 +31,7 @@ public class Part {
     @Column
     private String partName;
 
-    // 보그워너 코드
-    @Column(unique = true, nullable = false)
-    private String bwCode;
+
 
     // 공급자 코드
     @Column(unique = true, nullable = false)
@@ -56,6 +56,19 @@ public class Part {
     @OneToMany(fetch = FetchType.LAZY)
     private List<BomPart> bomParts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "part")
+    @OneToMany(mappedBy = "part", fetch = FetchType.LAZY)
+    @OrderBy("lot asc")
+    @Where(clause = "stock > 0 and use_yn = 'Y'")
     private List<PartInventory> partInventories;
+
+    @OneToMany(mappedBy = "part", fetch = FetchType.LAZY)
+    private List<PartLog> partLogs;
+
+    public int sumStock(){
+        int stock = 0;
+        for (int i = 0; i < partInventories.size(); i++){
+            stock += partInventories.get(i).getStock();
+        }
+        return stock;
+    }
 }

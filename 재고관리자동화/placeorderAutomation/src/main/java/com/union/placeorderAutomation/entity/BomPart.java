@@ -15,8 +15,8 @@ import javax.persistence.*;
 public class BomPart {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long bomPartId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "bomId")

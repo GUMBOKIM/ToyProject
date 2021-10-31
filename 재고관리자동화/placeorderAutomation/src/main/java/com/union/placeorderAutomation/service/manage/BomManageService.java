@@ -9,11 +9,13 @@ import com.union.placeorderAutomation.repository.BomPartRepository;
 import com.union.placeorderAutomation.repository.BomRepository;
 import com.union.placeorderAutomation.repository.PartRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Transactional
 @RequiredArgsConstructor
@@ -25,10 +27,10 @@ public class BomManageService {
     private final PartRepository partRepo;
 
     @Transactional(readOnly = true)
-    public List<BomDto> getBomList() {
-        List<Bom> bomEntityList = bomRepo.findAll();
-        List<BomDto> result = new ArrayList<>();
-        bomEntityList.forEach(bom -> result.add(new BomDto(bom)));
+    public List<String> getBomList() {
+        List<Bom> bomEntityList = bomRepo.findAll(Sort.by(Sort.Direction.ASC, "bwCode"));
+        List<String> result = new ArrayList<>();
+        bomEntityList.forEach(bom -> result.add(bom.getBwCode()));
         return result;
     }
 
@@ -40,44 +42,44 @@ public class BomManageService {
         return new BomDto(bom);
     }
 
-    public BomDto updateBom(Long bomId, String bwCode) {
-        Bom bom = bomRepo.findById(bomId).get();
-        bom.setBwCode(bwCode);
-        bomRepo.save(bom);
-        return new BomDto(bom);
-    }
-
-    public void deleteBom(Long bomId) {
-        bomRepo.deleteById(bomId);
+    public void deleteBom(String bwCode) {
+        Bom bom = Bom.builder()
+                .bwCode(bwCode)
+                .build();
+        bomRepo.delete(bom);
     }
 
     @Transactional(readOnly = true)
-    public List<BomPartDto> getBomPartList(Long bomId) {
-        Bom bom = bomRepo.findById(bomId).get();
+    public List<BomPartDto> getBomPartList(String bomBwCode) {
+        Bom bom = bomRepo.findByBwCode(bomBwCode);
         List<BomPart> bomPartList = bom.getBomParts();
         List<BomPartDto> partList = new ArrayList<>();
         bomPartList.forEach(bomPart -> partList.add(new BomPartDto(bomPart)));
         return partList;
     }
 
-    public BomPartDto createBomPart(Long bomId, Long partId) {
-        Bom bom = bomRepo.findById(bomId).get();
-        Part part = partRepo.findById(partId).get();
-        BomPart bomPart = BomPart.builder()
-                .bom(bom)
-                .part(part)
-                .build();
-        bomPartRepo.save(bomPart);
-        return new BomPartDto(bomPart);
+    public BomPartDto createBomPart(String bomBwCode, String partBwCode) {
+        Bom bom = bomRepo.findByBwCode(bomBwCode);
+        Optional<Part> partOpt = partRepo.findByBwCode(partBwCode);
+        if(partOpt.isPresent()) {
+            Part part = partOpt.get();
+            BomPart bomPart = BomPart.builder()
+                    .bom(bom)
+                    .part(part)
+                    .build();
+            bomPartRepo.save(bomPart);
+            return new BomPartDto(bomPart);
+        }
+        return null;
     }
 
-    public void deleteBomPart(Long bomId, Long bomPartId) {
-        bomPartRepo.deleteById(bomPartId);
-    }
-
-    @Transactional(readOnly = true)
-    public Long findPartIdByBwCode(String bwCode){
-        Part part = partRepo.findByBwCode(bwCode);
-        return part.getPartId();
+    public void deleteBomPart(String bomBwCode, String partBwCode) {
+        Bom bom = bomRepo.findByBwCode(bomBwCode);
+        Optional<Part> partOpt = partRepo.findByBwCode(partBwCode);
+        if(partOpt.isPresent()) {
+            Part part = partOpt.get();
+            BomPart bompart = bomPartRepo.findByBomAndPart(bom, part);
+            bomPartRepo.delete(bompart);
+        }
     }
 }

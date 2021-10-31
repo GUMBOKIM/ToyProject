@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Transactional
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public class PartManageService {
 
     public PartResDto createPart(PartReqDto request) {
         Company company = Company.builder()
-                .companyId(request.getCompanyId())
+                .companyCode(request.getCompanyCode())
                 .build();
         Part part = Part.builder()
                 .company(company)
@@ -44,27 +45,11 @@ public class PartManageService {
         return new PartResDto(part);
     }
 
-    public PartResDto updatePart(Long partId, PartReqDto request) {
-        Company company = Company.builder()
-                .companyId(request.getCompanyId())
-                .build();
-        Part part = Part.builder()
-                .partId(partId)
-                .company(company)
-                .partName(request.getPartName())
-                .bwCode(request.getBwCode())
-                .spCode(request.getSpCode())
-                .poCode(request.getPoCode())
-                .loadAmount(request.getLoadAmount())
-                .location(request.getLocation())
-                .description(request.getDescription())
-                .build();
-        partRepo.save(part);
-        return new PartResDto(part);
-    }
-
-    public void deletePart(Long partId) {
-        partRepo.deleteById(partId);
+    public void deletePart(String partBwCode) {
+        Optional<Part> partOpt = partRepo.findByBwCode(partBwCode);
+        if(partOpt.isPresent()) {
+            partRepo.delete(partOpt.get());
+        }
     }
 
 }

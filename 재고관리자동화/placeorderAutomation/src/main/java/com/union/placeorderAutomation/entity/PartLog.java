@@ -1,12 +1,13 @@
 package com.union.placeorderAutomation.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Date;
 
+@Setter
 @Getter
 @Builder
 @AllArgsConstructor
@@ -16,18 +17,23 @@ public class PartLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long partLogId;
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "partId")
+    private Part part;
 
     //I => 입고, O => 출고, M => 보정
-    @Column(columnDefinition = "nvarchar(1) check (div in ('I','O','M')", nullable = false)
-    private String div;
+    @Column(nullable = false)
+    private String division;
 
     @Column(nullable = false)
     private int amount;
 
-    @Column
-    private String date;
+    @Column(nullable = false)
+    private LocalDateTime date;
 
     @Column
     private String time;
+
 }

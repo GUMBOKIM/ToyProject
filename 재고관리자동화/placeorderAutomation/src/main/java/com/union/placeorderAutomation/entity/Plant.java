@@ -14,13 +14,12 @@ import javax.persistence.*;
 public class Plant {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long plantId;
+    @Column(nullable = false)
+    private String plantCode;
+
 
     @Column(unique = true, nullable = false)
     private String plantName;
 
-    @Column(nullable = false)
-    private String plantCode;
 
 }

@@ -15,10 +15,7 @@ import java.util.List;
 public class Bom {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long bomId;
-
-    @Column(unique = true, nullable = false)
+    @Column
     private String bwCode;
 
     @OneToMany(mappedBy = "bom", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

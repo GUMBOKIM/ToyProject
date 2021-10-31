@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/manage/bom")
@@ -20,50 +19,39 @@ public class BomManageController {
 
     @GetMapping("")
     public ResponseEntity getBomList() {
-        List<BomDto> bomList = bomManageService.getBomList();
+        List<String> bomList = bomManageService.getBomList();
         return new ResponseEntity(bomList, HttpStatus.OK);
     }
 
-    @PostMapping("")
-    public ResponseEntity createBom(@RequestBody Map<String, String> req){
-        BomDto bom = bomManageService.createBom(req.get("bwCode"));
+    @PostMapping("/{bomBwCode}")
+    public ResponseEntity createBom(@PathVariable("bomBwCode") String bomBwCode){
+        BomDto bom = bomManageService.createBom(bomBwCode);
         return new ResponseEntity(bom, HttpStatus.OK);
     }
 
-    @PutMapping("/{bomId}")
-    public ResponseEntity updateBom(@PathVariable("bomId") Long bomId, @RequestBody Map<String, String> req){
-        BomDto bom = bomManageService.updateBom(bomId, req.get("bwCode"));
-        return new ResponseEntity(bom, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{bomId}")
-    public ResponseEntity deleteBom(@PathVariable("bomId") Long bomId){
-        bomManageService.deleteBom(bomId);
+    @DeleteMapping("/{bomBwCode}")
+    public ResponseEntity deleteBom(@PathVariable("bomBwCode") String bomBwCode){
+        bomManageService.deleteBom(bomBwCode);
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @GetMapping("/{bomId}")
-    public ResponseEntity getBomPartList(@PathVariable("bomId") Long bomId) {
-        List<BomPartDto> bomPartList = bomManageService.getBomPartList(bomId);
+    @GetMapping("/{bomBwCode}")
+    public ResponseEntity getBomPartList(@PathVariable("bomBwCode") String bomBwCode) {
+        List<BomPartDto> bomPartList = bomManageService.getBomPartList(bomBwCode);
         return new ResponseEntity(bomPartList, HttpStatus.OK);
     }
 
-    @PostMapping("/{bomId}")
-    public ResponseEntity createBomPart(@PathVariable("bomId") Long bomId, @RequestBody Map<String, Long> req){
-        BomPartDto bomPart = bomManageService.createBomPart(bomId, req.get("partId"));
+    @PostMapping("/{bomBwCode}/{partBwCode}")
+    public ResponseEntity createBomPart(@PathVariable("bomBwCode") String bomBwCode, @PathVariable("partBwCode") String partBwCode){
+        BomPartDto bomPart = bomManageService.createBomPart(bomBwCode, partBwCode);
         return new ResponseEntity(bomPart, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{bomId}/{bomPartId}")
-    public ResponseEntity deleteBomPart(@PathVariable("bomId") Long bomId, @PathVariable("bomPartId") Long bomPartId){
-        bomManageService.deleteBomPart(bomId, bomPartId);
+    @DeleteMapping("/{bomBwCode}/{partBwCode}")
+    public ResponseEntity deleteBomPart(@PathVariable("bomBwCode") String bomBwCode, @PathVariable("partBwCode") String partBwCode){
+        bomManageService.deleteBomPart(bomBwCode, partBwCode);
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @GetMapping("/findPart/{partBwCode}")
-    public ResponseEntity findPartIdByBwCode(@PathVariable("partBwCode") String partBwCode){
-        Long partId = bomManageService.findPartIdByBwCode(partBwCode);
-        return new ResponseEntity(partId, HttpStatus.OK);
-    }
 
 }

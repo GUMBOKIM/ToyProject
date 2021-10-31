@@ -29,15 +29,9 @@ public class PartManageController {
         return new ResponseEntity(part, HttpStatus.OK);
     }
 
-    @PutMapping("/{partId}")
-    public ResponseEntity updatePart(@PathVariable("partId") Long partId, @RequestBody PartReqDto request){
-        PartResDto part = partService.updatePart(partId, request);
-        return new ResponseEntity(part, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{partId}")
-    public ResponseEntity deletePart(@PathVariable("partId") Long partId){
-        partService.deletePart(partId);
+    @DeleteMapping("/{partBwCode}")
+    public ResponseEntity deletePart(@PathVariable("partBwCode") String partBwCode){
+        partService.deletePart(partBwCode);
         return new ResponseEntity("삭제 완료", HttpStatus.OK);
     }
 }

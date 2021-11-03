@@ -5,10 +5,9 @@ import lombok.Data;
 @Data
 public class ProductPlanDto {
 
-    private int no;
     private String plant;
     private String workCenter;
-    private String partNo;
+    private String bomBwCode;
     private int totalQTY;
     private int deliveredQTY;
     private int remainQTY;

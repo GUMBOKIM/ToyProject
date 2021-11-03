@@ -1,5 +1,6 @@
 package com.union.placeorderAutomation.restcontroller.manage;
 
+import com.union.placeorderAutomation.dto.manage.BomCreateDto;
 import com.union.placeorderAutomation.dto.manage.BomDto;
 import com.union.placeorderAutomation.dto.manage.BomPartDto;
 import com.union.placeorderAutomation.service.manage.BomManageService;
@@ -41,9 +42,9 @@ public class BomManageController {
         return new ResponseEntity(bomPartList, HttpStatus.OK);
     }
 
-    @PostMapping("/{bomBwCode}/{partBwCode}")
-    public ResponseEntity createBomPart(@PathVariable("bomBwCode") String bomBwCode, @PathVariable("partBwCode") String partBwCode){
-        BomPartDto bomPart = bomManageService.createBomPart(bomBwCode, partBwCode);
+    @PostMapping("")
+    public ResponseEntity createBomPart(@RequestBody BomCreateDto bomCreateDto){
+        BomPartDto bomPart = bomManageService.createBomPart(bomCreateDto);
         return new ResponseEntity(bomPart, HttpStatus.OK);
     }
 

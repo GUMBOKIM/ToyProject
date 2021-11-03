@@ -1,9 +1,9 @@
 package com.union.placeorderAutomation.service.task;
 
-import com.union.placeorderAutomation.dto.Task.IncomeResultDto;
-import com.union.placeorderAutomation.dto.Task.PartStockDetailDto;
-import com.union.placeorderAutomation.dto.Task.PartStockDto;
-import com.union.placeorderAutomation.dto.Task.StockRequestDto;
+import com.union.placeorderAutomation.dto.task.IncomeResultDto;
+import com.union.placeorderAutomation.dto.task.PartStockDetailDto;
+import com.union.placeorderAutomation.dto.task.PartStockDto;
+import com.union.placeorderAutomation.dto.task.StockRequestDto;
 import com.union.placeorderAutomation.entity.Company;
 import com.union.placeorderAutomation.entity.Part;
 import com.union.placeorderAutomation.entity.PartInventory;
@@ -13,10 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -97,7 +95,7 @@ public class PartStockService {
                         partInventoryRepo.save(originInventory);
                         result.getSuccess().add(new PartStockDetailDto(originInventory));
 
-                        partLogService.createPartLog(part, "I", request.getStock(), LocalDateTime.now(), "");
+                        partLogService.createPartLog(part, "I", request.getStock(), LocalDateTime.now(), null);
                     } else {
                         PartInventory newInventory = PartInventory.builder()
                                 .part(part)
@@ -106,12 +104,15 @@ public class PartStockService {
                                 .stock(request.getStock())
                                 .build();
                         partInventoryRepo.save(newInventory);
+                        result.getSuccess().add(new PartStockDetailDto(newInventory));
 
-                        partLogService.createPartLog(part, "I", request.getStock(), LocalDateTime.now(), "");
+                        partLogService.createPartLog(part, "I", request.getStock(), LocalDateTime.now(), null);
                     }
                 } else {
-                    result.getFail().add(request.getPartBwCode());
+                    result.getFail().add(request);
                 }
+            } else{
+                result.getFail().add(request);
             }
         });
         return result;

@@ -1,4 +1,4 @@
-package com.union.placeorderAutomation.dto.Task;
+package com.union.placeorderAutomation.dto.task;
 
 import lombok.Data;
 

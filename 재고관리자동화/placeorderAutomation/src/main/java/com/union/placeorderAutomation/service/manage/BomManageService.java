@@ -1,5 +1,6 @@
 package com.union.placeorderAutomation.service.manage;
 
+import com.union.placeorderAutomation.dto.manage.BomCreateDto;
 import com.union.placeorderAutomation.dto.manage.BomDto;
 import com.union.placeorderAutomation.dto.manage.BomPartDto;
 import com.union.placeorderAutomation.entity.Bom;
@@ -52,20 +53,22 @@ public class BomManageService {
     @Transactional(readOnly = true)
     public List<BomPartDto> getBomPartList(String bomBwCode) {
         Bom bom = bomRepo.findByBwCode(bomBwCode);
+        System.out.println("bom.toString() = " + bom.toString());
         List<BomPart> bomPartList = bom.getBomParts();
         List<BomPartDto> partList = new ArrayList<>();
         bomPartList.forEach(bomPart -> partList.add(new BomPartDto(bomPart)));
         return partList;
     }
 
-    public BomPartDto createBomPart(String bomBwCode, String partBwCode) {
-        Bom bom = bomRepo.findByBwCode(bomBwCode);
-        Optional<Part> partOpt = partRepo.findByBwCode(partBwCode);
+    public BomPartDto createBomPart(BomCreateDto bomCreateDto) {
+        Bom bom = bomRepo.findByBwCode(bomCreateDto.getBomBwCode());
+        Optional<Part> partOpt = partRepo.findByBwCode(bomCreateDto.getPartBwCode());
         if(partOpt.isPresent()) {
             Part part = partOpt.get();
             BomPart bomPart = BomPart.builder()
                     .bom(bom)
                     .part(part)
+                    .amount(bomCreateDto.getAmount())
                     .build();
             bomPartRepo.save(bomPart);
             return new BomPartDto(bomPart);
@@ -82,4 +85,5 @@ public class BomManageService {
             bomPartRepo.delete(bompart);
         }
     }
+
 }

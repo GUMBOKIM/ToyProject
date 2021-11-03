@@ -62,9 +62,6 @@ public class ProductPlaning {
             if (matcher.group(2) == null) break;
             String temp = matcher.group(2).replace(",","");
             switch (seq){
-                case 1:
-                    plan.setNo(Integer.parseInt(temp));
-                    break;
                 case 2:
                     plan.setPlant(temp);
                     break;
@@ -72,7 +69,7 @@ public class ProductPlaning {
                     plan.setWorkCenter(temp);
                     break;
                 case 6:
-                    plan.setPartNo(temp);
+                    plan.setBomBwCode(temp);
                     break;
                 case 7:
                     plan.setTotalQTY(Integer.parseInt(temp));
@@ -99,7 +96,7 @@ public class ProductPlaning {
                     break;
             }
         }
-        System.out.println("planList = " + planList);
+        System.out.println("planList = " + planList.toString());
         assertThat(response.getStatusCode().equals(HttpStatus.OK));
     }
 }

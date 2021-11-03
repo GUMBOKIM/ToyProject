@@ -1,9 +1,9 @@
 package com.union.placeorderAutomation.restcontroller.task;
 
-import com.union.placeorderAutomation.dto.Task.IncomeResultDto;
-import com.union.placeorderAutomation.dto.Task.StockRequestDto;
-import com.union.placeorderAutomation.dto.Task.PartStockDetailDto;
-import com.union.placeorderAutomation.dto.Task.PartStockDto;
+import com.union.placeorderAutomation.dto.task.IncomeResultDto;
+import com.union.placeorderAutomation.dto.task.StockRequestDto;
+import com.union.placeorderAutomation.dto.task.PartStockDetailDto;
+import com.union.placeorderAutomation.dto.task.PartStockDto;
 import com.union.placeorderAutomation.service.task.PartStockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

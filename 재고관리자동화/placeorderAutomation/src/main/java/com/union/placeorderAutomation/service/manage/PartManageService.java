@@ -39,7 +39,7 @@ public class PartManageService {
                 .poCode(request.getPoCode())
                 .loadAmount(request.getLoadAmount())
                 .location(request.getLocation())
-                .description(request.getDescription())
+                .standardYn(request.getStandardYn())
                 .build();
         partRepo.save(part);
         return new PartResDto(part);

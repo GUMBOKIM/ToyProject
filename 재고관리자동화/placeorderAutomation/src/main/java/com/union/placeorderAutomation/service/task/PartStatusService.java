@@ -1,6 +1,6 @@
 package com.union.placeorderAutomation.service.task;
 
-import com.union.placeorderAutomation.dto.Task.PartStatusDto;
+import com.union.placeorderAutomation.dto.task.PartStatusDto;
 import com.union.placeorderAutomation.repository.PartLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

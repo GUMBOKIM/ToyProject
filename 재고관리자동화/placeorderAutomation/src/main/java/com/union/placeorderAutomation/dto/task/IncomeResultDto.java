@@ -1,4 +1,4 @@
-package com.union.placeorderAutomation.dto.Task;
+package com.union.placeorderAutomation.dto.task;
 
 import lombok.Data;
 
@@ -9,5 +9,5 @@ import java.util.List;
 public class IncomeResultDto {
 
     private List<PartStockDetailDto> success = new ArrayList<>();
-    private List<String> fail = new ArrayList<>();
+    private List<StockRequestDto> fail = new ArrayList<>();
 }

@@ -1,4 +1,4 @@
-package com.union.placeorderAutomation.dto.Task;
+package com.union.placeorderAutomation.dto.task;
 
 import lombok.Data;
 
@@ -11,6 +11,7 @@ public class PartStatusDto {
     private String division;
     private int amount;
     private String time;
+    private String factory;
 
     public PartStatusDto(Object[] object) {
         this.bwCode = (String) object[0];
@@ -18,5 +19,6 @@ public class PartStatusDto {
         this.division = (String) object[2];
         this.amount = ((BigDecimal) object[3]).intValue();
         this.time = (String) object[4];
+        this.factory = (String) object[5];
     }
 }

@@ -7,16 +7,19 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 public class BomPart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column
+    private int amount;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "bomId")
@@ -25,4 +28,5 @@ public class BomPart {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "partId")
     private Part part;
+
 }

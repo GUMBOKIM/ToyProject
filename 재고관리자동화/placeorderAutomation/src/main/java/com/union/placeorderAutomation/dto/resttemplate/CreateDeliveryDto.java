@@ -1,16 +1,16 @@
-package com.union.placeorderAutomation.dto.manage;
+package com.union.placeorderAutomation.dto.resttemplate;
 
 import lombok.Data;
 
 @Data
-public class PartReqDto {
+public class CreateDeliveryDto {
+
     private String bwCode;
-    private String companyCode;
     private String partName;
-    private String spCode;
     private String poCode;
+    private String lot;
+    private int boxQuantity;
     private int loadAmount;
     private String location;
     private String standardYn;
-
 }

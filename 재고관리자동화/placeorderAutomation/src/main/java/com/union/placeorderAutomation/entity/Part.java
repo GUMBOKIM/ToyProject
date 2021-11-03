@@ -31,8 +31,6 @@ public class Part {
     @Column
     private String partName;
 
-
-
     // 공급자 코드
     @Column(unique = true, nullable = false)
     private String spCode;
@@ -49,9 +47,9 @@ public class Part {
     @Column
     private String location;
 
-    //SP
+    //기준서 유무
     @Column
-    private String description;
+    private String standardYn;
 
     @OneToMany(fetch = FetchType.LAZY)
     private List<BomPart> bomParts = new ArrayList<>();

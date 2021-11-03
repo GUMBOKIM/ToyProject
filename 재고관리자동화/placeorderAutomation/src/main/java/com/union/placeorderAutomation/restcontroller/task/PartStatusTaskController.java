@@ -1,6 +1,6 @@
 package com.union.placeorderAutomation.restcontroller.task;
 
-import com.union.placeorderAutomation.dto.task.PartStatusDto;
+import com.union.placeorderAutomation.dto.task.part.PartStatusDto;
 import com.union.placeorderAutomation.service.task.PartStatusService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

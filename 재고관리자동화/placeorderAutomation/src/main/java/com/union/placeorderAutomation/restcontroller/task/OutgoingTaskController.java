@@ -1,6 +1,6 @@
 package com.union.placeorderAutomation.restcontroller.task;
 
-import com.union.placeorderAutomation.dto.task.SubmitDto;
+import com.union.placeorderAutomation.dto.task.part.SubmitDto;
 import com.union.placeorderAutomation.service.task.OutgoingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ public class OutgoingTaskController {
 
     @GetMapping("inquire/{companyCode}/{plantCode}")
     public ResponseEntity inquirePlanNInventory(@PathVariable String companyCode, @PathVariable String plantCode){
-//        outgoingService.inquirePlanAndInventory(companyCode, plantCode);
+        outgoingService.inquirePlanAndInventory(companyCode, plantCode);
         return new ResponseEntity(HttpStatus.OK);
     }
 

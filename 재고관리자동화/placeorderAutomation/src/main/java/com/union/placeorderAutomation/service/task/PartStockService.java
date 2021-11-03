@@ -1,9 +1,9 @@
 package com.union.placeorderAutomation.service.task;
 
-import com.union.placeorderAutomation.dto.task.IncomeResultDto;
-import com.union.placeorderAutomation.dto.task.PartStockDetailDto;
-import com.union.placeorderAutomation.dto.task.PartStockDto;
-import com.union.placeorderAutomation.dto.task.StockRequestDto;
+import com.union.placeorderAutomation.dto.task.part.IncomeResultDto;
+import com.union.placeorderAutomation.dto.task.part.PartStockDetailDto;
+import com.union.placeorderAutomation.dto.task.part.PartStockDto;
+import com.union.placeorderAutomation.dto.task.part.StockRequestDto;
 import com.union.placeorderAutomation.entity.Company;
 import com.union.placeorderAutomation.entity.Part;
 import com.union.placeorderAutomation.entity.PartInventory;

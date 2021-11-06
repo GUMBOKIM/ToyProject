@@ -33,6 +33,63 @@
                     <h1 class="h3 mb-0 text-gray-800">task part stock</h1>
                 </div>
 
+                <div class="row justify-content-center mb-1">
+                    <div class="btn-group btn-group-toggle " data-toggle="buttons">
+                        <label class="btn btn-primary">
+                            <input type="radio" name="options" value="1" id="option1" autocomplete="off"
+                                   onclick="clickCompanyButton(this.value)"> Radio1
+                        </label>
+                        <label class="btn btn-primary">
+                            <input type="radio" name="options" value="2" id="option2" autocomplete="off"
+                                   onclick="clickCompanyButton(this.value)"> Radio2
+                        </label>
+                        <label class="btn btn-primary">
+
+                            <input type="radio" name="options" value="3" id="option3" autocomplete="off"
+                                   onclick="clickCompanyButton(this.value)"> Radio3
+                        </label>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center input-group">
+                    <div class="w-30">
+                        <div><h6>날짜</h6>
+                        </div>
+                        <input type="month" class="form-control" onchange="clickYm(this.value)">
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <button type="button" class="btn btn-primary btn-lg btn-block" onclick="clickSendButton()">조회</button>
+                </div>
+
+                <script>
+                    let companyCode;
+                    let yearMonth;
+
+                    function clickCompanyButton(input) {
+                        companyCode = input;
+                    }
+
+                    function clickYm(input) {
+                        yearMonth = input.replace("-", "");
+                        console.log(yearMonth);
+                    }
+
+                    function clickSendButton() {
+                        let xhr = new XMLHttpRequest();
+                        xhr.open("GET", "/api/task/part-status/"+companyCode+"/"+yearMonth);
+                        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                        xhr.onreadystatechange = function () {
+                            if (this.readyState === 4 && this.status === 200) {
+                                console.log(xhr.response);
+                            } else if (this.readyState === 4 && this.status === 400) {
+                            }
+
+                        }
+                        xhr.send();
+                    }
+                </script>
+
 
             </div>
             <!-- /.container-fluid -->

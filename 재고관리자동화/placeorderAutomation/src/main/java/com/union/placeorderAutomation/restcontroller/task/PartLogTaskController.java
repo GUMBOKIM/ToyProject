@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/task/part-status")
 @RestController
-public class PartStatusTaskController {
+public class PartLogTaskController {
 
     private final PartStatusService partStatusService;
 

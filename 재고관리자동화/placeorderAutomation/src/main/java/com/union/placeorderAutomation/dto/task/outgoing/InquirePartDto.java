@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 public class InquirePartDto {
     private String partBwCode;
+    private int usage;
     private int loadAmount;
     private int stockQTY;
 }

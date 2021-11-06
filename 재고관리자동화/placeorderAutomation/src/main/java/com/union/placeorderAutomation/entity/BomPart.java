@@ -21,11 +21,11 @@ public class BomPart {
     @Column
     private int amount;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bom.bwCode")
     private Bom bom;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "part.bwCode")
     private Part part;
 

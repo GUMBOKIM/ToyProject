@@ -37,6 +37,6 @@ public class PartLog {
     private String time;
 
     @Column
-    private String factory;
+    private String plant;
 
 }

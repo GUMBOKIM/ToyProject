@@ -30,7 +30,7 @@ public class RestTemplateService {
         body.add("p_dml_gubun", "1");
         body.add("p_vendcd", companyCode);
         body.add("p_plant", plantCode);
-        body.add("p_income_date", date);//20210201 양식
+        body.add("p_income_date", date.replace("-", ""));//20210201 양식
 
         deliveryList.forEach(delivery -> {
             body.add("p_partno", delivery.getBwCode());
@@ -42,16 +42,6 @@ public class RestTemplateService {
             body.add("p_qty_box", Integer.toString(delivery.getBoxQuantity()));
             body.add("p_remarks", delivery.getLocation());
         });
-//
-//        body.add("p_partno", "K171103A");
-//        body.add("p_partnm", "SP");
-//        body.add("p_order_no", "5500009744");
-//        body.add("p_lotno", "QJK.L");
-//        body.add("p_qty", "60");
-//        body.add("p_qty_per_box", "60");
-//        body.add("p_qty_box", "1");
-//        body.add("p_remarks", "ROLI-1");
-//
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, httpHeaders);
 
@@ -62,6 +52,8 @@ public class RestTemplateService {
                 request,
                 String.class
         );
+
+        System.out.println("response = " + response);
     }
 
     public void registryDelivery(String companyCode, String plantCode, String date, String time, List<CreateDeliveryDto> deliveryList) {
@@ -73,7 +65,7 @@ public class RestTemplateService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("p_companycd", "00");
         body.add("p_dml_gubun", "1");
-        body.add("p_ym", date); // 20211011
+        body.add("p_ym", date.replace("-", "")); // 20211011
         body.add("p_vendcd", plantCode);
         body.add("p_time", time); // time => 09:00
 
@@ -91,15 +83,6 @@ public class RestTemplateService {
             }
             body.add("p_po_no", delivery.getPoCode());
         });
-//
-//        body.add("p_partno","K170377");
-//        body.add("p_menge","1");
-//        body.add("p_lgpbe","LO2");
-//        body.add("p_barco","N");
-//        body.add("p_seqno","");
-//        body.add("p_plant","01");
-//        body.add("p_po_no","1111");
-
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, httpHeaders);
 
         String url = "https://es-qms.borgwarner.com/qms/MIS1150_t_new.PROCESS";
@@ -109,6 +92,7 @@ public class RestTemplateService {
                 request,
                 String.class
         );
+        System.out.println("response = " + response);
     }
 
     public List<ProductPlanDto> getProductPlanning(String companyCode, String plantCode) {
@@ -121,7 +105,7 @@ public class RestTemplateService {
 
         HttpEntity request = new HttpEntity(httpHeaders);
 
-        String url = "https://es-qms.borgwarner.com/qms/kqis9210__tt.query_data?p_companycd=00&p_x=1&p_plant="+companyCode+"&p_produce_line=&p_workcenter=&p_part_no=";
+        String url = "https://es-qms.borgwarner.com/qms/kqis9210__tt.query_data?p_companycd=00&p_x=1&p_plant=&p_produce_line=&p_workcenter=&p_part_no=";
         ResponseEntity<String> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
@@ -138,12 +122,12 @@ public class RestTemplateService {
         while (matcher.find()) {
             seq = (seq == 12) ? seq - 11 : seq + 1;
             if (matcher.group(2) == null) break;
-            String temp = matcher.group(2).replace(",", "");
-            switch (seq) {
+            String temp = matcher.group(2).replace(",","");
+            switch (seq){
                 case 2:
                     plan.setPlant(temp);
                     break;
-                case 4:
+                case 4 :
                     plan.setWorkCenter(temp);
                     break;
                 case 6:
@@ -167,7 +151,7 @@ public class RestTemplateService {
                     break;
                 case 12:
                     plan.setTTime(Integer.parseInt(temp));
-                    if (!plan.getSeq().equals("0")) {
+                    if((!plan.getSeq().equals("0")) && plan.getPlant().equals(plantCode)) {
                         planList.add(plan);
                     }
                     plan = new ProductPlanDto();
@@ -236,7 +220,9 @@ public class RestTemplateService {
                     break;
                 case 10:
                     inventory.setLotMax(Integer.parseInt(temp));
-                    inventoryList.add(inventory);
+                    if(inventory.getPlant().equals(plantCode)) {
+                        inventoryList.add(inventory);
+                    }
                     inventory = new ProductInventoryDto();
                     break;
             }
@@ -267,12 +253,12 @@ public class RestTemplateService {
     private void setHeaderGetProductPlanning(String companyCode, String plantCode, HttpHeaders httpHeaders) {
         httpHeaders.set("authority", "es-qms.borgwarner.com");
         httpHeaders.set("method", "GET");
-        httpHeaders.set("path", "/qms/kqis9210__tt.query_data?p_companycd=00&p_x=1&p_plant="+plantCode+"&p_produce_line=&p_workcenter=&p_part_no=");
+        httpHeaders.set("path", "/qms/kqis9210__tt.query_data?p_companycd=00&p_x=1&p_plant=&p_produce_line=&p_workcenter=&p_part_no=");
         httpHeaders.set("accept", "*/*");
         httpHeaders.set("accept-encoding", "gzip, deflate, br");
         httpHeaders.set("accept-language", "en,ko;q=0.9,fr;q=0.8");
-        httpHeaders.set("cookie", "SYSLANG=KO; SYSTYPE=1; SYSCOMP=00; SYSID=" + companyCode + "; CCODE=" + companyCode);
-        httpHeaders.set("referer", "https://es-qms.borgwarner.com/qms/kqis9210__tt.query?p_companycd=00&p_x=1&p_plant="+plantCode+"&p_produce_line=&p_workcenter=&p_part_no="); // url이랑 동일
+        httpHeaders.set("cookie", "SYSLANG=KO; SYSTYPE=1; SYSCOMP=00; SYSID="+companyCode+"; CCODE="+companyCode);
+        httpHeaders.set("referer", "https://es-qms.borgwarner.com/qms/kqis9210__tt.query?p_companycd=00&p_x=1&p_plant=&p_produce_line=&p_workcenter=&p_part_no="); // url이랑 동일
         httpHeaders.set("sec-ch-ua", "\"Chromium\";v=\"94\", \"Google Chrome\";v=\"94\", \";Not A Brand\";v=\"99\"");
         httpHeaders.set("sec-ch-ua-mobile", "?0");
         httpHeaders.set("sec-ch-ua-platform", "\"Windows\"");

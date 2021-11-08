@@ -30,7 +30,97 @@
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">manage part part</h1>
+                    <h1 class="h3 mb-0 text-gray-800">부품 관리</h1>
+                </div>
+
+
+                <div class="row justify-content-center mb-4">
+                    <div class="col-2">
+                        <select class="custom-select">
+                            <option selected>회사</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </div>
+                    <div class="col-1">
+                        <button type="button" class="btn btn-primary btn-sm"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th class="col-1">회사</th>
+                            <th class="col-2">보그워너 코드</th>
+                            <th class="col-2">이름</th>
+                            <th class="col-2">공급업체 코드</th>
+                            <th class="col-2">발주 번호</th>
+                            <th class="col-1">적입량</th>
+                            <th class="col-1">위치</th>
+                            <th class="col-1">기준서</th>
+                            <th class="col-1"></th>
+                            <th class="col-1">
+                                <button type="button" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i></button>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>회사</td>
+                            <td>보그워너 코드</td>
+                            <td>이름</td>
+                            <td>공급업체 코드</td>
+                            <td>발주 번호</td>
+                            <td>적입량</td>
+                            <td>위치</td>
+                            <td>기준서</td>
+                            <td>
+                                <button type="button" class="btn btn-info btn-sm"><i class="far fa-edit"></i></button>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td name="companyCode">
+                                <select class="custom-select">
+                                    <option selected>회사</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </td>
+                            <td name="partBwCode">
+                                <input type="text" class="form-control">
+                            </td>
+                            <td name="usage">
+                                <input type="text" class="form-control">
+                            </td>
+                            <td name="partBwCode">
+                                <input type="text" class="form-control">
+                            </td>
+                            <td name="partBwCode">
+                                <input type="text" class="form-control">
+                            </td>
+                            <td name="partBwCode">
+                                <input type="text" class="form-control">
+                            </td>
+                            <td name="partBwCode">
+                                <input type="text" class="form-control">
+                            </td>
+                            <td name="partBwCode">
+                                <input type="text" class="form-control">
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-success btn-sm"><i class="fas fa-check"></i></button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
 
 

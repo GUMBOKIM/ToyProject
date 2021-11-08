@@ -30,65 +30,131 @@
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">task part stock</h1>
+                    <h1 class="h3 mb-0 text-gray-800">재고 관리</h1>
                 </div>
 
-                <div class="row justify-content-center mb-1">
-                    <div class="btn-group btn-group-toggle " data-toggle="buttons">
-                        <label class="btn btn-primary">
-                            <input type="radio" name="options" value="1" id="option1" autocomplete="off"
-                                   onclick="clickCompanyButton(this.value)"> Radio1
-                        </label>
-                        <label class="btn btn-primary">
-                            <input type="radio" name="options" value="2" id="option2" autocomplete="off"
-                                   onclick="clickCompanyButton(this.value)"> Radio2
-                        </label>
-                        <label class="btn btn-primary">
-
-                            <input type="radio" name="options" value="3" id="option3" autocomplete="off"
-                                   onclick="clickCompanyButton(this.value)"> Radio3
-                        </label>
+                <div class="row justify-content-center mb-4">
+                    <div class="col-2">
+                        <select class="custom-select">
+                            <option selected>회사</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </div>
+                    <div class="col-1">
+                        <button type="button" class="btn btn-primary btn-sm"><i class="fas fa-search"></i></button>
                     </div>
                 </div>
 
-                <div class="row justify-content-center input-group">
-                    <div class="w-30">
-                        <div><h6>날짜</h6>
+                <div class="row justify-content-end mb-3">
+                    <div class="col-3">
+                        <div class="input-group">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="inputGroupFile04">
+                                <label class="custom-file-label" for="inputGroupFile04">파일 선택</label>
+                            </div>
+                            <div class="input-group-append">
+                                <button class="btn btn-success btn-sm" type="button"><i class="far fa-file-excel"></i></button>
+                            </div>
                         </div>
-                        <input type="month" class="form-control" onchange="clickYm(this.value)">
+                    </div>
+<!--                    <div class="col-1">-->
+<!--                        <button type="button" class="btn btn-success btn-sm"><i class="far fa-file-excel"></i></i></button>-->
+<!--                    </div>-->
+                </div>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col" style="overflow:auto; overflow-x: hidden; height: 70vh">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th class="col-2">부품 코드</th>
+                                    <th class="col-2">공급자 코드</th>
+                                    <th class="col-2">발주 번호</th>
+                                    <th class="col-1">수량</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><a href="#">123123123123</a></td>
+                                    <td>123123123123</td>
+                                    <td>123123123123</td>
+                                    <td>
+                                      120
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#">123123123123</a></td>
+                                    <td>123123123123</td>
+                                    <td>123123123123</td>
+                                    <td>
+                                        123
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#">123123123123</a></td>
+                                    <td>123123123123</td>
+                                    <td>123123123123</td>
+                                    <td>
+                                        123
+                                    </td>
+                                </tr>
+                                <tr>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-3">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th class="col-2">로트</th>
+                                    <th class="col-2">수량</th>
+                                    <th class="col-1">
+                                        <button type="button" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i></button>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>ABC</td>
+                                    <td>10</td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>ABD</td>
+                                    <td>10</td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>ABE</td>
+                                    <td>100</td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td name="partBwCode">
+                                        <input type="text" class="form-control">
+                                    </td>
+                                    <td name="usage">
+                                        <input type="text" class="form-control">
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-success btn-sm"><i class="fas fa-check"></i></button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-                <div class="row justify-content-center">
-                    <button type="button" class="btn btn-primary btn-lg btn-block" onclick="clickSendButton()">조회</button>
-                </div>
-
-                <script>
-                    let companyCode;
-                    let yearMonth;
-
-                    function clickCompanyButton(input) {
-                        companyCode = input;
-                    }
-
-                    function clickYm(input) {
-                        yearMonth = input.replace("-", "");
-                        console.log(yearMonth);
-                    }
-
-                    function clickSendButton() {
-                        let xhr = new XMLHttpRequest();
-                        xhr.open("GET", "/api/task/part-status/"+companyCode+"/"+yearMonth);
-                        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-                        xhr.onreadystatechange = function () {
-                            if (this.readyState === 4 && this.status === 200) {
-                                console.log(xhr.response);
-                            } else if (this.readyState === 4 && this.status === 400) {
-                            }
-
-                        }
-                        xhr.send();
-                    }
-                </script>
 
 
             </div>

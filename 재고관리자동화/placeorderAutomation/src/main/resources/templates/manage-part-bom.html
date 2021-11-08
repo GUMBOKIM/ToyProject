@@ -29,8 +29,136 @@
             <div class="container-fluid">
 
                 <!-- Page Heading -->
-                <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">manage part bom</h1>
+                <div class="d-sm-flex align-items-center justify-content-between">
+                    <h1 class="h3 mb-3 text-gray-800">BOM 관리</h1>
+                </div>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-5" style="overflow:auto; overflow-x: hidden; height: 80vh">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th class="col-3">BOM</th>
+                                    <th class="col-1"></th>
+                                    <th class="col-1">
+                                        <button type="button" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i></button>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><a href="#">123123123123</a></td>
+                                    <td>
+                                        <button type="button" class="btn btn-info btn-sm"><i class="far fa-edit"></i></button>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>123123123123</td>
+                                    <td>
+                                        <button type="button" class="btn btn-info btn-sm"><i class="far fa-edit"></i></button>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>123123123123</td>
+                                    <td>
+                                        <button type="button" class="btn btn-info btn-sm"><i class="far fa-edit"></i></button>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="text" class="form-control">
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-success btn-sm">등록</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th class="col-2">회사</th>
+                                    <th class="col-2">부품 코드</th>
+                                    <th class="col-1">USAGE</th>
+                                    <th class="col-1"></th>
+                                    <th class="col-1">
+                                        <button type="button" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i></button>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>삼보</td>
+                                    <td>112312313212313</td>
+                                    <td>1</td>
+                                    <td>
+                                        <button type="button" class="btn btn-info btn-sm"><i class="far fa-edit"></i></button>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>우주</td>
+                                    <td>221321345465465</td>
+                                    <td>10</td>
+                                    <td>
+                                        <button type="button" class="btn btn-info btn-sm"><i class="far fa-edit"></i></button>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>병신</td>
+                                    <td>212132441</td>
+                                    <td>21</td>
+                                    <td>
+                                        <button type="button" class="btn btn-info btn-sm"><i class="far fa-edit"></i></button>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td name="companyCode">
+                                        <select class="custom-select">
+                                            <option selected>회사</option>
+                                            <option value="1">One</option>
+                                            <option value="2">Two</option>
+                                            <option value="3">Three</option>
+                                        </select>
+                                    </td>
+                                    <td name="partBwCode">
+                                        <input type="text" class="form-control">
+                                    </td>
+                                    <td name="usage">
+                                        <input type="text" class="form-control">
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-success btn-sm"><i class="fas fa-check"></i></button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
 

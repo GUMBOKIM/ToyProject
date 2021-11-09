@@ -29,8 +29,14 @@ public class PartManageController {
         return new ResponseEntity(part, HttpStatus.OK);
     }
 
+    @PutMapping("")
+    public ResponseEntity putPart(@RequestBody PartReqDto request){
+        partService.modifyPart(request);
+        return new ResponseEntity("수정 완료", HttpStatus.OK);
+    }
     @DeleteMapping("/{partBwCode}")
     public ResponseEntity deletePart(@PathVariable("partBwCode") String partBwCode){
+        System.out.println("partBwCode = " + partBwCode);
         partService.deletePart(partBwCode);
         return new ResponseEntity("삭제 완료", HttpStatus.OK);
     }

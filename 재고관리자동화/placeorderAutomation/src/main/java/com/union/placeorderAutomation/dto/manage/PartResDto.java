@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class PartResDto {
-    private String companyCode;
+    private String companyName;
     private String partName;
     private String bwCode;
     private String spCode;
@@ -15,7 +15,7 @@ public class PartResDto {
     private String standardYn;
 
     public PartResDto(Part part) {
-        this.companyCode = part.getCompany().getCompanyCode();
+        this.companyName = part.getCompany().getCompanyName();
         this.partName = part.getPartName();
         this.bwCode = part.getBwCode();
         this.spCode = part.getSpCode();

@@ -45,11 +45,32 @@ public class PartManageService {
         return new PartResDto(part);
     }
 
-    public void deletePart(String partBwCode) {
-        Optional<Part> partOpt = partRepo.findByBwCode(partBwCode);
-        if(partOpt.isPresent()) {
-            partRepo.delete(partOpt.get());
-        }
+    public void modifyPart(PartReqDto request) {
+        Company company = Company.builder()
+                .companyCode(request.getCompanyCode())
+                .build();
+        Part part = Part.builder()
+                .company(company)
+                .partName(request.getPartName())
+                .bwCode(request.getBwCode())
+                .spCode(request.getSpCode())
+                .poCode(request.getPoCode())
+                .loadAmount(request.getLoadAmount())
+                .location(request.getLocation())
+                .standardYn(request.getStandardYn())
+                .build();
+        partRepo.save(part);
     }
 
+    public void deletePart(String partBwCode) {
+        partRepo.delete(Part.builder().bwCode(partBwCode).build());
+    }
+
+    @Transactional(readOnly = true)
+    public List<PartResDto> getPartListByCompanyCode(String companyCode) {
+        List<Part> partList = partRepo.findByCompany(companyCode);
+        List<PartResDto> result = new ArrayList<>();
+        partList.forEach(part -> result.add(new PartResDto(part)));
+        return result;
+    }
 }

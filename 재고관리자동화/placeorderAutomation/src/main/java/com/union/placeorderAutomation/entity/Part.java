@@ -47,10 +47,6 @@ public class Part {
     @Column
     private String location;
 
-    //기준서 유무
-    @Column
-    private String standardYn;
-
     @OneToMany(fetch = FetchType.LAZY)
     private List<BomPart> bomParts = new ArrayList<>();
 

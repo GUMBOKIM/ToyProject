@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="/fragments/header.html :: fragment-header"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.full.min.js"></script>
+</head>
+
+<body id="page-top">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul th:replace="/fragments/sidebar.html :: fragment-sidebar">
+
+    </ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+            <!-- TopBar -->
+            <nav th:replace="/fragments/topbar.html :: fragment-topbar">
+            </nav>
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">고객사 납품 - 수동</h1>
+                </div>
+
+                <div class="row justify-content-center mb-4">
+                    <div class="col-1">
+                        <select class="custom-select" id="company" onchange="setCompanyCode(this.value)">
+                            <option selected>회사</option>
+                            <option th:each="company : ${companyList}"
+                                    th:value="${company.companyCode}"
+                                    th:text="${company.companyName}"></option>
+                        </select>
+                    </div>
+                    <div class="col-1">
+                        <select class="custom-select" id="plant" onchange="setPlantCode(this.value)">
+                            <option selected>공장</option>
+                            <option th:each="plant : ${plantList}"
+                                    th:value="${plant.plantCode}"
+                                    th:text="${plant.plantName}"></option>
+                        </select>
+                    </div>
+                    <div class="col-1">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="time" onchange="setTime(this.value)"
+                                   placeholder="HH:MM">
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="input-group">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="excelInput" onchange="readExcel()">
+                                <label class="custom-file-label" for="excelInput">파일선택</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-1">
+                        <button type="button" id="createButton" class="btn btn-primary" onclick="createTable()">확인
+                        </button>
+                    </div>
+                    <div class="col-1">
+                        <button type="button" id="sendButton" style="visibility:hidden;" class="btn btn-success"
+                                onclick="sendData()">전송
+                        </button>
+                    </div>
+                    <div class="col-1">
+                        <button type="button" id="reportButton" style="visibility:hidden;" class="btn btn-success"
+                                onclick="openReport()">납품카드
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">품번</th>
+                            <th scope="col">이름</th>
+                            <th scope="col">발주번호</th>
+                            <th scope="col">로트</th>
+                            <th scope="col">적입량</th>
+                            <th scope="col">박스수량</th>
+                            <th scope="col">위치</th>
+                        </tr>
+                        </thead>
+                        <tbody id="excelTable">
+                        </tbody>
+                    </table>
+                </div>
+
+                <script>
+                    let companyCode;
+                    let plantCode;
+                    let time;
+                    let date;
+                    let excelMemory = new Array();
+                    let reportUrl;
+
+                    window.onload = function () {
+                        let today = new Date();
+                        let year = today.getFullYear();
+                        let month = today.getMonth() + 1;
+                        let day = today.getDate();
+                        date = "" + year;
+                        date = (month < 10) ? date + "0" + month : date + month;
+                        date = (day < 10) ? date + "0" + day : date + day;
+                    }
+
+                    function setCompanyCode(value) {
+                        companyCode = value;
+                        let target = document.getElementById('company');
+                        target.disabled = true;
+                    }
+
+                    function setPlantCode(value) {
+                        plantCode = value;
+                        let target = document.getElementById('plant');
+                        target.disabled = true;
+                    }
+
+                    function setTime(value) {
+                        time = value;
+                        let target = document.getElementById('time');
+                        target.disabled = true;
+                    }
+
+                    async function readExcel() {
+                        let excelFile = event.target.files[0];
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                            const data = reader.result;
+                            const workBook = XLSX.read(data, {type: 'binary'})
+                            let rows = XLSX.utils.sheet_to_json(workBook.Sheets[workBook.SheetNames[0]]);
+                            for (let i = 0; i < rows.length; i++) {
+                                if (i >= 2) {
+                                    let temp = rows[i];
+                                    if (temp[Object.keys(temp)[0]] == '') {
+                                        break;
+                                    }
+                                    excelMemory.push({
+                                        bwCode: temp[Object.keys(temp)[0]],
+                                        partName: temp[Object.keys(temp)[1]],
+                                        poCode: temp[Object.keys(temp)[2]] + "",
+                                        lot: temp[Object.keys(temp)[3]],
+                                        boxQuantity: temp[Object.keys(temp)[4]] / temp[Object.keys(temp)[5]],
+                                        loadAmount: temp[Object.keys(temp)[5]],
+                                        location: temp[Object.keys(temp)[6]]
+                                    });
+                                }
+                            }
+                        }
+                        reader.readAsBinaryString(excelFile);
+
+                        const target = document.getElementById('excelInput');
+                        target.disabled = true;
+                    }
+
+                    function createTable() {
+                        const tbody = document.getElementById('excelTable');
+                        for (let i = 0; i < excelMemory.length; i++) {
+                            let tr = document.createElement("tr");
+                            tr.innerHTML = `<td>` + excelMemory[i].bwCode + `</td>`
+                                + `<td>` + excelMemory[i].partName + `</td>`
+                                + `<td>` + excelMemory[i].poCode + `</td>`
+                                + `<td>` + excelMemory[i].partName + `</td>`
+                                + `<td>` + excelMemory[i].lot + `</td>`
+                                + `<td>` + excelMemory[i].boxQuantity + `</td>`
+                                + `<td>` + excelMemory[i].loadAmount + `</td>`
+                                + `<td>` + excelMemory[i].location + `</td>`;
+                            tbody.append(tr);
+                        }
+                        let target = document.getElementById('createButton');
+                        target.disabled = true;
+                        target = document.getElementById('sendButton');
+                        target.style.visibility = "visible";
+                    }
+
+                    function sendData() {
+                        const url = "/api/task/outgoing-manual";
+                        fetch(url, {
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            method: "POST",
+                            body: JSON.stringify({
+                                companyCode: companyCode,
+                                plantCode: plantCode,
+                                date: date,
+                                time: time,
+                                deliveryList: excelMemory
+                            })
+                        }).then(
+                            response => {
+                                if (response.status == 200) {
+                                    let target = document.getElementById('sendButton');
+                                    target.disabled = true;
+                                    target = document.getElementById('reportButton');
+                                    target.style.visibility = "visible";
+                                    reportRequest();
+                                } else {
+                                    alert("전송 오류! 다시 해보세요")
+                                }
+                            }
+                        );
+                    }
+
+                    function reportRequest() {
+                        const url = "/api/task/outgoing-manual/" + companyCode + "/" + date + "/" + plantCode;
+                        fetch(url).then((response) => response.json())
+                            .then((data) => {
+                                reportUrl = `https://es-qms.borgwarner.com/qms/payment_card2.main?p_companycd=00&p_vendcd=${data[0]}&p_plant=${data[1]}&p_income_date=${data[2]}&p_sno=${data[3]}`
+                            });
+                    }
+
+                    function openReport() {
+                        window.open(reportUrl);
+                    }
+                </script>
+
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer th:replace="/fragments/footer.html :: fragment-footer">
+        </footer>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+</body>
+
+</html>

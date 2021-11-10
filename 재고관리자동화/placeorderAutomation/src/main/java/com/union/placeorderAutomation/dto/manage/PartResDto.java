@@ -12,7 +12,6 @@ public class PartResDto {
     private String poCode;
     private int loadAmount;
     private String location;
-    private String standardYn;
 
     public PartResDto(Part part) {
         this.companyName = part.getCompany().getCompanyName();
@@ -22,6 +21,5 @@ public class PartResDto {
         this.poCode = part.getPoCode();
         this.loadAmount = part.getLoadAmount();
         this.location = part.getLocation();
-        this.standardYn = part.getStandardYn();
     }
 }

@@ -48,14 +48,14 @@ public class DeliveryRegistration {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("p_companycd","00");
         body.add("p_dml_gubun","1");
-        body.add("p_ym","20211026");
+        body.add("p_ym","20211110");
         body.add("p_vendcd","106076");
-        body.add("p_time","09:00");
+        body.add("p_time","23:40");
 
         body.add("p_partno","K170377");
         body.add("p_menge","1");
         body.add("p_lgpbe","LO1");
-        body.add("p_barco","N");
+        body.add("p_barco","");
         body.add("p_seqno","");
         body.add("p_plant","01");
         body.add("p_po_no","1111");
@@ -64,7 +64,7 @@ public class DeliveryRegistration {
         body.add("p_partno","K170377");
         body.add("p_menge","1");
         body.add("p_lgpbe","LO2");
-        body.add("p_barco","N");
+        body.add("p_barco","");
         body.add("p_seqno","");
         body.add("p_plant","01");
         body.add("p_po_no","1111");

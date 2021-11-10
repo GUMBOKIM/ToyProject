@@ -1,6 +1,7 @@
 package com.union.placeorderAutomation.controller;
 
 import com.union.placeorderAutomation.dto.common.CompanyListDto;
+import com.union.placeorderAutomation.dto.common.PlantDto;
 import com.union.placeorderAutomation.dto.manage.PartResDto;
 import com.union.placeorderAutomation.service.common.CommonService;
 import com.union.placeorderAutomation.service.manage.PartManageService;
@@ -18,16 +19,24 @@ import java.util.List;
 public class PageController {
 
     private final CommonService commonService;
-    private final PartManageService partManageService;
 
     @RequestMapping("/")
     public String mainPage() {
-        return "task-outgoing";
+        return "redirect:/task/outgoing-manual";
     }
 
     @RequestMapping("/task/outgoing")
     public String taskOutgoing() {
         return "task-outgoing";
+    }
+
+    @RequestMapping("/task/outgoing-manual")
+    public String taskOutgoingManual(Model model) {
+        List<CompanyListDto> companyList = commonService.getCompanyList();
+        model.addAttribute("companyList", companyList);
+        List<PlantDto> plantList = commonService.getPlantList();
+        model.addAttribute("plantList", plantList);
+        return "task-outgoing-manual";
     }
 
     @RequestMapping("/task/part/log")
@@ -44,6 +53,8 @@ public class PageController {
     public String managePartBom() {
         return "manage-part-bom";
     }
+
+    private final PartManageService partManageService;
 
     @RequestMapping("/manage/part/part")
     public String managePartPart(Model model) {

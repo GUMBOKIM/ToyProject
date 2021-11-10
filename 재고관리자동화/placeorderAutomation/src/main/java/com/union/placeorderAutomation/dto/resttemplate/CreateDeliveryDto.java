@@ -1,9 +1,13 @@
 package com.union.placeorderAutomation.dto.resttemplate;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class CreateDeliveryDto {
     private String bwCode;
@@ -13,5 +17,4 @@ public class CreateDeliveryDto {
     private int boxQuantity;
     private int loadAmount;
     private String location;
-    private String standardYn;
 }

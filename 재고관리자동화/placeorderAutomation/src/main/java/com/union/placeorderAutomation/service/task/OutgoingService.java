@@ -116,7 +116,6 @@ public class OutgoingService {
                                     .loadAmount(p.getLoadAmount())
                                     .boxQuantity(inventory.getStock() / p.getLoadAmount())
                                     .location(p.getLocation())
-                                    .standardYn(p.getStandardYn())
                                     .build()
                     );
                     PartLog partLog = PartLog.builder()
@@ -142,7 +141,6 @@ public class OutgoingService {
                                     .loadAmount(p.getLoadAmount())
                                     .boxQuantity(amount / p.getLoadAmount())
                                     .location(p.getLocation())
-                                    .standardYn(p.getStandardYn())
                                     .build()
                     );
                     PartLog partLog = PartLog.builder()

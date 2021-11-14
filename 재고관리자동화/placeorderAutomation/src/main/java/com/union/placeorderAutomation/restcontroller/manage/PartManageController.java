@@ -36,7 +36,6 @@ public class PartManageController {
     }
     @DeleteMapping("/{partBwCode}")
     public ResponseEntity deletePart(@PathVariable("partBwCode") String partBwCode){
-        System.out.println("partBwCode = " + partBwCode);
         partService.deletePart(partBwCode);
         return new ResponseEntity("삭제 완료", HttpStatus.OK);
     }

@@ -27,7 +27,7 @@ public class CommonService {
     public List<CompanyListDto> getCompanyList() {
         List<Company> companyList = companyRepo.findAll();
         List<CompanyListDto> result = new ArrayList<>();
-        companyList.forEach(company -> result.add(new CompanyListDto(company)));
+        companyList.forEach(company -> result.add(new CompanyListDto(company.getCompanyCode(), company.getCompanyName())));
         return result;
     }
 

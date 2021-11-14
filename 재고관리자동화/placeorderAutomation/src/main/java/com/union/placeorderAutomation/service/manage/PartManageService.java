@@ -6,6 +6,7 @@ import com.union.placeorderAutomation.entity.Company;
 import com.union.placeorderAutomation.entity.Part;
 import com.union.placeorderAutomation.repository.PartRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,7 @@ public class PartManageService {
 
     @Transactional(readOnly = true)
     public List<PartResDto> getPartList() {
-        List<Part> partList = partRepo.findAll();
+        List<Part> partList = partRepo.findAll(Sort.by(Sort.Direction.ASC, "bwCode"));
         List<PartResDto> result = new ArrayList<>();
         partList.forEach(part -> result.add(new PartResDto(part)));
         return result;

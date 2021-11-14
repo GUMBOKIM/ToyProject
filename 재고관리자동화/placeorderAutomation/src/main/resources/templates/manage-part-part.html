@@ -160,9 +160,7 @@
         td6.innerHTML = `<input type="text" class="form-control">`;
         let td7 = document.createElement("td");
         td7.innerHTML = `<input type="text" class="form-control">`;
-        let td8 = document.createElement("td");
-        td8.innerHTML = `<input type="text" class="form-control">`;
-        tr.append(td1, td2, td3, td4, td5, td6, td7, td8);
+        tr.append(td1, td2, td3, td4, td5, td6, td7);
 
         let td9 = document.createElement("td");
         let td10 = document.createElement("td");
@@ -182,7 +180,6 @@
             poCode: tdList[4].childNodes[0].value,
             loadAmount: parseInt(tdList[5].childNodes[0].value),
             location: tdList[6].childNodes[0].value,
-            standardYn: tdList[7].childNodes[0].value,
         }
         console.log(result);
 
@@ -231,7 +228,7 @@
         td7.innerHTML = `<input type="text" class="form-control">`;
         let td8 = document.createElement("td");
         td8.innerHTML = `<input type="text" class="form-control">`;
-        tr.append(td1, td2, td3, td4, td5, td6, td7, td8);
+        tr.append(td1, td2, td3, td4, td5, td7, td8);
 
         let td9 = document.createElement("td");
         let td10 = document.createElement("td");
@@ -251,8 +248,7 @@
             spCode: tdList[3].childNodes[0].value,
             poCode: tdList[4].childNodes[0].value,
             loadAmount: parseInt(tdList[5].childNodes[0].value),
-            location: tdList[6].childNodes[0].value,
-            standardYn: tdList[7].childNodes[0].value,
+            location: tdList[6].childNodes[0].value
         }
         const url = "/api/manage/part";
         fetch(url, {

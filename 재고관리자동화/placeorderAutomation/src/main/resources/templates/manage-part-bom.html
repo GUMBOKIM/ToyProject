@@ -127,6 +127,7 @@
                             }
 
 
+                            // BOM PART 생성
                             function clickBomCode(td) {
                                 bomCode = td.innerText + "";
                                 const url = `/api/manage/bom/` + bomCode;
@@ -156,11 +157,26 @@
                                         + `<td>` + bomPart.bwCode + `</td>`
                                         + `<td>` + bomPart.amount + `</td>`
                                         + `<td>` + bomPart.selectYn + `</td>`
-                                        + `<td><button type="button" class="btn btn-info btn-sm"><i class="far fa-edit"></i></button></td>`
-                                        + `<td><button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button></td>`
+                                        + `<td><button type="button" onclick="clickBomPartDeleteButton(this)" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button></td>`
                                     tbody.append(tr);
                                 }
                             }
+
+
+                            function clickBomPartDeleteButton(button) {
+                                let tr = button.parentNode.parentNode;
+                                let partBwCode = tr.children[1].innerText;
+                                const url = "/api/manage/bom/" + bomCode + "/" + partBwCode;
+                                fetch(url, {
+                                    method: "DELETE"
+                                }).then(
+                                    response => {
+                                        if (response.status == 200) {
+                                            removeAllNode(tr);
+                                        }
+                                    });
+                            }
+
 
                             function clickBomPartCreateButton() {
                                 if (bomCode != null) {
@@ -174,9 +190,8 @@
                                     let td4 = document.createElement("td");
                                     td4.innerHTML = `<input name="selectYn" type="text" class="form-control">`;
                                     let td5 = document.createElement("td");
-                                    let td6 = document.createElement("td");
-                                    td6.innerHTML = `<button type="button" class="btn btn-success btn-sm" onclick="createBomPart(this)"><i class="fas fa-check"></i></button>`;
-                                    tr.append(td1, td2, td3, td4, td5, td6);
+                                    td5.innerHTML = `<button type="button" class="btn btn-success btn-sm" onclick="createBomPart(this)"><i class="fas fa-check"></i></button>`;
+                                    tr.append(td1, td2, td3, td4, td5);
                                     tbody.insertBefore(tr, tbody.firstChild);
                                 }
                             }
@@ -217,11 +232,9 @@
                                         }
                                     }
                                 );
-
-
                             }
                         </script>
-                        <div class="col-7">
+                        <div class="col">
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
@@ -229,7 +242,6 @@
                                     <th class="col-2">부품 코드</th>
                                     <th class="col-1">USAGE</th>
                                     <th class="col-1">선택품</th>
-                                    <th class="col-1"></th>
                                     <th class="col-1">
                                         <button type="button" class="btn btn-primary btn-sm"
                                                 onclick="clickBomPartCreateButton()"><i class="fas fa-plus"></i>

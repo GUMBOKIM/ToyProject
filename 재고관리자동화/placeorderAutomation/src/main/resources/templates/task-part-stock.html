@@ -35,17 +35,33 @@
 
                 <div class="row justify-content-center mb-4">
                     <div class="col-2">
-                        <select class="custom-select">
-                            <option selected>회사</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                        <select class="custom-select" onchange="setCompanyCode(this.value)">
+                            <option selected value="">전체</option>
+                            <option th:each="company : ${companyList}"
+                                    th:value="${company.companyCode}"
+                                    th:text="${company.companyName}"></option>
                         </select>
                     </div>
                     <div class="col-1">
-                        <button type="button" class="btn btn-primary btn-sm"><i class="fas fa-search"></i></button>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="findPartByCompanyCode()"><i class="fas fa-search"></i></button>
                     </div>
                 </div>
+
+                <script>
+                    let companyCode;
+
+                    function setCompanyCode(value){
+                        companyCode = value;
+                    }
+
+                    function findPartByCompanyCode() {
+                        if(companyCode == undefined){
+                            document.location.href = "/task/part/stock";
+                        } else {
+                            document.location.href = "/task/part/stock/" + companyCode;
+                        }
+                    }
+                </script>
 
                 <div class="row justify-content-end mb-3">
                     <div class="col-3">
@@ -70,6 +86,7 @@
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
+                                    <th class="col-1">회사</th>
                                     <th class="col-2">부품 코드</th>
                                     <th class="col-2">공급자 코드</th>
                                     <th class="col-2">발주 번호</th>
@@ -77,31 +94,12 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td><a href="#">123123123123</a></td>
-                                    <td>123123123123</td>
-                                    <td>123123123123</td>
-                                    <td>
-                                      120
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><a href="#">123123123123</a></td>
-                                    <td>123123123123</td>
-                                    <td>123123123123</td>
-                                    <td>
-                                        123
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><a href="#">123123123123</a></td>
-                                    <td>123123123123</td>
-                                    <td>123123123123</td>
-                                    <td>
-                                        123
-                                    </td>
-                                </tr>
-                                <tr>
+                                <tr th:each="partStock : ${partStockList}">
+                                    <td th:text="${partStock.companyName}"></td>
+                                    <td th:text="${partStock.bwCode}"></td>
+                                    <td th:text="${partStock.spCode}"></td>
+                                    <td th:text="${partStock.poCode}"></td>
+                                    <td th:text="${partStock.stock}"></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -110,8 +108,8 @@
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
-                                    <th class="col-2">로트</th>
-                                    <th class="col-2">수량</th>
+                                    <th class="col-1">로트</th>
+                                    <th class="col-1">수량</th>
                                     <th class="col-1">
                                         <button type="button" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i></button>
                                     </th>

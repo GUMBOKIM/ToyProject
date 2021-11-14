@@ -8,8 +8,8 @@ public class CompanyListDto {
     private String companyCode;
     private String companyName;
 
-    public CompanyListDto(Company company) {
-        this.companyCode = company.getCompanyCode();
-        this.companyName = company.getCompanyName();
+    public CompanyListDto(String companyCode, String companyName) {
+        this.companyCode = companyCode;
+        this.companyName = companyName;
     }
 }

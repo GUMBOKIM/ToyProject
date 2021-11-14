@@ -10,6 +10,7 @@ import com.union.placeorderAutomation.entity.PartInventory;
 import com.union.placeorderAutomation.repository.PartInventoryRepository;
 import com.union.placeorderAutomation.repository.PartRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,13 +29,18 @@ public class PartStockService {
     private final PartInventoryRepository partInventoryRepo;
 
     @Transactional(readOnly = true)
+    public List<PartStockDto> getPartStockListAll() {
+        List<PartStockDto> partStockList = new ArrayList<>();
+        List<Object[]> partList = partInventoryRepo.findPartStockInventoryList();
+        partList.forEach(part -> partStockList.add(new PartStockDto(part)));
+        return partStockList;
+    }
+
+    @Transactional(readOnly = true)
     public List<PartStockDto> getPartStockList(String companyCode) {
         List<PartStockDto> partStockList = new ArrayList<>();
-
-        Company company = Company.builder().companyCode(companyCode).build();
-        List<Part> partList = partRepo.findByCompany(company);
+        List<Object[]> partList = partInventoryRepo.findPartStockInventoryListByCompanyCode(companyCode);
         partList.forEach(part -> partStockList.add(new PartStockDto(part)));
-
         return partStockList;
     }
 

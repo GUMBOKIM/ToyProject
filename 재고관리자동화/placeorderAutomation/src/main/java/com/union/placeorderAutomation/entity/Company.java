@@ -23,8 +23,6 @@ public class Company {
     @Column(unique = true, nullable = false)
     private String companyName;
 
-
-
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     private List<Part> parts;
 }

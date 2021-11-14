@@ -9,6 +9,7 @@ import com.union.placeorderAutomation.repository.PlantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +21,13 @@ public class CommonService {
     private final CompanyRepository companyRepo;
     private final PlantRepository plantRepository;
 
+    private List<CompanyListDto> companyList;
+
     @Transactional(readOnly = true)
     public List<CompanyListDto> getCompanyList() {
         List<Company> companyList = companyRepo.findAll();
         List<CompanyListDto> result = new ArrayList<>();
-        companyList.forEach( company -> result.add(new CompanyListDto(company)));
+        companyList.forEach(company -> result.add(new CompanyListDto(company)));
         return result;
     }
 
@@ -36,4 +39,11 @@ public class CommonService {
         return result;
     }
 
+
+    public void addCompanyList(Model model) {
+        if (companyList == null) {
+            companyList = getCompanyList();
+        }
+        model.addAttribute("companyList", companyList);
+    }
 }

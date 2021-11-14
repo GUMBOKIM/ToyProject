@@ -26,8 +26,8 @@ public class BomManageController {
 
     @PostMapping("/{bomBwCode}")
     public ResponseEntity createBom(@PathVariable("bomBwCode") String bomBwCode){
-        BomDto bom = bomManageService.createBom(bomBwCode);
-        return new ResponseEntity(bom, HttpStatus.OK);
+        bomManageService.createBom(bomBwCode);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @DeleteMapping("/{bomBwCode}")

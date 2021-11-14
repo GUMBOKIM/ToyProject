@@ -48,7 +48,7 @@ public class Part {
     private String location;
 
     @OneToMany(fetch = FetchType.LAZY)
-    private List<BomPart> bomParts = new ArrayList<>();
+    private List<BomPart> bomParts;
 
     @OneToMany(mappedBy = "part", fetch = FetchType.LAZY)
     @OrderBy("lot asc")

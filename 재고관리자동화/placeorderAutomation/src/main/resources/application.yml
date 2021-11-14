@@ -19,11 +19,11 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
     cache: false
-    check-template-location: true
   #  https://dev-overload.tistory.com/25
 
   devtools:
-    livereload.enabled: true
+    livereload:
+      enabled: true
 
 logging:
   level:

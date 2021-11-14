@@ -34,6 +34,12 @@ dependencies {
 	//httpClient
 	implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5'
 }
+bootJar {
+
+	jar.enabled = true
+	mainClass = 'com.union.placeorderAutomation.PlaceorderAutomationApplication'
+}
+
 
 test {
 	useJUnitPlatform()

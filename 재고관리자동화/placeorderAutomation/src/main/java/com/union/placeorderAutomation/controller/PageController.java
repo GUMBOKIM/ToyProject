@@ -1,9 +1,8 @@
 package com.union.placeorderAutomation.controller;
 
-import com.union.placeorderAutomation.dto.common.CompanyListDto;
-import com.union.placeorderAutomation.dto.common.PlantDto;
 import com.union.placeorderAutomation.dto.manage.PartResDto;
 import com.union.placeorderAutomation.service.common.CommonService;
+import com.union.placeorderAutomation.service.manage.BomManageService;
 import com.union.placeorderAutomation.service.manage.PartManageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -19,10 +18,12 @@ import java.util.List;
 public class PageController {
 
     private final CommonService commonService;
+    private final PartManageService partManageService;
+    private final BomManageService bomManageService;
 
     @RequestMapping("/")
     public String mainPage() {
-        return "redirect:/task/outgoing-manual";
+        return "redirect:task/outgoing-manual";
     }
 
     @RequestMapping("/task/outgoing")
@@ -32,10 +33,6 @@ public class PageController {
 
     @RequestMapping("/task/outgoing-manual")
     public String taskOutgoingManual(Model model) {
-        List<CompanyListDto> companyList = commonService.getCompanyList();
-        model.addAttribute("companyList", companyList);
-        List<PlantDto> plantList = commonService.getPlantList();
-        model.addAttribute("plantList", plantList);
         return "task-outgoing-manual";
     }
 
@@ -50,16 +47,23 @@ public class PageController {
     }
 
     @RequestMapping("/manage/part/bom")
-    public String managePartBom() {
+    public String managePartBom(Model model) {
+        commonService.addCompanyList(model);
+        model.addAttribute("bomList", bomManageService.getBomList());
         return "manage-part-bom";
     }
 
-    private final PartManageService partManageService;
+    @RequestMapping("/manage/part/bom/{bomCode}")
+    public String managePartBom(@PathVariable String bomCode, Model model) {
+        commonService.addCompanyList(model);
+        return "manage-part-bom";
+    }
+
+
 
     @RequestMapping("/manage/part/part")
     public String managePartPart(Model model) {
-        List<CompanyListDto> companyList = commonService.getCompanyList();
-        model.addAttribute("companyList", companyList);
+        commonService.addCompanyList(model);
         List<PartResDto> partList = partManageService.getPartList();
         model.addAttribute("partList", partList);
         return "manage-part-part";
@@ -67,8 +71,8 @@ public class PageController {
 
     @RequestMapping("/manage/part/part/{companyCode}")
     public String managePartPartCompanyCode(@PathVariable String companyCode, Model model) {
-        List<CompanyListDto> companyList = commonService.getCompanyList();
-        model.addAttribute("companyList", companyList);
+        commonService.addCompanyList(model);
+
         List<PartResDto> partList = partManageService.getPartListByCompanyCode(companyCode);
         model.addAttribute("partList", partList);
         return "manage-part-part";

@@ -21,6 +21,9 @@ public class BomPart {
     @Column
     private int amount;
 
+    @Column
+    private String selectYn;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bom.bwCode")
     private Bom bom;

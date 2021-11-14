@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <div th:replace="/fragments/header.html :: fragment-header"></div>
+    <div th:replace="fragments/header.html :: fragment-header"></div>
 </head>
 
 <body id="page-top">
@@ -11,7 +11,7 @@
 <div id="wrapper">
 
     <!-- Sidebar -->
-    <ul th:replace="/fragments/sidebar.html :: fragment-sidebar">
+    <ul th:replace="fragments/sidebar.html :: fragment-sidebar">
 
     </ul>
     <!-- End of Sidebar -->
@@ -22,7 +22,7 @@
         <!-- Main Content -->
         <div id="content">
             <!-- TopBar -->
-            <nav th:replace="~{/fragments/topbar.html :: fragment-topbar}">
+            <nav th:replace="~{fragments/topbar.html :: fragment-topbar}">
             </nav>
 
             <!-- Begin Page Content -->
@@ -35,126 +35,209 @@
 
                 <div class="container">
                     <div class="row">
-                        <div class="col-5" style="overflow:auto; overflow-x: hidden; height: 80vh">
+                        <div class="col-3" style="overflow:auto; overflow-x: hidden; height: 80vh">
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
-                                    <th class="col-3">BOM</th>
-                                    <th class="col-1"></th>
+                                    <th class="col-2">BOM</th>
                                     <th class="col-1">
-                                        <button type="button" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i></button>
+                                        <button type="button" onclick="clickCreateBomButton()"
+                                                class="btn btn-primary btn-sm"><i class="fas fa-plus"></i>
+                                        </button>
                                     </th>
                                 </tr>
                                 </thead>
-                                <tbody>
-                                <tr>
-                                    <td><a href="#">123123123123</a></td>
-                                    <td>
-                                        <button type="button" class="btn btn-info btn-sm"><i class="far fa-edit"></i></button>
+                                <tbody id="bomTable">
+                                <tr th:each="bom : ${bomList}">
+                                    <td th:text="${bom}" onclick="clickBomCode(this)">
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>123123123123</td>
-                                    <td>
-                                        <button type="button" class="btn btn-info btn-sm"><i class="far fa-edit"></i></button>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>123123123123</td>
-                                    <td>
-                                        <button type="button" class="btn btn-info btn-sm"><i class="far fa-edit"></i></button>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <input type="text" class="form-control">
-                                    </td>
-                                    <td>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-success btn-sm">등록</button>
+                                        <button type="button" onclick="clickBomDeleteButton(this)" class="btn btn-danger btn-sm"><i
+                                                class="far fa-trash-alt"></i></button>
                                     </td>
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col">
+
+                        <script th:inline="javascript">
+                            /*<![CDATA[*/
+                            let companyList = /*[[ ${companyList} ]]*/;
+                            /*]]*/
+                        </script>
+
+                        <script>
+                            let bomCode;
+                            let partCode;
+                            let bomPartList;
+
+                            function clickCreateBomButton() {
+                                const tbody = document.getElementById('bomTable');
+                                let tr = document.createElement("tr");
+                                let td1 = document.createElement("td");
+                                td1.innerHTML = `<input name="bomBwCode" type="text" class="form-control">`;
+                                let td2 = document.createElement("td");
+                                td2.innerHTML = `<button type="button" class="btn btn-success btn-sm" onclick="createBom(this)"><i class="fas fa-check"></i></button>`;
+                                tr.append(td1, td2);
+                                tbody.insertBefore(tr, tbody.firstChild);
+                            }
+
+                            function createBom(button) {
+                                let tr = button.parentNode.parentNode;
+                                let tdList = tr.children;
+                                let bomBwCode;
+                                for (let i = 0; i < tdList.length - 1; i++) {
+                                    let td = tdList[i];
+                                    let input = td.firstChild;
+                                    if (input != null) {
+                                        bomBwCode = input.value;
+                                    }
+                                }
+
+                                const url = "/api/manage/bom/" + bomBwCode;
+                                fetch(url, {
+                                    method: "POST"
+                                }).then(
+                                    response => {
+                                        if (response.status == 200) {
+                                            window.location.href = '/manage/part/bom';
+                                        } else {
+                                            alert("BOM 코드를 재확인하세요")
+                                        }
+                                    });
+
+                            }
+
+                            function clickBomDeleteButton(element) {
+                                let tr = element.parentNode.parentNode;
+                                let bomBwCode = tr.children[0].innerText + "";
+
+                                const url = "/api/manage/bom/" + bomBwCode;
+                                console.log(url);
+                                fetch(url, {
+                                    method: "DELETE"
+                                }).then(
+                                    response => {
+                                        if (response.status == 200) {
+                                            window.location.href = '/manage/part/bom';
+                                        } else {
+                                            alert("BOM 자재를 먼저 삭제하세요")
+                                        }
+                                    });
+                            }
+
+
+                            function clickBomCode(td) {
+                                bomCode = td.innerText + "";
+                                const url = `/api/manage/bom/` + bomCode;
+                                fetch(url).then(response => {
+                                    if (response.status == 200) {
+                                        response.json().then(data => {
+                                            bomPartList = data
+                                            createBomPartTable();
+                                        });
+                                    }
+                                });
+                            }
+
+                            function createBomPartTable() {
+                                const tbody = document.getElementById('partTable');
+                                removeChildNode(tbody);
+                                for (let i = 0; i < bomPartList.length; i++) {
+                                    let bomPart = bomPartList[i]
+                                    let companyName = companyList.find(findCompanyName).companyName;
+
+                                    function findCompanyName(element) {
+                                        return bomPart.companyCode === element.companyCode;
+                                    }
+
+                                    let tr = document.createElement("tr");
+                                    tr.innerHTML = `<td>` + companyName + `</td>`
+                                        + `<td>` + bomPart.bwCode + `</td>`
+                                        + `<td>` + bomPart.amount + `</td>`
+                                        + `<td>` + bomPart.selectYn + `</td>`
+                                        + `<td><button type="button" class="btn btn-info btn-sm"><i class="far fa-edit"></i></button></td>`
+                                        + `<td><button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button></td>`
+                                    tbody.append(tr);
+                                }
+                            }
+
+                            function clickBomPartCreateButton() {
+                                if (bomCode != null) {
+                                    const tbody = document.getElementById('partTable');
+                                    let tr = document.createElement("tr");
+                                    let td1 = document.createElement("td");
+                                    let td2 = document.createElement("td");
+                                    td2.innerHTML = `<input name="partBwCode" type="text" class="form-control">`;
+                                    let td3 = document.createElement("td");
+                                    td3.innerHTML = `<input name="usage" type="text" class="form-control">`;
+                                    let td4 = document.createElement("td");
+                                    td4.innerHTML = `<input name="selectYn" type="text" class="form-control">`;
+                                    let td5 = document.createElement("td");
+                                    let td6 = document.createElement("td");
+                                    td6.innerHTML = `<button type="button" class="btn btn-success btn-sm" onclick="createBomPart(this)"><i class="fas fa-check"></i></button>`;
+                                    tr.append(td1, td2, td3, td4, td5, td6);
+                                    tbody.insertBefore(tr, tbody.firstChild);
+                                }
+                            }
+
+                            function createBomPart(button) {
+                                let createBom = {bomBwCode: bomCode};
+                                let tr = button.parentNode.parentNode;
+                                let tdList = tr.children;
+                                for (let i = 0; i < tdList.length - 1; i++) {
+                                    let td = tdList[i];
+                                    let input = td.firstChild;
+                                    if (input != null) {
+                                        createBom[input.name] = input.value;
+                                    }
+                                }
+
+                                const url = "/api/manage/bom";
+                                fetch(url, {
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                    },
+                                    method: "POST",
+                                    body: JSON.stringify(createBom)
+                                }).then(
+                                    response => {
+                                        if (response.status == 200) {
+                                            const url = `/api/manage/bom/` + bomCode;
+                                            fetch(url).then(response => {
+                                                if (response.status == 200) {
+                                                    response.json().then(data => {
+                                                        bomPartList = data
+                                                        createBomPartTable();
+                                                    });
+                                                }
+                                            });
+                                        } else {
+                                            alert("부품 코드를 재확인 하세요")
+                                        }
+                                    }
+                                );
+
+
+                            }
+                        </script>
+                        <div class="col-7">
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
                                     <th class="col-2">회사</th>
                                     <th class="col-2">부품 코드</th>
                                     <th class="col-1">USAGE</th>
+                                    <th class="col-1">선택품</th>
                                     <th class="col-1"></th>
                                     <th class="col-1">
-                                        <button type="button" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i></button>
+                                        <button type="button" class="btn btn-primary btn-sm"
+                                                onclick="clickBomPartCreateButton()"><i class="fas fa-plus"></i>
+                                        </button>
                                     </th>
                                 </tr>
                                 </thead>
-                                <tbody>
-                                <tr>
-                                    <td>삼보</td>
-                                    <td>112312313212313</td>
-                                    <td>1</td>
-                                    <td>
-                                        <button type="button" class="btn btn-info btn-sm"><i class="far fa-edit"></i></button>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>우주</td>
-                                    <td>221321345465465</td>
-                                    <td>10</td>
-                                    <td>
-                                        <button type="button" class="btn btn-info btn-sm"><i class="far fa-edit"></i></button>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>병신</td>
-                                    <td>212132441</td>
-                                    <td>21</td>
-                                    <td>
-                                        <button type="button" class="btn btn-info btn-sm"><i class="far fa-edit"></i></button>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td name="companyCode">
-                                        <select class="custom-select">
-                                            <option selected>회사</option>
-                                            <option value="1">One</option>
-                                            <option value="2">Two</option>
-                                            <option value="3">Three</option>
-                                        </select>
-                                    </td>
-                                    <td name="partBwCode">
-                                        <input type="text" class="form-control">
-                                    </td>
-                                    <td name="usage">
-                                        <input type="text" class="form-control">
-                                    </td>
-                                    <td>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-success btn-sm"><i class="fas fa-check"></i></button>
-                                    </td>
-                                </tr>
+                                <tbody id="partTable">
                                 </tbody>
                             </table>
                         </div>
@@ -169,7 +252,7 @@
         <!-- End of Main Content -->
 
         <!-- Footer -->
-        <footer th:replace="/fragments/footer.html :: fragment-footer">
+        <footer th:replace="fragments/footer.html :: fragment-footer">
         </footer>
         <!-- End of Footer -->
 

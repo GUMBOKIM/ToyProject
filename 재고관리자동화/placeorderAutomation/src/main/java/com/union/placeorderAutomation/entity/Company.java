@@ -26,6 +26,5 @@ public class Company {
 
 
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
-    private List<Part> parts = new ArrayList<>();
-
+    private List<Part> parts;
 }

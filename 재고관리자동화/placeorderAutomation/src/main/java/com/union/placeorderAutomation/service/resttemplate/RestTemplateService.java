@@ -19,6 +19,44 @@ import java.util.regex.Pattern;
 @Service
 public class RestTemplateService {
 
+
+    public void createDeliveryCardManual(String companyCode, String plantCode, String date, String seqNo, List<CreateDeliveryDto> deliveryList) {
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        setHeaderDeliveryCard(companyCode, httpHeaders);
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("p_companycd", "00");
+        body.add("p_dml_gubun", "1");
+        body.add("p_vendcd", companyCode);
+        body.add("p_plant", plantCode);
+        body.add("p_sno", seqNo);
+        body.add("P_descr", deliveryList.size() + " 품목");
+        body.add("p_income_date", date.replace("-", ""));//20210201 양식
+
+        deliveryList.forEach(delivery -> {
+            body.add("p_partno", delivery.getBwCode());
+            body.add("p_partnm", delivery.getPartName());
+            body.add("p_order_no", delivery.getPoCode());
+            body.add("p_lotno", delivery.getLot());
+            body.add("p_qty", Integer.toString(delivery.getLoadAmount() * delivery.getBoxQuantity()));
+            body.add("p_qty_per_box", Integer.toString(delivery.getLoadAmount()));
+            body.add("p_qty_box", Integer.toString(delivery.getBoxQuantity()));
+            body.add("p_remarks", delivery.getLocation());
+        });
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, httpHeaders);
+
+        String url = "https://es-qms.borgwarner.com/qms/kqis91101.process";
+        ResponseEntity<String> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                request,
+                String.class
+        );
+    }
+
     public void createDeliveryCard(String companyCode, String plantCode, String date, List<CreateDeliveryDto> deliveryList) {
 
         RestTemplate restTemplate = new RestTemplate();
@@ -30,6 +68,9 @@ public class RestTemplateService {
         body.add("p_dml_gubun", "1");
         body.add("p_vendcd", companyCode);
         body.add("p_plant", plantCode);
+        // 차수
+        //        body.add("p_sno", "");
+        body.add("P_descr", deliveryList.size() + " 품목");
         body.add("p_income_date", date.replace("-", ""));//20210201 양식
 
         deliveryList.forEach(delivery -> {

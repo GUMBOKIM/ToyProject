@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <div th:replace="/fragments/header.html :: fragment-header"></div>
+    <div th:replace="fragments/header.html :: fragment-header"></div>
 </head>
 
 <body id="page-top">
@@ -11,7 +11,7 @@
 <div id="wrapper">
 
     <!-- Sidebar -->
-    <ul th:replace="/fragments/sidebar.html :: fragment-sidebar">
+    <ul th:replace="fragments/sidebar.html :: fragment-sidebar">
 
     </ul>
     <!-- End of Sidebar -->
@@ -22,7 +22,7 @@
         <!-- Main Content -->
         <div id="content">
             <!-- TopBar -->
-            <nav th:replace="/fragments/topbar.html :: fragment-topbar">
+            <nav th:replace="fragments/topbar.html :: fragment-topbar">
             </nav>
 
             <!-- Begin Page Content -->
@@ -33,17 +33,10 @@
                     <h1 class="h3 mb-0 text-gray-800">부품 관리</h1>
                 </div>
 
-                <script th:inline="javascript">
-                    /*<![CDATA[*/
-                    let companyList = /*[[ ${companyList} ]]*/;
-                    /*]]*/
-                </script>
-
-
                 <div class="row justify-content-center mb-4">
                     <div class="col-2">
                         <select class="custom-select" onchange="setCompanyCode(this.value)">
-                            <option selected>회사</option>
+                            <option selected value="">전체</option>
                             <option th:each="company : ${companyList}"
                                     th:value="${company.companyCode}"
                                     th:text="${company.companyName}"></option>
@@ -65,7 +58,6 @@
                             <th class="col-2">발주 번호</th>
                             <th class="col-1">적입량</th>
                             <th class="col-1">위치</th>
-                            <th class="col-1">기준서</th>
                             <th class="col-1"></th>
                             <th class="col-1">
                                 <button type="button" class="btn btn-primary btn-sm" onclick="clickAddButton()"><i
@@ -83,7 +75,6 @@
                             <td th:text="${part.poCode}"></td>
                             <td th:text="${part.loadAmount}"></td>
                             <td th:text="${part.location}"></td>
-                            <td th:text="${part.standardYn}"></td>
                             <td>
                                 <button type="button" class="btn btn-info btn-sm" onclick="clickModifyButton(this)">
                                     <i class="far fa-edit"></i>
@@ -108,7 +99,7 @@
         <!-- End of Main Content -->
 
         <!-- Footer -->
-        <footer th:replace="/fragments/footer.html :: fragment-footer">
+        <footer th:replace="fragments/footer.html :: fragment-footer">
         </footer>
         <!-- End of Footer -->
 
@@ -122,6 +113,12 @@
     <i class="fas fa-angle-up"></i>
 </a>
 
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    let companyList = /*[[ ${companyList} ]]*/;
+    /*]]*/
+</script>
+
 <script>
     let companyCode;
     let inputColumn = false;
@@ -131,7 +128,11 @@
     }
 
     function findPartByCompanyCode() {
+        if(companyCode == undefined){
+            document.location.href = "/manage/part/part";
+        } else {
         document.location.href = "/manage/part/part/" + companyCode;
+        }
     }
 
     function clickAddButton() {

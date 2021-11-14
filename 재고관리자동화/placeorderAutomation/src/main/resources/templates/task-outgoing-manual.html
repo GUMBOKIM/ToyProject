@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <div th:replace="/fragments/header.html :: fragment-header"></div>
+    <div th:replace="fragments/header.html :: fragment-header"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.full.min.js"></script>
 </head>
 
@@ -12,7 +12,7 @@
 <div id="wrapper">
 
     <!-- Sidebar -->
-    <ul th:replace="/fragments/sidebar.html :: fragment-sidebar">
+    <ul th:replace="fragments/sidebar.html :: fragment-sidebar">
 
     </ul>
     <!-- End of Sidebar -->
@@ -23,7 +23,7 @@
         <!-- Main Content -->
         <div id="content">
             <!-- TopBar -->
-            <nav th:replace="/fragments/topbar.html :: fragment-topbar">
+            <nav th:replace="fragments/topbar.html :: fragment-topbar">
             </nav>
 
             <!-- Begin Page Content -->
@@ -35,22 +35,22 @@
                 </div>
 
                 <div class="row justify-content-center mb-4">
-                    <div class="col-1">
-                        <select class="custom-select" id="company" onchange="setCompanyCode(this.value)">
-                            <option selected>회사</option>
-                            <option th:each="company : ${companyList}"
-                                    th:value="${company.companyCode}"
-                                    th:text="${company.companyName}"></option>
-                        </select>
-                    </div>
-                    <div class="col-1">
-                        <select class="custom-select" id="plant" onchange="setPlantCode(this.value)">
-                            <option selected>공장</option>
-                            <option th:each="plant : ${plantList}"
-                                    th:value="${plant.plantCode}"
-                                    th:text="${plant.plantName}"></option>
-                        </select>
-                    </div>
+                    <!--                    <div class="col-1">-->
+                    <!--                        <select class="custom-select" id="company" onchange="setCompanyCode(this.value)">-->
+                    <!--                            <option selected>회사</option>-->
+                    <!--                            <option th:each="company : ${companyList}"-->
+                    <!--                                    th:value="${company.companyCode}"-->
+                    <!--                                    th:text="${company.companyName}"></option>-->
+                    <!--                        </select>-->
+                    <!--                    </div>-->
+                    <!--                    <div class="col-1">-->
+                    <!--                        <select class="custom-select" id="plant" onchange="setPlantCode(this.value)">-->
+                    <!--                            <option selected>공장</option>-->
+                    <!--                            <option th:each="plant : ${plantList}"-->
+                    <!--                                    th:value="${plant.plantCode}"-->
+                    <!--                                    th:text="${plant.plantName}"></option>-->
+                    <!--                        </select>-->
+                    <!--                    </div>-->
                     <div class="col-1">
                         <div class="input-group">
                             <input type="text" class="form-control" id="time" onchange="setTime(this.value)"
@@ -104,18 +104,9 @@
                     let plantCode;
                     let time;
                     let date;
+                    let seqNo;
                     let excelMemory = new Array();
                     let reportUrl;
-
-                    window.onload = function () {
-                        let today = new Date();
-                        let year = today.getFullYear();
-                        let month = today.getMonth() + 1;
-                        let day = today.getDate();
-                        date = "" + year;
-                        date = (month < 10) ? date + "0" + month : date + month;
-                        date = (day < 10) ? date + "0" + day : date + day;
-                    }
 
                     function setCompanyCode(value) {
                         companyCode = value;
@@ -143,8 +134,14 @@
                             const workBook = XLSX.read(data, {type: 'binary'})
                             let rows = XLSX.utils.sheet_to_json(workBook.Sheets[workBook.SheetNames[0]]);
                             for (let i = 0; i < rows.length; i++) {
+                                let temp = rows[i];
+                                if (i == 0) {
+                                    companyCode = temp[Object.keys(temp)[0]] + "";
+                                    plantCode = temp[Object.keys(temp)[1]] + "";
+                                    date = temp[Object.keys(temp)[2]].replaceAll("-", "");
+                                    seqNo = temp[Object.keys(temp)[3]]
+                                }
                                 if (i >= 2) {
-                                    let temp = rows[i];
                                     if (temp[Object.keys(temp)[0]] == '') {
                                         break;
                                     }
@@ -161,12 +158,13 @@
                             }
                         }
                         reader.readAsBinaryString(excelFile);
-
                         const target = document.getElementById('excelInput');
                         target.disabled = true;
                     }
 
                     function createTable() {
+                        confirm(`회사코드 : ${companyCode}\n` + `공장코드 : ${plantCode}\n` + `납품시간 : ${time}\n` + `납품날짜 : ${date}\n` + `납품회차 : ${seqNo}\n`);
+
                         const tbody = document.getElementById('excelTable');
                         for (let i = 0; i < excelMemory.length; i++) {
                             let tr = document.createElement("tr");
@@ -198,6 +196,7 @@
                                 plantCode: plantCode,
                                 date: date,
                                 time: time,
+                                seqNo: seqNo,
                                 deliveryList: excelMemory
                             })
                         }).then(
@@ -235,7 +234,7 @@
         <!-- End of Main Content -->
 
         <!-- Footer -->
-        <footer th:replace="/fragments/footer.html :: fragment-footer">
+        <footer th:replace="fragments/footer.html :: fragment-footer">
         </footer>
         <!-- End of Footer -->
 

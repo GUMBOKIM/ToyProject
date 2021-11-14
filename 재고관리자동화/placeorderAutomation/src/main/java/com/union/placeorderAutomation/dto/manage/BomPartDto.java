@@ -6,14 +6,16 @@ import lombok.Data;
 
 @Data
 public class BomPartDto {
-    private String companyName;
+    private String companyCode;
     private String bwCode;
     private int amount;
+    private String selectYn;
 
     public BomPartDto(BomPart bomPart) {
         Part part = bomPart.getPart();
-        this.companyName = part.getCompany().getCompanyName();
+        this.companyCode = part.getCompany().getCompanyCode();
         this.bwCode = part.getBwCode();
         this.amount = bomPart.getAmount();
+        this.selectYn = bomPart.getSelectYn();
     }
 }

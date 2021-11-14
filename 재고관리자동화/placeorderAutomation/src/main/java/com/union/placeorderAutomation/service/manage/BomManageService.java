@@ -35,12 +35,12 @@ public class BomManageService {
         return result;
     }
 
-    public BomDto createBom(String bwCode) {
+    public void createBom(String bwCode) {
         Bom bom = Bom.builder()
                 .bwCode(bwCode)
+                .bomParts(null)
                 .build();
         bomRepo.save(bom);
-        return new BomDto(bom);
     }
 
     public void deleteBom(String bwCode) {
@@ -53,7 +53,6 @@ public class BomManageService {
     @Transactional(readOnly = true)
     public List<BomPartDto> getBomPartList(String bomBwCode) {
         Bom bom = bomRepo.findByBwCode(bomBwCode);
-        System.out.println("bom.toString() = " + bom.toString());
         List<BomPart> bomPartList = bom.getBomParts();
         List<BomPartDto> partList = new ArrayList<>();
         bomPartList.forEach(bomPart -> partList.add(new BomPartDto(bomPart)));
@@ -68,7 +67,8 @@ public class BomManageService {
             BomPart bomPart = BomPart.builder()
                     .bom(bom)
                     .part(part)
-                    .amount(bomCreateDto.getAmount())
+                    .amount(bomCreateDto.getUsage())
+                    .selectYn(bomCreateDto.getSelectYn())
                     .build();
             bomPartRepo.save(bomPart);
             return new BomPartDto(bomPart);

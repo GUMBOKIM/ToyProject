@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <div th:replace="/fragments/header.html :: fragment-header"></div>
+    <div th:replace="fragments/header.html :: fragment-header"></div>
 </head>
 
 <body id="page-top">
@@ -11,7 +11,7 @@
 <div id="wrapper">
 
     <!-- Sidebar -->
-    <ul th:replace="/fragments/sidebar.html :: fragment-sidebar">
+    <ul th:replace="fragments/sidebar.html :: fragment-sidebar">
 
     </ul>
     <!-- End of Sidebar -->
@@ -22,7 +22,7 @@
         <!-- Main Content -->
         <div id="content">
             <!-- TopBar -->
-            <nav th:replace="/fragments/topbar.html :: fragment-topbar">
+            <nav th:replace="fragments/topbar.html :: fragment-topbar">
             </nav>
 
             <!-- Begin Page Content -->
@@ -164,7 +164,7 @@
         <!-- End of Main Content -->
 
         <!-- Footer -->
-        <footer th:replace="/fragments/footer.html :: fragment-footer">
+        <footer th:replace="fragments/footer.html :: fragment-footer">
         </footer>
         <!-- End of Footer -->
 

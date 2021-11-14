@@ -18,7 +18,8 @@ public class Bom {
     @Column
     private String bwCode;
 
-    @OneToMany(mappedBy = "bom", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BomPart> bomParts = new ArrayList<>();
+    @OneToMany(mappedBy = "bom", fetch = FetchType.LAZY)
+    @OrderBy("part asc")
+    private List<BomPart> bomParts;
 
 }

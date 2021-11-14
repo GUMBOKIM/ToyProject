@@ -7,5 +7,6 @@ public class BomCreateDto {
 
     private String bomBwCode;
     private String partBwCode;
-    private int amount;
+    private int usage;
+    private String selectYn;
 }

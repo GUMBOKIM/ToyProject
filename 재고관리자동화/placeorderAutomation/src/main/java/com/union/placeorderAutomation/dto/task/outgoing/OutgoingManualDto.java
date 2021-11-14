@@ -9,5 +9,6 @@ public class OutgoingManualDto {
     private String plantCode;
     private String date;
     private String time;
+    private String seqNo;
     private CreateDeliveryDto[] deliveryList;
 }

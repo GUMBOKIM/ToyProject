@@ -51,18 +51,9 @@ public class Part {
     private List<BomPart> bomParts;
 
     @OneToMany(mappedBy = "part", fetch = FetchType.LAZY)
-    @OrderBy("lot asc")
     @Where(clause = "stock > 0 and use_yn = 'Y'")
     private List<PartInventory> partInventories;
 
     @OneToMany(mappedBy = "part", fetch = FetchType.LAZY)
     private List<PartLog> partLogs;
-
-    public int sumStock(){
-        int stock = 0;
-        for (int i = 0; i < partInventories.size(); i++){
-            stock += partInventories.get(i).getStock();
-        }
-        return stock;
-    }
 }

@@ -32,7 +32,12 @@ public interface PartInventoryRepository extends JpaRepository<PartInventory, Lo
             nativeQuery = true)
     List<Object[]> findPartStockInventoryListByCompanyCode(String companyCode);
 
+    @Query(value = "SELECT * FROM part_inventory WHERE part_id = ?1 ORDER BY lot * 1 ASC", nativeQuery = true)
+    List<PartInventory> findInventoryListByPart(String partBwCode);
+
     Optional<PartInventory> findByPartAndLot(Part part, String lot);
 
     List<PartInventory> findByPart(Part findPart);
+
+
 }

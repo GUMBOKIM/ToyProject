@@ -47,11 +47,13 @@ public class PartStockService {
     @Transactional(readOnly = true)
     public List<PartStockDetailDto> getPartStockDetailList(String partBwCode) {
         List<PartStockDetailDto> partStockDetailList = new ArrayList<>();
-
-        Part part = partRepo.findByBwCode(partBwCode).get();
-        List<PartInventory> partInventories = part.getPartInventories();
+        List<PartInventory> partInventories = partInventoryRepo.findInventoryListByPart(partBwCode);
         partInventories.forEach(partInventory -> partStockDetailList.add(new PartStockDetailDto(partInventory)));
         return partStockDetailList;
+    }
+
+    public void removePartStock(Long partInventoryId) {
+        partInventoryRepo.deleteById(partInventoryId);
     }
 
     public PartStockDetailDto manualModifyPartStock(StockRequestDto stockRequest) {
@@ -123,4 +125,5 @@ public class PartStockService {
         });
         return result;
     }
+
 }

@@ -3,6 +3,7 @@
 
 <head>
     <div th:replace="fragments/header.html :: fragment-header"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.full.min.js"></script>
 </head>
 
 <body id="page-top">
@@ -12,7 +13,6 @@
 
     <!-- Sidebar -->
     <ul th:replace="fragments/sidebar.html :: fragment-sidebar">
-
     </ul>
     <!-- End of Sidebar -->
 
@@ -30,7 +30,7 @@
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">재고 관리</h1>
+                    <h1 class="h3 mb-0 text-gray-800">재고 현황</h1>
                 </div>
 
                 <div class="row justify-content-center mb-4">
@@ -43,134 +43,109 @@
                         </select>
                     </div>
                     <div class="col-1">
-                        <button type="button" class="btn btn-primary btn-sm" onclick="findPartByCompanyCode()"><i class="fas fa-search"></i></button>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="findPartByCompanyCode()"><i
+                                class="fas fa-search"></i></button>
                     </div>
                 </div>
 
-                <script>
-                    let companyCode;
-
-                    function setCompanyCode(value){
-                        companyCode = value;
-                    }
-
-                    function findPartByCompanyCode() {
-                        if(companyCode == undefined){
-                            document.location.href = "/task/part/stock";
-                        } else {
-                            document.location.href = "/task/part/stock/" + companyCode;
-                        }
-                    }
-                </script>
-
-                <div class="row justify-content-end mb-3">
+                <div class="row">
+                    <div class="col" style="overflow:auto; overflow-x: hidden; height: 70vh">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th class="col-1">회사</th>
+                                <th class="col-2">부품 코드</th>
+                                <th class="col-2">공급자 코드</th>
+                                <th class="col-2">발주 번호</th>
+                                <th class="col-1">수량</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="partStock : ${partStockList}" onclick="clickPartRow(this)">
+                                <td th:text="${partStock.companyName}"></td>
+                                <td th:text="${partStock.bwCode}"></td>
+                                <td th:text="${partStock.spCode}"></td>
+                                <td th:text="${partStock.poCode}"></td>
+                                <td th:text="${partStock.stock}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                     <div class="col-3">
-                        <div class="input-group">
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="inputGroupFile04">
-                                <label class="custom-file-label" for="inputGroupFile04">파일 선택</label>
-                            </div>
-                            <div class="input-group-append">
-                                <button class="btn btn-success btn-sm" type="button"><i class="far fa-file-excel"></i></button>
-                            </div>
-                        </div>
-                    </div>
-<!--                    <div class="col-1">-->
-<!--                        <button type="button" class="btn btn-success btn-sm"><i class="far fa-file-excel"></i></i></button>-->
-<!--                    </div>-->
-                </div>
-
-                <div class="container">
-                    <div class="row">
-                        <div class="col" style="overflow:auto; overflow-x: hidden; height: 70vh">
-                            <table class="table table-striped">
-                                <thead>
-                                <tr>
-                                    <th class="col-1">회사</th>
-                                    <th class="col-2">부품 코드</th>
-                                    <th class="col-2">공급자 코드</th>
-                                    <th class="col-2">발주 번호</th>
-                                    <th class="col-1">수량</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="partStock : ${partStockList}">
-                                    <td th:text="${partStock.companyName}"></td>
-                                    <td th:text="${partStock.bwCode}"></td>
-                                    <td th:text="${partStock.spCode}"></td>
-                                    <td th:text="${partStock.poCode}"></td>
-                                    <td th:text="${partStock.stock}"></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="col-3">
-                            <table class="table table-striped">
-                                <thead>
-                                <tr>
-                                    <th class="col-1">로트</th>
-                                    <th class="col-1">수량</th>
-                                    <th class="col-1">
-                                        <button type="button" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i></button>
-                                    </th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>ABC</td>
-                                    <td>10</td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>ABD</td>
-                                    <td>10</td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>ABE</td>
-                                    <td>100</td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td name="partBwCode">
-                                        <input type="text" class="form-control">
-                                    </td>
-                                    <td name="usage">
-                                        <input type="text" class="form-control">
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-success btn-sm"><i class="fas fa-check"></i></button>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th class="col-1">로트</th>
+                                <th class="col-1">수량</th>
+                            </tr>
+                            </thead>
+                            <tbody id="inventory-table">
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-
-
             </div>
             <!-- /.container-fluid -->
-
         </div>
-        <!-- End of Main Content -->
-
         <!-- Footer -->
         <footer th:replace="fragments/footer.html :: fragment-footer">
         </footer>
-        <!-- End of Footer -->
 
     </div>
-    <!-- End of Content Wrapper -->
+    <!-- End of Main Content -->
+
+
+    <!-- End of Footer -->
+</div>
+<!-- End of Content Wrapper -->
 </div>
 <!-- End of Page Wrapper -->
+<script>
+    let companyCode;
 
+    function setCompanyCode(value) {
+        companyCode = value;
+    }
+
+    function findPartByCompanyCode() {
+        if (companyCode == undefined) {
+            document.location.href = "/task/part/stock";
+        } else {
+            document.location.href = "/task/part/stock/" + companyCode;
+        }
+    }
+
+    let partBwCode;
+    let inventory;
+
+    function clickPartRow(tr) {
+        partBwCode = tr.childNodes[3].innerText;
+
+        const url = `/api/task/part-stock/inventory/` + partBwCode;
+        fetch(url).then(response => {
+            if (response.status == 200) {
+                response.json().then(data => {
+                    inventory = data;
+                    createInventoryTable();
+                });
+            }
+        });
+    }
+
+    function createInventoryTable() {
+        let tbody = document.getElementById("inventory-table");
+        removeChildNode(tbody);
+
+        for (let i = 0; i < inventory.length; i++) {
+            let temp = inventory[i];
+            let tr = document.createElement("tr");
+            tr.id = temp.partInventoryId;
+            tr.innerHTML = `<td>` + temp.lot + `</td>`
+                + `<td>` + temp.stock + `</td>`
+            tbody.append(tr);
+        }
+    }
+</script>
 <!-- Scroll to Top Button-->
 <a class="scroll-to-top rounded" href="#page-top">
     <i class="fas fa-angle-up"></i>

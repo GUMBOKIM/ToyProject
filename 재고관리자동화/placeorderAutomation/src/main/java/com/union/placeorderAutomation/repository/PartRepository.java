@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PartRepository extends JpaRepository<Part,Long> {
+
     Optional<Part> findByBwCode(String bwCode);
 
     @Query(value ="SELECT p " +

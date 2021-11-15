@@ -20,15 +20,21 @@ public class PartStockController {
     private final PartStockService partStockService;
 
     @GetMapping("/{companyCode}")
-    public ResponseEntity getPartList(@PathVariable("companyCode") String companyCode) {
+    public ResponseEntity getPartList(@PathVariable String companyCode) {
         List<PartStockDto> partList = partStockService.getPartStockList(companyCode);
         return new ResponseEntity(partList, HttpStatus.OK);
     }
 
     @GetMapping("/inventory/{partBwCode}")
-    public ResponseEntity getPartStockList(@PathVariable("partBwCode") String partBwCode) {
+    public ResponseEntity getPartStockList(@PathVariable String partBwCode) {
         List<PartStockDetailDto> partDetailList = partStockService.getPartStockDetailList(partBwCode);
         return new ResponseEntity(partDetailList, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/inventory/{partInventoryId}")
+    public ResponseEntity removePartStock(@PathVariable Long partInventoryId){
+        partStockService.removePartStock(partInventoryId);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @PostMapping("/inventory/manual")

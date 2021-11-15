@@ -36,8 +36,15 @@ public class PageController {
     }
 
     @RequestMapping("/task/part/log")
-    public String taskPartLog() {
+    public String taskPartLog(Model model) {
+        commonService.addCompanyList(model);
         return "task-part-log";
+    }
+
+    @RequestMapping("/task/part/manage")
+    public String taskPartManage(Model model) {
+        commonService.addCompanyList(model);
+        return "task-part-manage";
     }
 
     @RequestMapping("/task/part/stock")

@@ -137,7 +137,7 @@ public class RestTemplateService {
             if (plantCode.equals("5300")) {
                 body.add("p_plant", "01");
             } else if (plantCode.equals("5330")) {
-                body.add("p_plant", "02");
+                body.add("p_plant", "03");
             }
             body.add("p_po_no", delivery.getPoCode());
         });

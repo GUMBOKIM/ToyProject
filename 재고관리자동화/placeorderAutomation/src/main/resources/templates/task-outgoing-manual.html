@@ -35,22 +35,6 @@
                 </div>
 
                 <div class="row justify-content-center mb-4">
-                    <!--                    <div class="col-1">-->
-                    <!--                        <select class="custom-select" id="company" onchange="setCompanyCode(this.value)">-->
-                    <!--                            <option selected>회사</option>-->
-                    <!--                            <option th:each="company : ${companyList}"-->
-                    <!--                                    th:value="${company.companyCode}"-->
-                    <!--                                    th:text="${company.companyName}"></option>-->
-                    <!--                        </select>-->
-                    <!--                    </div>-->
-                    <!--                    <div class="col-1">-->
-                    <!--                        <select class="custom-select" id="plant" onchange="setPlantCode(this.value)">-->
-                    <!--                            <option selected>공장</option>-->
-                    <!--                            <option th:each="plant : ${plantList}"-->
-                    <!--                                    th:value="${plant.plantCode}"-->
-                    <!--                                    th:text="${plant.plantName}"></option>-->
-                    <!--                        </select>-->
-                    <!--                    </div>-->
                     <div class="col-1">
                         <div class="input-group">
                             <input type="text" class="form-control" id="time" onchange="setTime(this.value)"
@@ -107,18 +91,6 @@
                     let seqNo;
                     let excelMemory = new Array();
                     let reportUrl;
-
-                    function setCompanyCode(value) {
-                        companyCode = value;
-                        let target = document.getElementById('company');
-                        target.disabled = true;
-                    }
-
-                    function setPlantCode(value) {
-                        plantCode = value;
-                        let target = document.getElementById('plant');
-                        target.disabled = true;
-                    }
 
                     function setTime(value) {
                         time = value;
@@ -215,11 +187,8 @@
                     }
 
                     function reportRequest() {
-                        const url = "/api/task/outgoing-manual/" + companyCode + "/" + date + "/" + plantCode;
-                        fetch(url).then((response) => response.json())
-                            .then((data) => {
-                                reportUrl = `https://es-qms.borgwarner.com/qms/payment_card2.main?p_companycd=00&p_vendcd=${data[0]}&p_plant=${data[1]}&p_income_date=${data[2]}&p_sno=${data[3]}`
-                            });
+                        reportUrl = `https://es-qms.borgwarner.com/qms/payment_card2.main?p_companycd=00&p_vendcd=` +
+                            companyCode + `&p_plant=` + plantCode + `&p_income_date=` + date + `&p_sno=` + seqNo
                     }
 
                     function openReport() {

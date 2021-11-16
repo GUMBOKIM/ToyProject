@@ -43,7 +43,6 @@ public class PageController {
 
     @RequestMapping("/task/part/manage")
     public String taskPartManage(Model model) {
-        commonService.addCompanyList(model);
         return "task-part-manage";
     }
 

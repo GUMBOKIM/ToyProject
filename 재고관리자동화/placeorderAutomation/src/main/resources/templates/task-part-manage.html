@@ -3,6 +3,7 @@
 
 <head>
     <div th:replace="fragments/header.html :: fragment-header"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.full.min.js"></script>
 </head>
 
 <body id="page-top">
@@ -30,65 +31,165 @@
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">재고 내역</h1>
+                    <h1 class="h3 mb-0 text-gray-800">재고 관리</h1>
                 </div>
 
                 <div class="row justify-content-center mb-3">
-                    <div class="col-2">
-                        <select class="custom-select" id="companySelect">
-                            <option selected value="">전체</option>
-                            <option th:each="company : ${companyList}"
-                                    th:value="${company.companyCode}"
-                                    th:text="${company.companyName}"></option>
+                    <div class="col-1 input-group">
+                        <select class="custom-select" id="kindSelect">
+                            <option selected value="income">입고</option>
+                            <option value="modify">보정</option>
                         </select>
                     </div>
-                    <div class="col-2 input-group">
-                        <input type="text" class="form-control" id="yearMonth" placeholder="YYYYMM">
+                    <div class="col-1 input-group">
+                        <select class="custom-select" id="orderSeq">
+                            <option selected value="">차수</option>
+                            <option value="1">1차</option>
+                            <option value="2">2차</option>
+                            <option value="3">3차</option>
+                            <option value="4">4차</option>
+                            <option value="0">용차</option>
+                        </select>
+                    </div>
+                    <div class="col-1 input-group">
+                        <input type="text" class="form-control" id="dateInput" placeholder="YYYYMMDD">
                     </div>
                     <div class="col-1">
-                        <button type="button" class="btn btn-primary btn-sm" onclick="clickLogButton()"><i class="fas fa-search"></i></button>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="clickConfirmButton()">확인</button>
                     </div>
                 </div>
 
                 <script>
-                    function clickLogButton() {
-                        let companyCode = document.getElementById("companySelect").value;
-                        let yearMonth = document.getElementById("yearMonth").value;
-                        if(companyCode != "" & yearMonth != ""){
-                            console.log("ㄱㄱ")
+                    let kind
+                    let date;
+                    let orderSeq;
+
+                    window.onload = function () {
+                        let today = new Date();
+                        let year = today.getFullYear();
+                        let month = today.getMonth() + 1;
+                        let day = today.getDate()
+                        let dateStr = "" + year + (month < 10 ? "0" + month : month) + (day < 10 ? "0" + day : day);
+                        document.getElementById("dateInput").value = dateStr;
+                    }
+
+                    function clickConfirmButton() {
+                        let kindElement = document.getElementById("kindSelect");
+                        let dateElement = document.getElementById("dateInput");
+                        let orderElement = document.getElementById("orderSeq");
+                        kind = kindElement.value;
+                        date = dateElement.value;
+                        orderSeq = orderElement.value;
+                        if (kind == "" || date == "" || orderSeq == "") {
+                            alert("모두 입력해주세요")
                         } else {
-                            alert("다시 선택하세요");
+                            disableElement(kindElement);
+                            disableElement(orderElement);
+                            disableElement(dateElement);
+                            let target = document.getElementById('excelRow');
+                            target.style.visibility = "visible";
                         }
+                    }
+
+                    function disableElement(element) {
+                        element.disabled = true;
                     }
                 </script>
 
-                <div class="row">
-                    <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th scope="row">3</th>
-                            <td colspan="2">Larry the Bird</td>
-                            <td>@twitter</td>
-                        </tr>
-                        <tr>
-                            <th scope="col">NO</th>
-                            <th class="col" name="bwCode">부품</th>
-                            <th class="col" name="incomeBox">BOX</th>
-                            <th class="col" name="incomeQuantity">수량</th>
-                            <th class="col" name="">공급자 코드</th>
-                            <th class="col">발주 번호</th>
-                            <th class="col">수량</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-
-                        </tr>
-                        </tbody>
-                    </table>
+                <div id="excelRow" class="row justify-content-center mb-3" style="visibility: hidden">
+                    <div class="col-2">
+                        <div class="input-group">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="excelInput" onchange="readExcel()">
+                                <label class="custom-file-label" for="excelInput">파일 선택</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <button type="button" id="createButton" class="btn btn-primary" onclick="createTable()">확인
+                        </button>
+                        <button type="button" id="checkButton" style="visibility: hidden" class="btn btn-success" onclick="checkTable()">검사
+                        </button>
+                    </div>
                 </div>
 
+                <script>
+                    let excelMemory = new Array();
 
+                    async function readExcel() {
+                        let excelFile = event.target.files[0];
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                            const data = reader.result;
+                            const workBook = XLSX.read(data, {type: 'binary'})
+                            let rows = XLSX.utils.sheet_to_json(workBook.Sheets[workBook.SheetNames[0]]);
+                            for (let i = 0; i < rows.length; i++) {
+                                let temp = rows[i];
+                                if (i >= 1) {
+                                    if (temp[Object.keys(temp)[0]] == '') {
+                                        break;
+                                    }
+                                    excelMemory.push({
+                                        companyName : null,
+                                        spCode: null,
+                                        poCode: null,
+                                        name: null,
+                                        check: null,
+                                        bwCode: temp[Object.keys(temp)[0]],
+                                        lot: temp[Object.keys(temp)[1]],
+                                        quantity: temp[Object.keys(temp)[2]] * 1,
+                                    });
+                                }
+                            }
+                        }
+                        reader.readAsBinaryString(excelFile);
+                    }
+
+                    function createTable() {
+                        const tbody = document.getElementById('partTable');
+                        for (let i = 0; i < excelMemory.length; i++) {
+                            let tr = document.createElement("tr");
+                            let temp = excelMemory[i];
+                            tr.innerHTML = `<td>` + temp.companyName + `</td>`
+                                + `<td>` + temp.bwCode + `</td>`
+                                + `<td>` + temp.spCode + `</td>`
+                                + `<td>` + temp.poCode + `</td>`
+                                + `<td>` + temp.name + `</td>`
+                                + `<td>` + temp.lot + `</td>`
+                                + `<td>` + temp.quantity + `</td>`
+                                + `<td>` + temp.check + `</td>`;
+                            tbody.append(tr);
+                        }
+                        let target = document.getElementById('excelInput');
+                        target.disabled = true;
+                        target = document.getElementById('createButton');
+                        target.disabled = true;
+                        target = document.getElementById('checkButton');
+                        target.style.visibility = "visible";
+                    }
+                </script>
+
+                <div class="row justify-content-center">
+                    <div class="col-9">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th class="col-2">회사</th>
+                                <th class="col-2">보그워너 코드</th>
+                                <th class="col-2">부품업체 코드</th>
+                                <th class="col-2">발주 번호</th>
+                                <th class="col-2">이름</th>
+                                <th class="col-1">로트</th>
+                                <th class="col-1">수량</th>
+                                <th class="col-1"></th>
+
+                            </tr>
+                            </thead>
+                            <tbody id="partTable">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
             <!-- /.container-fluid -->
 

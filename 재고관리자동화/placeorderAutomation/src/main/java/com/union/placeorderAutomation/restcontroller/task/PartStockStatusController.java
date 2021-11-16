@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/task/part-stock")
 @RestController
-public class PartStockController {
+public class PartStockStatusController {
 
     private final PartStockService partStockService;
 
@@ -36,18 +36,5 @@ public class PartStockController {
         partStockService.removePartStock(partInventoryId);
         return new ResponseEntity(HttpStatus.OK);
     }
-
-    @PostMapping("/inventory/manual")
-    public ResponseEntity manualModifyPartStock(@RequestBody StockRequestDto stockRequest) {
-        PartStockDetailDto partStockDetail = partStockService.manualModifyPartStock(stockRequest);
-        return new ResponseEntity(partStockDetail, HttpStatus.OK);
-    }
-
-    @PostMapping("/inventory/income")
-    public ResponseEntity incomePartStock(@RequestBody List<StockRequestDto> stockRequestList) {
-        IncomeResultDto result = partStockService.incomePartStock(stockRequestList);
-        return new ResponseEntity(result, HttpStatus.OK);
-    }
-
 
 }

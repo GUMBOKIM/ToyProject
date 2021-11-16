@@ -48,40 +48,42 @@
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col" style="overflow:auto; overflow-x: hidden; height: 70vh">
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th class="col-1">회사</th>
-                                <th class="col-2">부품 코드</th>
-                                <th class="col-2">공급자 코드</th>
-                                <th class="col-2">발주 번호</th>
-                                <th class="col-1">수량</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="partStock : ${partStockList}" onclick="clickPartRow(this)">
-                                <td th:text="${partStock.companyName}"></td>
-                                <td th:text="${partStock.bwCode}"></td>
-                                <td th:text="${partStock.spCode}"></td>
-                                <td th:text="${partStock.poCode}"></td>
-                                <td th:text="${partStock.stock}"></td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col-3">
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th class="col-1">로트</th>
-                                <th class="col-1">수량</th>
-                            </tr>
-                            </thead>
-                            <tbody id="inventory-table">
-                            </tbody>
-                        </table>
+                <div class="row justify-content-center">
+                    <div class="row col-9">
+                        <div class="col" style="overflow:auto; overflow-x: hidden; height: 70vh">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th class="col-1">회사</th>
+                                    <th class="col-2">부품 코드</th>
+                                    <th class="col-2">공급자 코드</th>
+                                    <th class="col-2">발주 번호</th>
+                                    <th class="col-1">수량</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="partStock : ${partStockList}" onclick="clickPartRow(this)">
+                                    <td th:text="${partStock.companyName}"></td>
+                                    <td th:text="${partStock.bwCode}"></td>
+                                    <td th:text="${partStock.spCode}"></td>
+                                    <td th:text="${partStock.poCode}"></td>
+                                    <td th:text="${partStock.stock}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-3">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th class="col-1">로트</th>
+                                    <th class="col-1">수량</th>
+                                </tr>
+                                </thead>
+                                <tbody id="inventory-table">
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

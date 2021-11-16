@@ -292,55 +292,6 @@ public class RestTemplateService {
         return inventoryList;
     }
 
-    public String[] findDeliveryCard(String companyCode, String date, String plantCode) {
-        HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(
-                HttpClientBuilder.create().build());
-        RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
-        String prefix = "https://es-qms.borgwarner.com";
-        String url = "/qms/kqis91101.query_data?p_companycd=00&p_vendcd=" + companyCode + "&p_plant=" + plantCode + "&p_symd=" + date + "&p_eymd=" + date + "&p_delivery_no=";
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("authority", "es-qms.borgwarner.com");
-        httpHeaders.set("method", "GET");
-        httpHeaders.set("path", url);
-        httpHeaders.set("accept", "*/*");
-        httpHeaders.set("accept-encoding", "gzip, deflate, br");
-        httpHeaders.set("accept-language", "en,ko;q=0.9,fr;q=0.8");
-        httpHeaders.set("cookie", "SYSLANG=KO; SYSTYPE=1; SYSCOMP=00; SYSID=" + companyCode + "; CCODE=" + companyCode);
-        httpHeaders.set("referer", prefix + url); // url이랑 동일
-        httpHeaders.set("sec-ch-ua", "\"Chromium\";v=\"94\", \"Google Chrome\";v=\"94\", \";Not A Brand\";v=\"99\"");
-        httpHeaders.set("sec-ch-ua-mobile", "?0");
-        httpHeaders.set("sec-ch-ua-platform", "\"Windows\"");
-        httpHeaders.set("sec-fetch-dest", "empty");
-        httpHeaders.set("sec-fetch-mode", "cors");
-        httpHeaders.set("sec-fetch-site", "same-origin");
-        httpHeaders.set("user-agent", "XMLHttpRequest");
-        httpHeaders.set(HttpHeaders.ACCEPT_ENCODING, "gzip");
-
-        HttpEntity request = new HttpEntity(httpHeaders);
-
-        ResponseEntity<String> response = restTemplate.exchange(
-                prefix + url,
-                HttpMethod.GET,
-                request,
-                String.class
-        );
-        String result = response.getBody();
-
-        Pattern pattern = Pattern.compile("(\\{value:\")(.*)(\"\\})", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(result);
-        String find = "";
-        int seq = 0;
-        while (matcher.find()) {
-            seq += 1;
-            if (seq == 12) {
-                find = matcher.group(2);
-            }
-        }
-        String[] splitList = find.replace("<img border='0' src='/image/button/print.gif'>^javascript:to_Print2(", "")
-                .replace(")^_self", "").replace("\\\"", "").split(",");
-        return splitList;
-    }
-
     private void setHeaderGetProductInvetory(String companyCode, String plantCode, HttpHeaders httpHeaders) {
         httpHeaders.set("authority", "es-qms.borgwarner.com");
         httpHeaders.set("method", "GET");

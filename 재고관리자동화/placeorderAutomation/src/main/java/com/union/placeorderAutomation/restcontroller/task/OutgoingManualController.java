@@ -37,10 +37,4 @@ public class OutgoingManualController {
         );
         return new ResponseEntity(HttpStatus.OK);
     }
-
-    @GetMapping("/{companyCode}/{date}/{plantCode}")
-    public ResponseEntity findCard(@PathVariable String companyCode, @PathVariable String date, @PathVariable String plantCode) {
-        String[] result = restTemplateService.findDeliveryCard(companyCode, date, plantCode);
-        return new ResponseEntity(result, HttpStatus.OK);
-    }
 }

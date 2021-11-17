@@ -1,9 +1,6 @@
 package com.union.placeorderAutomation.service.task;
 
-import com.union.placeorderAutomation.dto.task.part.IncomeResultDto;
-import com.union.placeorderAutomation.dto.task.part.PartStockDetailDto;
-import com.union.placeorderAutomation.dto.task.part.PartStockDto;
-import com.union.placeorderAutomation.dto.task.part.StockRequestDto;
+import com.union.placeorderAutomation.dto.task.part.*;
 import com.union.placeorderAutomation.entity.Company;
 import com.union.placeorderAutomation.entity.Part;
 import com.union.placeorderAutomation.entity.PartInventory;
@@ -27,6 +24,24 @@ public class PartStockService {
     private final PartLogService partLogService;
     private final PartRepository partRepo;
     private final PartInventoryRepository partInventoryRepo;
+
+
+    public PartCheckDto[] checkPart(PartCheckDto[] partCheckDtoList) {
+        for(PartCheckDto partCheckDto : partCheckDtoList){
+            Optional<Part> findPart = partRepo.findByBwCode(partCheckDto.getBwCode());
+            if(findPart.isPresent()){
+                Part part = findPart.get();
+                partCheckDto.setCheck("Y");
+                partCheckDto.setCompanyName(part.getCompany().getCompanyName());
+                partCheckDto.setSpCode(part.getSpCode());
+                partCheckDto.setPoCode(part.getPoCode());
+                partCheckDto.setName(part.getPartName());
+            } else {
+                partCheckDto.setCheck("N");
+            }
+        }
+        return partCheckDtoList;
+    }
 
     @Transactional(readOnly = true)
     public List<PartStockDto> getPartStockListAll() {

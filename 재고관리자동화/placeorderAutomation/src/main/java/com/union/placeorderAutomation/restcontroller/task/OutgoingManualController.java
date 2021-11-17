@@ -20,12 +20,12 @@ public class OutgoingManualController {
 
     @PostMapping("")
     public ResponseEntity outgoingManual(@RequestBody OutgoingManualDto request) {
+        System.out.println("request = " + request);
         List<CreateDeliveryDto> deliveryList = Arrays.asList(request.getDeliveryList());
-        restTemplateService.createDeliveryCardManual(
+        restTemplateService.createDeliveryCard(
                 request.getCompanyCode(),
                 request.getPlantCode(),
                 request.getDate(),
-                request.getSeqNo(),
                 deliveryList
         );
         restTemplateService.registryDelivery(
@@ -36,5 +36,11 @@ public class OutgoingManualController {
                 deliveryList
         );
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @GetMapping("/{companyCode}/{date}/{plantCode}")
+    public ResponseEntity findCard(@PathVariable String companyCode, @PathVariable String date, @PathVariable String plantCode) {
+        String[] result = restTemplateService.findDeliveryCard(companyCode, date, plantCode);
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 }

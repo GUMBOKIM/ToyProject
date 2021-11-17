@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <div th:replace="fragments/header.html :: fragment-header"></div>
+    <div th:replace="/fragments/header.html :: fragment-header"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.full.min.js"></script>
 </head>
 
@@ -12,7 +12,7 @@
 <div id="wrapper">
 
     <!-- Sidebar -->
-    <ul th:replace="fragments/sidebar.html :: fragment-sidebar">
+    <ul th:replace="/fragments/sidebar.html :: fragment-sidebar">
 
     </ul>
     <!-- End of Sidebar -->
@@ -23,7 +23,7 @@
         <!-- Main Content -->
         <div id="content">
             <!-- TopBar -->
-            <nav th:replace="fragments/topbar.html :: fragment-topbar">
+            <nav th:replace="/fragments/topbar.html :: fragment-topbar">
             </nav>
 
             <!-- Begin Page Content -->
@@ -36,9 +36,34 @@
 
                 <div class="row justify-content-center mb-4">
                     <div class="col-1">
+                        <select class="custom-select" id="company" onchange="setCompanyCode(this.value)">
+                            <option selected>회사</option>
+                            <option value="107324">SKF</option>
+                            <option value="107155">대성</option>
+                            <option value="106056">미래메탈</option>
+                            <option value="320344">보원</option>
+                            <option value="341329">부강</option>
+                            <option value="106076">삼보</option>
+                            <option value="106064">유신</option>
+                        </select>
+                    </div>
+                    <div class="col-1">
+                        <select class="custom-select" id="plant" onchange="setPlantCode(this.value)">
+                            <option selected>공장</option>
+                            <option value="5300">1공장</option>
+                            <option value="5330">2공장</option>
+                        </select>
+                    </div>
+                    <div class="col-1">
                         <div class="input-group">
                             <input type="text" class="form-control" id="time" onchange="setTime(this.value)"
                                    placeholder="HH:MM">
+                        </div>
+                    </div>
+                    <div class="col-1">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="date" onchange="setDate(this.value)"
+                                   placeholder="YYYYMMDD">
                         </div>
                     </div>
                     <div class="col-2">
@@ -49,16 +74,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <button type="button" id="createButton" class="btn btn-primary" onclick="createTable()">확인
                         </button>
-                    </div>
-                    <div class="col-1">
                         <button type="button" id="sendButton" style="visibility:hidden;" class="btn btn-success"
                                 onclick="sendData()">전송
                         </button>
-                    </div>
-                    <div class="col-1">
                         <button type="button" id="reportButton" style="visibility:hidden;" class="btn btn-success"
                                 onclick="openReport()">납품카드
                         </button>
@@ -88,9 +109,41 @@
                     let plantCode;
                     let time;
                     let date;
-                    let seqNo;
+                    let checkCompanyCode;
+                    let checkPlantCode;
+                    let checkDate;
                     let excelMemory = new Array();
                     let reportUrl;
+
+                    window.onload = function () {
+                        let today = new Date();
+                        let year = today.getFullYear();
+                        let month = today.getMonth() + 1;
+                        let day = today.getDate();
+                        date = "" + year;
+                        date = (month < 10) ? date + "0" + month : date + month;
+                        date = (day < 10) ? date + "0" + day : date + day;
+                        let target = document.getElementById('date');
+                        target.placeholder = date;
+                    }
+
+                    function setDate(value) {
+                        date = value;
+                        let target = document.getElementById('date');
+                        target.disabled = true;
+                    }
+
+                    function setCompanyCode(value) {
+                        companyCode = value;
+                        let target = document.getElementById('company');
+                        target.disabled = true;
+                    }
+
+                    function setPlantCode(value) {
+                        plantCode = value;
+                        let target = document.getElementById('plant');
+                        target.disabled = true;
+                    }
 
                     function setTime(value) {
                         time = value;
@@ -107,11 +160,10 @@
                             let rows = XLSX.utils.sheet_to_json(workBook.Sheets[workBook.SheetNames[0]]);
                             for (let i = 0; i < rows.length; i++) {
                                 let temp = rows[i];
-                                if (i == 0) {
-                                    companyCode = temp[Object.keys(temp)[0]] + "";
-                                    plantCode = temp[Object.keys(temp)[1]] + "";
-                                    date = temp[Object.keys(temp)[2]].replaceAll("-", "");
-                                    seqNo = temp[Object.keys(temp)[3]]
+                                if(i == 0){
+                                    checkCompanyCode = temp[Object.keys(temp)[0]];
+                                    checkPlantCode = temp[Object.keys(temp)[1]];
+                                    checkDate = temp[Object.keys(temp)[2]].replaceAll("-","");
                                 }
                                 if (i >= 2) {
                                     if (temp[Object.keys(temp)[0]] == '') {
@@ -130,12 +182,33 @@
                             }
                         }
                         reader.readAsBinaryString(excelFile);
+
                         const target = document.getElementById('excelInput');
                         target.disabled = true;
+
                     }
 
                     function createTable() {
-                        confirm(`회사코드 : ${companyCode}\n` + `공장코드 : ${plantCode}\n` + `납품시간 : ${time}\n` + `납품날짜 : ${date}\n` + `납품회차 : ${seqNo}\n`);
+                        console.log(companyCode);
+                        console.log(plantCode);
+                        console.log(date);
+                        console.log(time);
+                        console.log("------");
+                        console.log(checkCompanyCode);
+                        console.log(checkPlantCode);
+                        console.log(checkDate);
+                        console.log(time.length);
+
+                        if (companyCode == checkCompanyCode || plantCode == checkPlantCode || date == checkDate || time.length() == 5) {
+                            alert("입력 오류 입니다. 엑셀과 입력한 값을 다시 확인해보세요");
+                            location.reload();
+                        } else {
+                            confirm(`회사코드 : ${companyCode}\n` + `공장코드 : ${plantCode}\n` + `납품시간 : ${time}\n` + `납품날짜 : ${date}\n`);
+                            let target = document.getElementById('createButton');
+                            target.disabled = true;
+                            target = document.getElementById('sendButton');
+                            target.style.visibility = "visible";
+                        }
 
                         const tbody = document.getElementById('excelTable');
                         for (let i = 0; i < excelMemory.length; i++) {
@@ -150,10 +223,6 @@
                                 + `<td>` + excelMemory[i].location + `</td>`;
                             tbody.append(tr);
                         }
-                        let target = document.getElementById('createButton');
-                        target.disabled = true;
-                        target = document.getElementById('sendButton');
-                        target.style.visibility = "visible";
                     }
 
                     function sendData() {
@@ -168,7 +237,6 @@
                                 plantCode: plantCode,
                                 date: date,
                                 time: time,
-                                seqNo: seqNo,
                                 deliveryList: excelMemory
                             })
                         }).then(
@@ -187,8 +255,11 @@
                     }
 
                     function reportRequest() {
-                        reportUrl = `https://es-qms.borgwarner.com/qms/payment_card2.main?p_companycd=00&p_vendcd=` +
-                            companyCode + `&p_plant=` + plantCode + `&p_income_date=` + date + `&p_sno=` + seqNo
+                        const url = "/api/task/outgoing-manual/" + companyCode + "/" + date + "/" + plantCode;
+                        fetch(url).then((response) => response.json())
+                            .then((data) => {
+                                reportUrl = `https://es-qms.borgwarner.com/qms/payment_card2.main?p_companycd=00&p_vendcd=${data[0]}&p_plant=${data[1]}&p_income_date=${data[2]}&p_sno=${data[3]}`
+                            });
                     }
 
                     function openReport() {
@@ -203,7 +274,7 @@
         <!-- End of Main Content -->
 
         <!-- Footer -->
-        <footer th:replace="fragments/footer.html :: fragment-footer">
+        <footer th:replace="/fragments/footer.html :: fragment-footer">
         </footer>
         <!-- End of Footer -->
 

@@ -1,8 +1,7 @@
 package com.union.placeorderAutomation.service.manage;
 
-import com.union.placeorderAutomation.dto.manage.BomCreateDto;
-import com.union.placeorderAutomation.dto.manage.BomDto;
-import com.union.placeorderAutomation.dto.manage.BomPartDto;
+import com.union.placeorderAutomation.dto.manage.bom.BomCreateDto;
+import com.union.placeorderAutomation.dto.manage.bom.BomPartDto;
 import com.union.placeorderAutomation.entity.Bom;
 import com.union.placeorderAutomation.entity.BomPart;
 import com.union.placeorderAutomation.entity.Part;

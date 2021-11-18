@@ -20,10 +20,6 @@ public class PartLogService {
     public void createPartLog(Part part, String division, int amount, LocalDateTime date, String time) {
         PartLog partLog = PartLog.builder()
                 .part(part)
-                .division(division)
-                .amount(amount)
-                .date(date)
-                .time(time)
                 .build();
         partLogRepo.save(partLog);
     }

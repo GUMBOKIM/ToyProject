@@ -1,7 +1,7 @@
 package com.union.placeorderAutomation.service.manage;
 
-import com.union.placeorderAutomation.dto.manage.PartReqDto;
-import com.union.placeorderAutomation.dto.manage.PartResDto;
+import com.union.placeorderAutomation.dto.manage.part.PartReqDto;
+import com.union.placeorderAutomation.dto.manage.part.PartResDto;
 import com.union.placeorderAutomation.entity.Company;
 import com.union.placeorderAutomation.entity.Part;
 import com.union.placeorderAutomation.repository.PartRepository;
@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Transactional
 @RequiredArgsConstructor

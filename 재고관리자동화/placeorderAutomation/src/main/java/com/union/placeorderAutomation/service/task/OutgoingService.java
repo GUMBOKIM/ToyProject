@@ -100,8 +100,7 @@ public class OutgoingService {
         submitDto.getPartList().forEach(part -> {
             int amount = part.getAmount();
             List<CreateDeliveryDto> temp = new ArrayList<>();
-            Part findPart = partRepo.findByBwCode(part.getBwCode()).get();
-            List<PartInventory> inventoryList = partInventoryRepo.findByPart(findPart);
+            List<PartInventory> inventoryList = partInventoryRepo.findInventoryListByPartBwCode(part.getBwCode());
             for (PartInventory inventory : inventoryList) {
                 Part p = inventory.getPart();
                 if (amount > inventory.getStock()) {
@@ -120,11 +119,6 @@ public class OutgoingService {
                     );
                     PartLog partLog = PartLog.builder()
                             .part(inventory.getPart())
-                            .division("O")
-                            .amount(inventory.getStock())
-                            .date(date)
-                            .time(submitDto.getTime())
-                            .plant(submitDto.getPlantCode())
                             .build();
                     partLogRepository.save(partLog);
 
@@ -145,11 +139,6 @@ public class OutgoingService {
                     );
                     PartLog partLog = PartLog.builder()
                             .part(inventory.getPart())
-                            .division("O")
-                            .amount(amount)
-                            .date(date)
-                            .time(submitDto.getTime())
-                            .plant(submitDto.getPlantCode())
                             .build();
                     partLogRepository.save(partLog);
 

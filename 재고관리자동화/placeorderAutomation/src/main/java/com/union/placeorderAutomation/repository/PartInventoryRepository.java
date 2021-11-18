@@ -11,33 +11,36 @@ import java.util.Optional;
 
 public interface PartInventoryRepository extends JpaRepository<PartInventory, Long> {
 
+    // 파트 재고 조회에서 사용
+    // 부품별 파트 재고 - 전체
     @Query(value =
             "SELECT c.company_name, b.bw_code, b.po_code, b.sp_code, SUM(STOCK)  AS STOCK " +
                     "FROM part_inventory a " +
                     "INNER JOIN part b on a.part_id = b.bw_code " +
                     "INNER JOIN company c on b.company_id = c.company_code " +
+                    "WHERE STOCK > 0 " +
                     "GROUP BY a.part_id " +
                     "ORDER BY b.bw_code",
             nativeQuery = true)
     List<Object[]> findPartStockInventoryList();
 
+    // 부품별 파트 재고 - 회사
     @Query(value =
             "SELECT c.company_name, b.bw_code, b.po_code, b.sp_code, SUM(STOCK)  AS STOCK " +
                     "FROM part_inventory a " +
                     "INNER JOIN part b on a.part_id = b.bw_code " +
                     "INNER JOIN company c on b.company_id = c.company_code " +
                     "WHERE b.company_id = ?1 " +
+                    "AND STOCK > 0 " +
                     "GROUP BY a.part_id " +
                     "ORDER BY b.bw_code",
             nativeQuery = true)
     List<Object[]> findPartStockInventoryListByCompanyCode(String companyCode);
 
-    @Query(value = "SELECT * FROM part_inventory WHERE part_id = ?1 ORDER BY lot * 1 ASC", nativeQuery = true)
-    List<PartInventory> findInventoryListByPart(String partBwCode);
+    @Query(value = "SELECT * FROM part_inventory WHERE part_id = ?1 AND stock > 0 ORDER BY lot * 1 ASC", nativeQuery = true)
+    List<PartInventory> findInventoryListByPartBwCode(String partBwCode);
 
-    Optional<PartInventory> findByPartAndLot(Part part, String lot);
-
-    List<PartInventory> findByPart(Part findPart);
-
+    @Query(value = "SELECT * FROM part_inventory WHERE part_id = ?1 AND lot = ?2", nativeQuery = true)
+    Optional<PartInventory> findByPartAndLot(String partBwCode, String lot);
 
 }

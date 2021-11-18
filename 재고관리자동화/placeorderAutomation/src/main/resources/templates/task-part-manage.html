@@ -38,7 +38,7 @@
                     <div class="col-1 input-group">
                         <select class="custom-select" id="kindSelect">
                             <option selected value="income">입고</option>
-                            <option value="modify">수정</option>
+                            <option value="modify">보정(차감)</option>
                             <option value="defective">불량</option>
                         </select>
                     </div>
@@ -63,7 +63,7 @@
                 </div>
 
                 <script>
-                    let kind
+                    let kind;
                     let date;
                     let orderSeq;
                     let checkPass = true;
@@ -92,7 +92,7 @@
                                 message = `구분 : 수정\n` + `차수 : ${orderSeq}차\n` + `날짜 : ${date}`;
                             } else if (kind == "income") {
                                 message = `구분 : 입고\n` + `차수 : ${orderSeq}차\n` + `날짜 : ${date}`;
-                            } else if (kind == "defective"){
+                            } else if (kind == "defective") {
                                 message = `구분 : 불량`;
                             }
                             confirm(message);
@@ -121,19 +121,19 @@
                         </div>
                     </div>
                     <div class="col-2">
-                        <button type="button" id="createButton" class="btn btn-primary" onclick="createTable()">확인
+                        <button type="button" id="createButton" class="btn btn-primary" onclick="createExcelTable()">확인
                         </button>
                         <button type="button" id="checkButton" style="visibility: hidden" class="btn btn-success"
                                 onclick="checkPart()">검사
                         </button>
                         <button type="button" id="submitButton" style="visibility: hidden" class="btn btn-success"
-                                onclick="checkPart()">전송
+                                onclick="sendPartStock()">전송
                         </button>
                     </div>
                 </div>
 
                 <script>
-                    let excelMemory = new Array();
+                    let partCheck = new Array();
 
                     async function readExcel() {
                         let excelFile = event.target.files[0];
@@ -148,7 +148,7 @@
                                     if (temp[Object.keys(temp)[0]] == '') {
                                         break;
                                     }
-                                    excelMemory.push({
+                                    partCheck.push({
                                         companyName: "",
                                         spCode: "",
                                         poCode: "",
@@ -164,12 +164,12 @@
                         reader.readAsBinaryString(excelFile);
                     }
 
-                    function createTable() {
+                    function createExcelTable() {
                         const tbody = document.getElementById('partTable');
                         removeChildNode(tbody);
-                        for (let i = 0; i < excelMemory.length; i++) {
+                        for (let i = 0; i < partCheck.length; i++) {
                             let tr = document.createElement("tr");
-                            let temp = excelMemory[i];
+                            let temp = partCheck[i];
                             tr.innerHTML = `<td>` + temp.companyName + `</td>`
                                 + `<td>` + temp.bwCode + `</td>`
                                 + `<td>` + temp.spCode + `</td>`
@@ -181,6 +181,8 @@
                             if (temp.check == "N") {
                                 tr.className = "table-danger";
                                 checkPass = false;
+                            } else if (temp.check == "Y"){
+                                tr.className = "table-primary";
                             }
                             tbody.append(tr);
                         }
@@ -199,19 +201,19 @@
                                 "Content-Type": "application/json",
                             },
                             method: "POST",
-                            body: JSON.stringify(excelMemory)
+                            body: JSON.stringify(partCheck)
                         }).then(
                             response => {
                                 if (response.status == 200) {
                                     response.json().then(data => {
-                                        if(checkPass){
+                                        if (checkPass) {
                                             let target1 = document.getElementById("submitButton");
                                             target1.style.visibility = "visible";
-                                        }else{
+                                        } else {
                                             alert("자재 파일을 수정해주세요");
                                         }
-                                        excelMemory = data;
-                                        createTable();
+                                        partCheck = data;
+                                        createExcelTable();
                                         let target2 = document.getElementById("checkButton");
                                         target2.disabled = true;
                                     });
@@ -220,12 +222,65 @@
                         );
                     }
 
-                    function submit(){
+
+                    function sendPartStock() {
+                        let sendData = {
+                            date,
+                            orderSeq,
+                            partCheck
+                        }
+
+                        const url = "/api/task/part-manage/" + kind;
+                        fetch(url, {
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            method: "POST",
+                            body: JSON.stringify(sendData)
+                        }).then(
+                            response => {
+                                if (response.status == 200) {
+                                    response.json().then(data => {
+                                        createResultTable(data);
+                                    });
+                                }
+                            }
+                        );
+
+                    }
+
+                    function createResultTable(data) {
+                        console.log(data);
+                        let target = document.getElementById('resultTableAll');
+                        target.style.visibility = "visible";
+                        target = document.getElementById('excelTableAll');
+                        removeAllNode(target);
+
+                        const tbody = document.getElementById('resultTable');
+                        for (let i = 0; i < data.length; i++) {
+                            let tr = document.createElement("tr");
+                            let temp = data[i];
+                            tr.innerHTML = `<td>` + temp.bwCode + `</td>`
+                                + `<td>` + temp.lot + `</td>`
+                                + `<td>` + temp.quantity + `</td>`
+                                + `<td>` + temp.beforeStock + `</td>`
+                                + `<td>` + temp.afterStock + `</td>`
+                                + `<td>` + temp.check + `</td>`;
+                            if (temp.check == "N") {
+                                tr.className = "table-danger";
+                            } else if (temp.check == "Y") {
+                                tr.className = "table-success";
+                            }
+                            tbody.append(tr);
+                        }
+
+                        target = document.getElementById('submitButton');
+                        target.style.visibility = "hidden";
 
                     }
                 </script>
 
-                <div class="row justify-content-center">
+                <div class="row justify-content-center" id="excelTableAll">
                     <div class="col-9">
                         <table class="table table-striped">
                             <thead>
@@ -246,17 +301,38 @@
                     </div>
                 </div>
             </div>
-            <!-- /.container-fluid -->
+
+            <div class="row justify-content-center" id="resultTableAll" style="visibility: hidden">
+                <div class="col-7">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th class="col-2">보그워너 코드</th>
+                            <th class="col-1">로트</th>
+                            <th class="col-1">수량</th>
+                            <th class="col-1">반영 전</th>
+                            <th class="col-1">반영 후</th>
+                            <th class="col-1"></th>
+                        </tr>
+                        </thead>
+                        <tbody id="resultTable">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-        <!-- End of Main Content -->
-
-        <!-- Footer -->
-        <footer th:replace="fragments/footer.html :: fragment-footer">
-        </footer>
-        <!-- End of Footer -->
-
     </div>
-    <!-- End of Content Wrapper -->
+    <!-- /.container-fluid -->
+</div>
+<!-- End of Main Content -->
+
+<!-- Footer -->
+<footer th:replace="fragments/footer.html :: fragment-footer">
+</footer>
+<!-- End of Footer -->
+
+</div>
+<!-- End of Content Wrapper -->
 </div>
 <!-- End of Page Wrapper -->
 

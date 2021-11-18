@@ -162,9 +162,9 @@
                             for (let i = 0; i < rows.length; i++) {
                                 let temp = rows[i];
                                 if(i == 0){
-                                    checkCompanyCode = temp[Object.keys(temp)[0]];
-                                    checkPlantCode = temp[Object.keys(temp)[1]];
-                                    checkDate = temp[Object.keys(temp)[2]].replaceAll("-","");
+                                    checkCompanyCode = temp[Object.keys(temp)[0]] + "";
+                                    checkPlantCode = temp[Object.keys(temp)[1]] + "";
+                                    checkDate = temp[Object.keys(temp)[2]].replaceAll("-","") + "";
                                 }
                                 if (i >= 2) {
                                     if (temp[Object.keys(temp)[0]] == '') {
@@ -200,7 +200,7 @@
                         console.log(checkDate);
                         console.log(time.length);
 
-                        if (companyCode == checkCompanyCode || plantCode == checkPlantCode || date == checkDate || time.length() == 5) {
+                        if (companyCode != checkCompanyCode || plantCode != checkPlantCode || date != checkDate || time.length != 5) {
                             alert("입력 오류 입니다. 엑셀과 입력한 값을 다시 확인해보세요");
                             location.reload();
                         } else {

@@ -1,8 +1,7 @@
 package com.union.placeorderAutomation.restcontroller.manage;
 
-import com.union.placeorderAutomation.dto.manage.BomCreateDto;
-import com.union.placeorderAutomation.dto.manage.BomDto;
-import com.union.placeorderAutomation.dto.manage.BomPartDto;
+import com.union.placeorderAutomation.dto.manage.bom.BomCreateDto;
+import com.union.placeorderAutomation.dto.manage.bom.BomPartDto;
 import com.union.placeorderAutomation.service.manage.BomManageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -5,7 +5,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Setter
 @Getter
@@ -20,23 +22,45 @@ public class PartLog {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "partId")
+    @JoinColumn(name = "bwCode")
     private Part part;
 
-    //I => 입고, O => 출고, M => 보정
-    @Column(nullable = false)
-    private String division;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plantCode")
+    private Plant plant;
 
-    @Column(nullable = false)
-    private int amount;
+    @Column(nullable = false, length = 6)
+    private String date;
 
-    @Column(nullable = false)
-    private LocalDateTime date;
+    @OneToMany(mappedBy = "partLog")
+    private List<DefectiveLog> defectiveLogs = new ArrayList<>();
 
-    @Column
-    private String time;
+    @OneToMany(mappedBy = "partLog")
+    private List<IncomeLog> incomeLogs = new ArrayList<>();
 
-    @Column
-    private String plant;
+    @OneToMany(mappedBy = "partLog")
+    private List<OutcomeLog> outcomeLogs = new ArrayList<>();
 
+    @OneToMany(mappedBy = "partLog")
+    private List<ModifyLog> modifyLogs = new ArrayList<>();
+
+    public void addDefectiveLogs(DefectiveLog defectiveLog){
+        defectiveLog.setPartLog(this);
+        this.defectiveLogs.add(defectiveLog);
+    }
+
+    public void addIncomeLogs(IncomeLog incomeLogs){
+        incomeLogs.setPartLog(this);
+        this.incomeLogs.add(incomeLogs);
+    }
+
+    public void addOutcomeLogs(OutcomeLog outcomeLogs){
+        outcomeLogs.setPartLog(this);
+        this.outcomeLogs.add(outcomeLogs);
+    }
+
+    public void addModifyLogs(ModifyLog modifyLogs){
+        modifyLogs.setPartLog(this);
+        this.modifyLogs.add(modifyLogs);
+    }
 }

@@ -1,6 +1,8 @@
 package com.union.placeorderAutomation.restcontroller.task;
 
-import com.union.placeorderAutomation.dto.task.part.*;
+import com.union.placeorderAutomation.dto.task.part.manage.PartCheckDto;
+import com.union.placeorderAutomation.dto.task.part.manage.StockSendReqDto;
+import com.union.placeorderAutomation.dto.task.part.manage.StockSendResDto;
 import com.union.placeorderAutomation.service.task.PartStockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,16 +24,21 @@ public class PartStockManageController {
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
-
-    @PostMapping("/stock")
-    public ResponseEntity manualModifyPartStock(@RequestBody StockRequestDto stockRequest) {
-        PartStockDetailDto partStockDetail = partStockService.manualModifyPartStock(stockRequest);
-        return new ResponseEntity(partStockDetail, HttpStatus.OK);
+    @PostMapping("/income")
+    public ResponseEntity incomePartStock(@RequestBody StockSendReqDto stockSendReqDto) {
+        List<StockSendResDto> result = partStockService.incomePartStock(stockSendReqDto);
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
-    @PostMapping("/income")
-    public ResponseEntity incomePartStock(@RequestBody List<StockRequestDto> stockRequestList) {
-        IncomeResultDto result = partStockService.incomePartStock(stockRequestList);
+    @PostMapping("/modify")
+    public ResponseEntity modifyPartStock(@RequestBody StockSendReqDto stockSendReqDto) {
+        List<StockSendResDto> result = partStockService.modifyPartStock(stockSendReqDto);
+        return new ResponseEntity(result, HttpStatus.OK);
+    }
+
+    @PostMapping("/defective")
+    public ResponseEntity defectivePartStock(@RequestBody StockSendReqDto stockSendReqDto) {
+        List<StockSendResDto> result = partStockService.defectivePartStock(stockSendReqDto);
         return new ResponseEntity(result, HttpStatus.OK);
     }
 

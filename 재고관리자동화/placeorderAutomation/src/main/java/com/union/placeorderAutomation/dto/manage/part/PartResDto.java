@@ -1,4 +1,4 @@
-package com.union.placeorderAutomation.dto.manage;
+package com.union.placeorderAutomation.dto.manage.part;
 
 import com.union.placeorderAutomation.entity.Part;
 import lombok.Data;

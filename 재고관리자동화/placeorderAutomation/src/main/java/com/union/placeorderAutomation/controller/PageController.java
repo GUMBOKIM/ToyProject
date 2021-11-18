@@ -1,6 +1,5 @@
 package com.union.placeorderAutomation.controller;
 
-import com.union.placeorderAutomation.dto.manage.PartResDto;
 import com.union.placeorderAutomation.service.common.CommonService;
 import com.union.placeorderAutomation.service.manage.BomManageService;
 import com.union.placeorderAutomation.service.manage.PartManageService;

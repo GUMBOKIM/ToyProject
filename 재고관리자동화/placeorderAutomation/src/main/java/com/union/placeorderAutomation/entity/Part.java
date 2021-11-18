@@ -1,18 +1,15 @@
 package com.union.placeorderAutomation.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 
 
-@Getter
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -46,6 +43,10 @@ public class Part {
     //SAP 위치
     @Column
     private String location;
+
+    @Column(length = 1)
+    @ColumnDefault("'N'")
+    private String selectYn;
 
     @OneToMany(fetch = FetchType.LAZY)
     private List<BomPart> bomParts;

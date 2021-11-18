@@ -22,7 +22,7 @@ public class PartInventory {
     @JoinColumn(name = "partId")
     private Part part;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 3)
     private String lot;
 
     @Column(nullable = false)

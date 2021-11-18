@@ -1,4 +1,4 @@
-package com.union.placeorderAutomation.dto.manage;
+package com.union.placeorderAutomation.dto.manage.bom;
 
 import com.union.placeorderAutomation.entity.BomPart;
 import com.union.placeorderAutomation.entity.Part;

@@ -20,7 +20,7 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 @Service
-public class BomManageService {
+public class ManageBomService {
 
     private final BomRepository bomRepo;
     private final BomPartRepository bomPartRepo;

@@ -2,7 +2,7 @@ package com.union.placeorderAutomation.restcontroller.manage;
 
 import com.union.placeorderAutomation.dto.manage.part.PartReqDto;
 import com.union.placeorderAutomation.dto.manage.part.PartResDto;
-import com.union.placeorderAutomation.service.manage.PartManageService;
+import com.union.placeorderAutomation.service.manage.ManagePartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 public class PartManageController {
 
-    private final PartManageService partService;
+    private final ManagePartService partService;
 
     @GetMapping("")
     public ResponseEntity getPartList() {

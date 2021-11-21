@@ -43,56 +43,173 @@
                         </select>
                     </div>
                     <div class="col-2 input-group">
-                        <input type="text" class="form-control" id="yearMonth" placeholder="YYYYMM">
+                        <input type="text" class="form-control" id="dateInput" placeholder="YYYYMMDD">
                     </div>
                     <div class="col-1">
-                        <button type="button" class="btn btn-primary btn-sm" onclick="clickLogButton()"><i class="fas fa-search"></i></button>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="clickLogButton()"><i
+                                class="fas fa-search"></i></button>
                     </div>
                 </div>
 
                 <script>
+
+                    window.onload = function () {
+                        let today = new Date();
+                        let year = today.getFullYear();
+                        let month = today.getMonth() + 1;
+                        let day = today.getDate()
+                        let dateStr = "" + year + (month < 10 ? "0" + month : month) + (day < 10 ? "0" + day : day);
+                        document.getElementById("dateInput").value = dateStr;
+                    }
+
                     function clickLogButton() {
                         let companyCode = document.getElementById("companySelect").value;
-                        let yearMonth = document.getElementById("yearMonth").value;
-                        if(companyCode != "" & yearMonth != ""){
-                            console.log("ㄱㄱ")
+                        let date = document.getElementById("dateInput").value;
+                        if (companyCode != "" & date != "") {
+                            const url = `/api/task/part-log/` + companyCode + `/` + date;
+                            fetch(url).then(response => {
+                                if (response.status == 200) {
+                                    response.json().then(data => {
+                                        console.log(data);
+                                        createTable(data);
+                                    });
+                                }
+                            });
                         } else {
-                            alert("다시 선택하세요");
+                            alert("공장과 날짜를 입력해주세요");
                         }
                     }
+
+                    function createTable(data) {
+                        let tbody = document.getElementById("partLogTbody");
+                        removeChildNode(tbody);
+                        for (let i = 0; i < data.length; i++) {
+                            let tr = document.createElement("tr");
+                            let temp = data[i];
+
+                            let td = document.createElement("td");
+                            td.innerText = temp.partBwCode;
+                            tr.append(td);
+
+                            createIncomeAndModifyRow(tr, temp.incomeLog);
+                            createIncomeAndModifyRow(tr, temp.modifyLog);
+                            createOutComeRow(tr, temp.outcomeLog1);
+                            createOutComeRow(tr, temp.outcomeLog2);
+                            createDefectiveRow(tr, temp.defectiveLog);
+                            tbody.append(tr);
+                        }
+
+                    }
+
+                    function createIncomeAndModifyRow(tr, data) {
+                        for (let i = 0; i < 5; i++) {
+                            let td = document.createElement("td");
+                            let find = data.find(log => log.orderSeq == i);
+                            if (find != undefined) {
+                                td.innerText = find.quantity;
+                            } else {
+                                td.innerText = "0";
+                            }
+                            tr.append(td);
+                        }
+                    }
+
+                    function createOutComeRow(tr, data) {
+                        for (let i = 0; i < 20; i++) {
+                            let td = document.createElement("td");
+                            let find = data.find(log => log.orderSeq == i);
+                            if (find != undefined) {
+                                td.innerText = find.quantity;
+                            } else {
+                                td.innerText = "0";
+                            }
+                            tr.append(td)
+                        }
+                    }
+
+                    function createDefectiveRow(tr, data) {
+                        let td = document.createElement("td");
+                        td.innerText = data;
+                        tr.append(td)
+                    }
+
                 </script>
 
-<!--                <div class="row">-->
-<!--                    <table class="table table-striped">-->
-<!--                        <thead>-->
-<!--                        <tr>-->
-<!--                            <th scope="row"></th>-->
-<!--                            <th scope="row"></th>-->
-<!--                            <th scope="row"></th>-->
-<!--                            <th scope="row"></th>-->
-<!--                            <th scope="row"></th>-->
-<!--                            <th scope="row"></th>-->
-
-<!--                            <td colspan="2">Larry the Bird</td>-->
-<!--                            <td>@twitter</td>-->
-<!--                        </tr>-->
-<!--                        <tr>-->
-<!--                            <th scope="col">NO</th>-->
-<!--                            <th class="col" name="bwCode">부품</th>-->
-<!--                            <th class="col" name="incomeBox">BOX</th>-->
-<!--                            <th class="col" name="incomeQuantity">수량</th>-->
-<!--                            <th class="col" name="">공급자 코드</th>-->
-<!--                            <th class="col">발주 번호</th>-->
-<!--                            <th class="col">수량</th>-->
-<!--                        </tr>-->
-<!--                        </thead>-->
-<!--                        <tbody>-->
-<!--                        <tr>-->
-
-<!--                        </tr>-->
-<!--                        </tbody>-->
-<!--                    </table>-->
-<!--                </div>-->
+                <div class="row" style="overflow: auto">
+                    <table class="table table-bordered text-center" id="partLogTable">
+                        <thead>
+                        <tr>
+                            <th colspan="1"></th>
+                            <th colspan="5" class="table-info">입고</th>
+                            <th colspan="5" class="table-warning">보정</th>
+                            <th colspan="20" class="table-success">1공장</th>
+                            <th colspan="20" class="table-success">2공장</th>
+                            <th colspan="1" class="table-danger" style="white-space: nowrap">불량</th>
+                        </tr>
+                        <tr>
+                            <th style="white-space: nowrap">부품</th>
+                            <!-- 입고 -->
+                            <th class="table-info" style="white-space: nowrap">용차</th>
+                            <th class="table-info">1</th>
+                            <th class="table-info">2</th>
+                            <th class="table-info">3</th>
+                            <th class="table-info">4</th>
+                            <!-- 보정 -->
+                            <th class="table-warning" style="white-space: nowrap">용차</th>
+                            <th class="table-warning">1</th>
+                            <th class="table-warning">2</th>
+                            <th class="table-warning">3</th>
+                            <th class="table-warning">4</th>
+                            <!-- 1공장 -->
+                            <th class="table-success">1</th>
+                            <th class="table-success">2</th>
+                            <th class="table-success">3</th>
+                            <th class="table-success">4</th>
+                            <th class="table-success">5</th>
+                            <th class="table-success">6</th>
+                            <th class="table-success">7</th>
+                            <th class="table-success">8</th>
+                            <th class="table-success">9</th>
+                            <th class="table-success">10</th>
+                            <th class="table-success">11</th>
+                            <th class="table-success">12</th>
+                            <th class="table-success">13</th>
+                            <th class="table-success">14</th>
+                            <th class="table-success">15</th>
+                            <th class="table-success">16</th>
+                            <th class="table-success">17</th>
+                            <th class="table-success">18</th>
+                            <th class="table-success">19</th>
+                            <th class="table-success">20</th>
+                            <!-- 2공장 -->
+                            <th class="table-success">1</th>
+                            <th class="table-success">2</th>
+                            <th class="table-success">3</th>
+                            <th class="table-success">4</th>
+                            <th class="table-success">5</th>
+                            <th class="table-success">6</th>
+                            <th class="table-success">7</th>
+                            <th class="table-success">8</th>
+                            <th class="table-success">9</th>
+                            <th class="table-success">10</th>
+                            <th class="table-success">11</th>
+                            <th class="table-success">12</th>
+                            <th class="table-success">13</th>
+                            <th class="table-success">14</th>
+                            <th class="table-success">15</th>
+                            <th class="table-success">16</th>
+                            <th class="table-success">17</th>
+                            <th class="table-success">18</th>
+                            <th class="table-success">19</th>
+                            <th class="table-success">20</th>
+                            <!-- 불량 -->
+                            <th class="table-danger"></th>
+                        </tr>
+                        </thead>
+                        <tbody id="partLogTbody">
+                        </tbody>
+                    </table>
+                </div>
 
 
             </div>

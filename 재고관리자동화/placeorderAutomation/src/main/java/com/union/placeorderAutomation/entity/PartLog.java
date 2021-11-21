@@ -25,11 +25,7 @@ public class PartLog {
     @JoinColumn(name = "bwCode")
     private Part part;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "plantCode")
-    private Plant plant;
-
-    @Column(nullable = false, length = 6)
+    @Column(nullable = false, length = 8)
     private String date;
 
     @OneToMany(mappedBy = "partLog")

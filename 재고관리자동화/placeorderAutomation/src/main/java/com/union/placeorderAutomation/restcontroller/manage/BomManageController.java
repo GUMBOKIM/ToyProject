@@ -2,7 +2,7 @@ package com.union.placeorderAutomation.restcontroller.manage;
 
 import com.union.placeorderAutomation.dto.manage.bom.BomCreateDto;
 import com.union.placeorderAutomation.dto.manage.bom.BomPartDto;
-import com.union.placeorderAutomation.service.manage.BomManageService;
+import com.union.placeorderAutomation.service.manage.ManageBomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 public class BomManageController {
 
-    private final BomManageService bomManageService;
+    private final ManageBomService bomManageService;
 
     @GetMapping("")
     public ResponseEntity getBomList() {

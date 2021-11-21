@@ -1,8 +1,8 @@
-package com.union.placeorderAutomation.restcontroller.task;
+package com.union.placeorderAutomation.restcontroller.task.part;
 
-import com.union.placeorderAutomation.dto.task.part.status.PartStockDetailDto;
-import com.union.placeorderAutomation.dto.task.part.status.PartStockDto;
-import com.union.placeorderAutomation.service.task.PartStockService;
+import com.union.placeorderAutomation.dto.task.part.stock.PartStockDetailDto;
+import com.union.placeorderAutomation.dto.task.part.stock.PartStockDto;
+import com.union.placeorderAutomation.service.task.TaskPartStockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 public class PartStockStatusController {
 
-    private final PartStockService partStockService;
+    private final TaskPartStockService partStockService;
 
     @GetMapping("/{companyCode}")
     public ResponseEntity getPartList(@PathVariable String companyCode) {

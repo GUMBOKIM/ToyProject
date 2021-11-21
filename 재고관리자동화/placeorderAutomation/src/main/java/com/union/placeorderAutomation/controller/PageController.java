@@ -1,9 +1,9 @@
 package com.union.placeorderAutomation.controller;
 
 import com.union.placeorderAutomation.service.common.CommonService;
-import com.union.placeorderAutomation.service.manage.BomManageService;
-import com.union.placeorderAutomation.service.manage.PartManageService;
-import com.union.placeorderAutomation.service.task.PartStockService;
+import com.union.placeorderAutomation.service.manage.ManageBomService;
+import com.union.placeorderAutomation.service.manage.ManagePartService;
+import com.union.placeorderAutomation.service.task.TaskPartStockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class PageController {
 
     private final CommonService commonService;
-    private final PartManageService partManageService;
-    private final PartStockService partStockService;
-    private final BomManageService bomManageService;
+    private final ManagePartService partManageService;
+    private final TaskPartStockService partStockService;
+    private final ManageBomService bomManageService;
 
     @RequestMapping("/")
     public String mainPage() {

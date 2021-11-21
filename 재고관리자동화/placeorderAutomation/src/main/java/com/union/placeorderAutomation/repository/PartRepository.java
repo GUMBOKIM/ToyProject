@@ -3,11 +3,13 @@ package com.union.placeorderAutomation.repository;
 import com.union.placeorderAutomation.entity.Part;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface PartRepository extends JpaRepository<Part,Long> {
+@Repository
+public interface PartRepository extends JpaRepository<Part,String> {
 
     Optional<Part> findByBwCode(String bwCode);
 

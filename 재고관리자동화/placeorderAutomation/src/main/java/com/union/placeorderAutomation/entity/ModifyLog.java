@@ -1,20 +1,22 @@
 package com.union.placeorderAutomation.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class ModifyLog {
+public class ModifyLog extends BaseTimeEntity {
 
     @Id
-    @Column(unique = true, nullable = false)
-    private String modifyId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long modifyId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "partLogId")

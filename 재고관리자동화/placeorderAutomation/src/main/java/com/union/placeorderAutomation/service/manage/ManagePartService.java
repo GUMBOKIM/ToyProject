@@ -16,7 +16,7 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 @Service
-public class PartManageService {
+public class ManagePartService {
     private final PartRepository partRepo;
 
     @Transactional(readOnly = true)

@@ -1,7 +1,7 @@
 package com.union.placeorderAutomation.service.resttemplate;
 
 import com.union.placeorderAutomation.dto.resttemplate.CreateDeliveryDto;
-import com.union.placeorderAutomation.dto.resttemplate.ProductInventoryDto;
+import com.union.placeorderAutomation.dto.resttemplate.PartInventoryDto;
 import com.union.placeorderAutomation.dto.resttemplate.ProductPlanDto;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.http.*;
@@ -157,17 +157,30 @@ public class RestTemplateService {
         System.out.println("result = " + result);
     }
 
-    public List<ProductPlanDto> getProductPlanning(String companyCode, String plantCode) {
+    public List<ProductPlanDto> getProductPlanning(String companyCode, String plantCode, String lineCode) {
         HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(
                 HttpClientBuilder.create().build());
         RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        setHeaderGetProductPlanning(companyCode, plantCode, httpHeaders);
-
+        httpHeaders.set("authority", "es-qms.borgwarner.com");
+        httpHeaders.set("method", "GET");
+        httpHeaders.set("path", "/qms/kqis9210__tt.query_data?p_companycd=00&p_x=1&p_plant=&p_produce_line=&p_workcenter=&p_part_no=");
+        httpHeaders.set("accept", "*/*");
+        httpHeaders.set("accept-encoding", "gzip, deflate, br");
+        httpHeaders.set("accept-language", "en,ko;q=0.9,fr;q=0.8");
+        httpHeaders.set("cookie", "SYSLANG=KO; SYSTYPE=1; SYSCOMP=00; SYSID=" + companyCode + "; CCODE=" + companyCode);
+        httpHeaders.set("referer", "https://es-qms.borgwarner.com/qms/kqis9210__tt.query?p_companycd=00&p_x=1&p_plant=" + plantCode + "&p_produce_line=" + lineCode + "&p_workcenter=&p_part_no="); // url이랑 동일
+        httpHeaders.set("sec-ch-ua", "\"Chromium\";v=\"94\", \"Google Chrome\";v=\"94\", \";Not A Brand\";v=\"99\"");
+        httpHeaders.set("sec-ch-ua-mobile", "?0");
+        httpHeaders.set("sec-ch-ua-platform", "\"Windows\"");
+        httpHeaders.set("sec-fetch-dest", "empty");
+        httpHeaders.set("sec-fetch-mode", "cors");
+        httpHeaders.set("sec-fetch-site", "same-origin");
+        httpHeaders.set("user-agent", "XMLHttpRequest");
+        httpHeaders.set(HttpHeaders.ACCEPT_ENCODING, "gzip");
         HttpEntity request = new HttpEntity(httpHeaders);
-
-        String url = "https://es-qms.borgwarner.com/qms/kqis9210__tt.query_data?p_companycd=00&p_x=1&p_plant=&p_produce_line=&p_workcenter=&p_part_no=";
+        String url = "https://es-qms.borgwarner.com/qms/kqis9210__tt.query_data?p_companycd=00&p_x=1&p_plant=" + plantCode + "&p_produce_line=" + lineCode + "&p_workcenter=&p_part_no=";
         ResponseEntity<String> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
@@ -178,9 +191,9 @@ public class RestTemplateService {
         Pattern pattern = Pattern.compile("(\\{value:\")(.*)(\"\\})", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(result);
 
-        int seq = 0;
-        ProductPlanDto plan = new ProductPlanDto();
+        int seq = 0;;
         List<ProductPlanDto> planList = new ArrayList<>();
+        ProductPlanDto plan = new ProductPlanDto();
         while (matcher.find()) {
             seq = (seq == 12) ? seq - 11 : seq + 1;
             if (matcher.group(2) == null) break;
@@ -213,9 +226,8 @@ public class RestTemplateService {
                     break;
                 case 12:
                     plan.setTTime(Integer.parseInt(temp));
-                    if ((!plan.getSeq().equals("0")) && plan.getPlant().equals(plantCode)) {
-                        planList.add(plan);
-                    }
+                    planList.add(plan);
+                    System.out.println("plan = " + plan);
                     plan = new ProductPlanDto();
                     break;
             }
@@ -272,7 +284,7 @@ public class RestTemplateService {
         return splitList;
     }
 
-    public List<ProductInventoryDto> getPartInventory(String companyCode, String plantCode) {
+    public List<PartInventoryDto> getPartInventory(String companyCode, String plantCode) {
         HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(
                 HttpClientBuilder.create().build());
         RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
@@ -295,8 +307,8 @@ public class RestTemplateService {
         Matcher matcher = pattern.matcher(result);
 
         int seq = 0;
-        ProductInventoryDto inventory = new ProductInventoryDto();
-        List<ProductInventoryDto> inventoryList = new ArrayList<>();
+        PartInventoryDto inventory = new PartInventoryDto();
+        List<PartInventoryDto> inventoryList = new ArrayList<>();
         while (matcher.find()) {
             seq = (seq == 10) ? seq - 9 : seq + 1;
             if (matcher.group(2) == null) break;
@@ -315,7 +327,7 @@ public class RestTemplateService {
                     inventory.setStoreLocation(temp);
                     break;
                 case 5:
-                    inventory.setPartNo(temp);
+                    inventory.setPartBwCode(temp);
                     break;
                 case 6:
                     inventory.setStockQTY(Integer.parseInt(temp));
@@ -334,7 +346,7 @@ public class RestTemplateService {
                     if (inventory.getPlant().equals(plantCode)) {
                         inventoryList.add(inventory);
                     }
-                    inventory = new ProductInventoryDto();
+                    inventory = new PartInventoryDto();
                     break;
             }
         }
@@ -362,22 +374,7 @@ public class RestTemplateService {
 
 
     private void setHeaderGetProductPlanning(String companyCode, String plantCode, HttpHeaders httpHeaders) {
-        httpHeaders.set("authority", "es-qms.borgwarner.com");
-        httpHeaders.set("method", "GET");
-        httpHeaders.set("path", "/qms/kqis9210__tt.query_data?p_companycd=00&p_x=1&p_plant=&p_produce_line=&p_workcenter=&p_part_no=");
-        httpHeaders.set("accept", "*/*");
-        httpHeaders.set("accept-encoding", "gzip, deflate, br");
-        httpHeaders.set("accept-language", "en,ko;q=0.9,fr;q=0.8");
-        httpHeaders.set("cookie", "SYSLANG=KO; SYSTYPE=1; SYSCOMP=00; SYSID=" + companyCode + "; CCODE=" + companyCode);
-        httpHeaders.set("referer", "https://es-qms.borgwarner.com/qms/kqis9210__tt.query?p_companycd=00&p_x=1&p_plant=&p_produce_line=&p_workcenter=&p_part_no="); // url이랑 동일
-        httpHeaders.set("sec-ch-ua", "\"Chromium\";v=\"94\", \"Google Chrome\";v=\"94\", \";Not A Brand\";v=\"99\"");
-        httpHeaders.set("sec-ch-ua-mobile", "?0");
-        httpHeaders.set("sec-ch-ua-platform", "\"Windows\"");
-        httpHeaders.set("sec-fetch-dest", "empty");
-        httpHeaders.set("sec-fetch-mode", "cors");
-        httpHeaders.set("sec-fetch-site", "same-origin");
-        httpHeaders.set("user-agent", "XMLHttpRequest");
-        httpHeaders.set(HttpHeaders.ACCEPT_ENCODING, "gzip");
+
     }
 
     private void setHeaderDeliveryCard(String companyCode, HttpHeaders httpHeaders) {

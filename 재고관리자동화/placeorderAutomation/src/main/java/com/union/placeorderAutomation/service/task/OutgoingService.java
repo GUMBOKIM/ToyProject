@@ -1,10 +1,8 @@
 package com.union.placeorderAutomation.service.task;
 
 import com.union.placeorderAutomation.dto.resttemplate.CreateDeliveryDto;
-import com.union.placeorderAutomation.dto.resttemplate.ProductInventoryDto;
+import com.union.placeorderAutomation.dto.resttemplate.PartInventoryDto;
 import com.union.placeorderAutomation.dto.resttemplate.ProductPlanDto;
-import com.union.placeorderAutomation.dto.task.outgoing.InquirePartDto;
-import com.union.placeorderAutomation.dto.task.outgoing.InquireResultDto;
 import com.union.placeorderAutomation.dto.task.outgoing.OutgoingSubmitDto;
 import com.union.placeorderAutomation.entity.*;
 import com.union.placeorderAutomation.repository.BomRepository;
@@ -32,49 +30,51 @@ public class OutgoingService {
     private final PartInventoryRepository partInventoryRepo;
     private final PartLogRepository partLogRepository;
 
-    public List<InquireResultDto> inquirePlanAndInventory(String companyCode, String plantCode) {
+    public List<ProductPlanDto> inquirePlanAndInventory(String companyCode, String plantCode) {
+        // 재고 찾기(공장) -> 회사 전체 부품으로 걸러냄
+        List<PartInventoryDto> partInvenList = restTemplateService.getPartInventory(companyCode, plantCode);
         List<Part> findPartList = partRepo.findByCompany(companyCode);
-        List<InquirePartDto> partList = new ArrayList<>();
-        List<ProductInventoryDto> partInventory = restTemplateService.getPartInventory(companyCode, plantCode);
-        System.out.println("partInventory = " + partInventory);
-        for (ProductInventoryDto findPart : partInventory) {
+        List<PartInventoryDto> partInvenResult = new ArrayList<>();
+        for (PartInventoryDto findPart : partInvenList) {
             for (Part part : findPartList) {
-                if (findPart.getPartNo().equals(part.getBwCode())) {
-                    partList.add(
-                            InquirePartDto.builder()
-                                    .partBwCode(part.getBwCode())
-                                    .stockQTY(findPart.getStockQTY())
-                                    .loadAmount(part.getLoadAmount())
-                                    .build()
-                    );
+                if (findPart.getPartBwCode().equals(part.getBwCode())) {
+                    partInvenResult.add(findPart);
                     break;
                 }
             }
         }
 
+        // 생산계획(BOM) 찾기(공장, 라인으로 검색)
+        List<ProductPlanDto> planBomList = new ArrayList<>();
+        planBomList.addAll(restTemplateService.getProductPlanning(companyCode, plantCode, "CS"));
+        planBomList.addAll(restTemplateService.getProductPlanning(companyCode, plantCode, "CP"));
+        planBomList.addAll(restTemplateService.getProductPlanning(companyCode, plantCode, "MC"));
+        // 현재 선택한 회사에 속해 있는 BOM으로 걸러냄
         List<Bom> findBomList = bomRepo.findByCompanyCode(companyCode);
-        List<InquireResultDto> result = new ArrayList<>();
-        List<ProductPlanDto> planBomList = restTemplateService.getProductPlanning(companyCode, plantCode);
-        System.out.println("planBomList = " + planBomList);
-        for(ProductPlanDto planBom : planBomList){
-            for(Bom bom : findBomList){
-                if(bom.getBwCode().equals(planBom.getBomBwCode())){
-                    InquireResultDto temp = new InquireResultDto(planBom);
+        List<ProductPlanDto> planBomResult = new ArrayList<>();
+        for (ProductPlanDto planBom : planBomList) {
+            for (Bom bom : findBomList) {
+                if (bom.getBwCode().equals(planBom.getBomBwCode())) {
                     List<BomPart> bomPartList = bom.getBomParts();
-                    for(BomPart bomPart : bomPartList){
-                        for(InquirePartDto selectPart: partList){
-                            if(bomPart.getPart().getBwCode().equals(selectPart.getPartBwCode())){
-                                selectPart.setUsage(bomPart.getAmount());
-                                temp.addParts(selectPart);
+                    List<PartInventoryDto> tempInven = new ArrayList<>();
+                    for(PartInventoryDto partInven : partInvenResult){
+                        for(BomPart bomPart : bomPartList){
+                            if(bomPart.getPart().getBwCode().equals(partInven.getPartBwCode())){
+                                partInven.setUsage(bomPart.getAmount());
+                                tempInven.add(partInven);
                             }
                         }
                     }
-                    result.add(temp);
+                    planBom.setPartInventory(tempInven);
+                    if(planBom.getPartInventory() != null) {
+                        planBomResult.add(planBom);
+                    }
                     break;
                 }
             }
         }
-        return result;
+
+        return planBomResult;
     }
 
     public List<CreateDeliveryDto> submitInventory(OutgoingSubmitDto submitDto) {

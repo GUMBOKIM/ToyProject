@@ -3,8 +3,10 @@ package com.union.placeorderAutomation.service.common;
 import com.union.placeorderAutomation.dto.common.CompanyListDto;
 import com.union.placeorderAutomation.dto.common.PlantDto;
 import com.union.placeorderAutomation.entity.Company;
+import com.union.placeorderAutomation.entity.OrderHistory;
 import com.union.placeorderAutomation.entity.Plant;
 import com.union.placeorderAutomation.repository.CompanyRepository;
+import com.union.placeorderAutomation.repository.OrderHistoryRepository;
 import com.union.placeorderAutomation.repository.PlantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import java.util.List;
 public class CommonService {
     private final CompanyRepository companyRepo;
     private final PlantRepository plantRepository;
+    private final OrderHistoryRepository orderHistoryRepo;
 
     private List<CompanyListDto> companyList;
 
@@ -36,6 +39,20 @@ public class CommonService {
         List<Plant> plantList = plantRepository.findAll();
         List<PlantDto> result = new ArrayList<>();
         plantList.forEach(plant -> result.add(new PlantDto(plant)));
+        return result;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Integer> findCompanyOrderHistoryList(String companyCode, String plantCode, String date){
+        Company company = Company.builder().companyCode(companyCode).build();
+        Plant plant = Plant.builder().plantCode(plantCode).build();
+        List<OrderHistory> findOrderHistory = orderHistoryRepo.findOrderHistoriesByCompanyAndPlantAndDate(company, plant, date);
+
+        List<Integer> result = new ArrayList<>();
+        for(OrderHistory orderHistory : findOrderHistory){
+            result.add(orderHistory.getOrderSeq());
+        }
+
         return result;
     }
 

@@ -1,6 +1,7 @@
 package com.union.placeorderAutomation.restcontroller.task;
 
 import com.union.placeorderAutomation.dto.resttemplate.CreateDeliveryDto;
+import com.union.placeorderAutomation.dto.resttemplate.ProductPlanDto;
 import com.union.placeorderAutomation.dto.task.outgoing.InquireResultDto;
 import com.union.placeorderAutomation.dto.task.outgoing.OutgoingSubmitDto;
 import com.union.placeorderAutomation.service.task.OutgoingService;
@@ -21,7 +22,7 @@ public class OutgoingTaskController {
     @GetMapping("/inquire/{companyCode}/{plantCode}")
     public ResponseEntity inquirePlanNInventory(@PathVariable String companyCode,
                                                 @PathVariable String plantCode) {
-        List<InquireResultDto> result = outgoingService.inquirePlanAndInventory(companyCode, plantCode);
+        List<ProductPlanDto> result = outgoingService.inquirePlanAndInventory(companyCode, plantCode);
         return new ResponseEntity(result, HttpStatus.OK);
     }
 

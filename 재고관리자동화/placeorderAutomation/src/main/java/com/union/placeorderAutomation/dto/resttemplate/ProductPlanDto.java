@@ -1,6 +1,7 @@
 package com.union.placeorderAutomation.dto.resttemplate;
 
 import lombok.Data;
+import java.util.List;
 
 @Data
 public class ProductPlanDto {
@@ -14,5 +15,7 @@ public class ProductPlanDto {
     private String seq;
     private int rTime;
     private int tTime;
+
+    private List<PartInventoryDto> partInventory;
 
 }

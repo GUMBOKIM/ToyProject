@@ -14,9 +14,6 @@ import java.util.Optional;
 @Service
 public class PartLogService {
 
-    private final PartRepository partRepo;
-    private final PlantRepository plantRepo;
-
     private final PartLogRepository partLogRepo;
     private final DefectiveLogRepository defectiveLogRepo;
     private final IncomeLogRepository incomeLogRepo;
@@ -58,7 +55,7 @@ public class PartLogService {
 
     public void createOutcomeLogs(CreateLogDto logDto) {
         PartLog partLog = createPartLog(logDto.getPartBwCode(), logDto.getDate());
-        Plant plant = plantRepo.getById(logDto.getPlantCode());
+        Plant plant = Plant.builder().plantCode(logDto.getPlantCode()).build();
 
         OutcomeLog outcomeLog = OutcomeLog.builder()
                 .partLog(partLog)
@@ -70,8 +67,8 @@ public class PartLogService {
         outcomeLogRepo.save(outcomeLog);
     }
 
-    public PartLog createPartLog(String partBwCode,String date) {
-        Part part = partRepo.findByBwCode(partBwCode).get();
+    public PartLog createPartLog(String partBwCode, String date) {
+        Part part = Part.builder().bwCode(partBwCode).build();
 
         Optional<PartLog> partLog = partLogRepo.findPartLogByPartAndDate(part, date);
         if (partLog.isEmpty()) {

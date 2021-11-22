@@ -1,6 +1,6 @@
 package com.union.placeorderAutomation.scraping;
 
-import com.union.placeorderAutomation.dto.resttemplate.ProductInventoryDto;
+import com.union.placeorderAutomation.dto.resttemplate.PartInventoryDto;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.*;
@@ -54,8 +54,8 @@ public class ProductInventory {
         Matcher matcher = pattern.matcher(result);
 
         int seq = 0;
-        ProductInventoryDto inventory = new ProductInventoryDto();
-        List<ProductInventoryDto> inventoryList = new ArrayList<>();
+        PartInventoryDto inventory = new PartInventoryDto();
+        List<PartInventoryDto> inventoryList = new ArrayList<>();
         while (matcher.find()) {
             seq = (seq == 10) ? seq - 9 : seq + 1;
             if (matcher.group(2) == null) break;
@@ -74,7 +74,7 @@ public class ProductInventory {
                     inventory.setStoreLocation(temp);
                     break;
                 case 5:
-                    inventory.setPartNo(temp);
+                    inventory.setPartBwCode(temp);
                     break;
                 case 6:
                     inventory.setStockQTY(Integer.parseInt(temp));
@@ -91,7 +91,7 @@ public class ProductInventory {
                 case 10:
                     inventory.setLotMax(Integer.parseInt(temp));
                         inventoryList.add(inventory);
-                    inventory = new ProductInventoryDto();
+                    inventory = new PartInventoryDto();
                     break;
             }
         }

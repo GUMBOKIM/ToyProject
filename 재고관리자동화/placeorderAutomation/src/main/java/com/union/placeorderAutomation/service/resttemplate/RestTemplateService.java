@@ -12,6 +12,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -154,10 +155,9 @@ public class RestTemplateService {
         );
         String result = response.getBody();
 
-        System.out.println("result = " + result);
     }
 
-    public List<ProductPlanDto> getProductPlanning(String companyCode, String plantCode, String lineCode) {
+    public HashMap<String ,ProductPlanDto> getProductPlanning(String companyCode, String plantCode, String lineCode) {
         HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(
                 HttpClientBuilder.create().build());
         RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
@@ -192,7 +192,7 @@ public class RestTemplateService {
         Matcher matcher = pattern.matcher(result);
 
         int seq = 0;;
-        List<ProductPlanDto> planList = new ArrayList<>();
+        HashMap<String ,ProductPlanDto> planHashMap = new HashMap<>();
         ProductPlanDto plan = new ProductPlanDto();
         while (matcher.find()) {
             seq = (seq == 12) ? seq - 11 : seq + 1;
@@ -226,13 +226,12 @@ public class RestTemplateService {
                     break;
                 case 12:
                     plan.setTTime(Integer.parseInt(temp));
-                    planList.add(plan);
-                    System.out.println("plan = " + plan);
+                    planHashMap.put(plan.getBomBwCode(), plan);
                     plan = new ProductPlanDto();
                     break;
             }
         }
-        return planList;
+        return planHashMap;
     }
 
     public String[] findDeliveryCard(String companyCode, String date, String plantCode) {
@@ -284,7 +283,7 @@ public class RestTemplateService {
         return splitList;
     }
 
-    public List<PartInventoryDto> getPartInventory(String companyCode, String plantCode) {
+    public HashMap<String, PartInventoryDto> getPartInventory(String companyCode, String plantCode) {
         HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(
                 HttpClientBuilder.create().build());
         RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
@@ -308,7 +307,7 @@ public class RestTemplateService {
 
         int seq = 0;
         PartInventoryDto inventory = new PartInventoryDto();
-        List<PartInventoryDto> inventoryList = new ArrayList<>();
+        HashMap<String, PartInventoryDto> inventoryMap = new HashMap<>();
         while (matcher.find()) {
             seq = (seq == 10) ? seq - 9 : seq + 1;
             if (matcher.group(2) == null) break;
@@ -344,13 +343,13 @@ public class RestTemplateService {
                 case 10:
                     inventory.setLotMax(Integer.parseInt(temp));
                     if (inventory.getPlant().equals(plantCode)) {
-                        inventoryList.add(inventory);
+                        inventoryMap.put(inventory.getPartBwCode(), inventory);
                     }
                     inventory = new PartInventoryDto();
                     break;
             }
         }
-        return inventoryList;
+        return inventoryMap;
     }
 
     private void setHeaderGetProductInvetory(String companyCode, String plantCode, HttpHeaders httpHeaders) {

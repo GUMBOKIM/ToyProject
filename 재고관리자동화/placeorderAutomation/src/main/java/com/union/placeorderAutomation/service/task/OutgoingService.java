@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Transactional
@@ -32,45 +33,42 @@ public class OutgoingService {
 
     public List<ProductPlanDto> inquirePlanAndInventory(String companyCode, String plantCode) {
         // 재고 찾기(공장) -> 회사 전체 부품으로 걸러냄
-        List<PartInventoryDto> partInvenList = restTemplateService.getPartInventory(companyCode, plantCode);
+        HashMap<String, PartInventoryDto> partInvenMap = restTemplateService.getPartInventory(companyCode, plantCode);
         List<Part> findPartList = partRepo.findByCompany(companyCode);
-        List<PartInventoryDto> partInvenResult = new ArrayList<>();
-        for (PartInventoryDto findPart : partInvenList) {
-            for (Part part : findPartList) {
-                if (findPart.getPartBwCode().equals(part.getBwCode())) {
-                    partInvenResult.add(findPart);
-                    break;
-                }
+        HashMap<String, PartInventoryDto> partInvenResult = new HashMap<>();
+        for(Part part : findPartList){
+            String bwCode = part.getBwCode();
+            if(partInvenMap.containsKey(bwCode)){
+                partInvenResult.put(bwCode, partInvenMap.get(bwCode));
             }
         }
 
         // 생산계획(BOM) 찾기(공장, 라인으로 검색)
-        List<ProductPlanDto> planBomList = new ArrayList<>();
-        planBomList.addAll(restTemplateService.getProductPlanning(companyCode, plantCode, "CS"));
-        planBomList.addAll(restTemplateService.getProductPlanning(companyCode, plantCode, "CP"));
-        planBomList.addAll(restTemplateService.getProductPlanning(companyCode, plantCode, "MC"));
-        // 현재 선택한 회사에 속해 있는 BOM으로 걸러냄
+        HashMap<String, ProductPlanDto> planBomMap = new HashMap<>();
+        planBomMap.putAll(restTemplateService.getProductPlanning(companyCode, plantCode, "CS"));
+        planBomMap.putAll(restTemplateService.getProductPlanning(companyCode, plantCode, "CP"));
+        planBomMap.putAll(restTemplateService.getProductPlanning(companyCode, plantCode, "MC"));
+        // 회사 제품이 들어간 BOM 필터링
         List<Bom> findBomList = bomRepo.findByCompanyCode(companyCode);
         List<ProductPlanDto> planBomResult = new ArrayList<>();
-        for (ProductPlanDto planBom : planBomList) {
-            for (Bom bom : findBomList) {
-                if (bom.getBwCode().equals(planBom.getBomBwCode())) {
-                    List<BomPart> bomPartList = bom.getBomParts();
-                    List<PartInventoryDto> tempInven = new ArrayList<>();
-                    for(PartInventoryDto partInven : partInvenResult){
-                        for(BomPart bomPart : bomPartList){
-                            if(bomPart.getPart().getBwCode().equals(partInven.getPartBwCode())){
-                                partInven.setUsage(bomPart.getAmount());
-                                tempInven.add(partInven);
-                            }
-                        }
+        for (Bom bom : findBomList){
+            String bomBwCode = bom.getBwCode();
+            if(planBomMap.containsKey(bomBwCode)){
+                ProductPlanDto productPlanDto = planBomMap.get(bomBwCode);
+                List<BomPart> bomParts = bom.getBomParts();
+                List<PartInventoryDto> partInventory = new ArrayList<>();
+                for(BomPart bomPart : bomParts){
+                    String partBwCode = bomPart.getPart().getBwCode();
+                    int usage = bomPart.getAmount();
+
+                    if(partInvenResult.containsKey(partBwCode)){
+                        PartInventoryDto partInventoryDto = partInvenResult.get(partBwCode);
+                        partInventoryDto.setUsage(usage);
+                        partInventory.add(partInventoryDto);
                     }
-                    planBom.setPartInventory(tempInven);
-                    if(planBom.getPartInventory() != null) {
-                        planBomResult.add(planBom);
-                    }
-                    break;
                 }
+                productPlanDto.setPartInventory(partInventory);
+                planBomResult.add(productPlanDto);
             }
         }
 

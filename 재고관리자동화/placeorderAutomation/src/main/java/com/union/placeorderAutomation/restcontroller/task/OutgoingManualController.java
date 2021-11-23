@@ -20,7 +20,6 @@ public class OutgoingManualController {
 
     @PostMapping("")
     public ResponseEntity outgoingManual(@RequestBody OutgoingManualDto request) {
-        System.out.println("request = " + request);
         List<CreateDeliveryDto> deliveryList = Arrays.asList(request.getDeliveryList());
         restTemplateService.createDeliveryCard(
                 request.getCompanyCode(),

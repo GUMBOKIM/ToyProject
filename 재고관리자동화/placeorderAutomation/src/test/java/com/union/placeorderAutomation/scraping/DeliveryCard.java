@@ -72,7 +72,6 @@ public class DeliveryCard {
         );
         String result = response.getBody();
 
-        System.out.println("result = " + result);
         assertThat(response.getStatusCode().equals(HttpStatus.OK));
     }
 }

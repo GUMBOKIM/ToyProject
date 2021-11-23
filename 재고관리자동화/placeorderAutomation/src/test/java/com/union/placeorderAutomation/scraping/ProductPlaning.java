@@ -96,7 +96,6 @@ public class ProductPlaning {
                     break;
             }
         }
-        System.out.println("planList = " + planList.toString());
         assertThat(response.getStatusCode().equals(HttpStatus.OK));
     }
 }

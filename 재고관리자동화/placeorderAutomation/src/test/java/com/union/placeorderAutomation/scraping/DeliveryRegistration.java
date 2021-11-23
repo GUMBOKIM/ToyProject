@@ -83,7 +83,6 @@ public class DeliveryRegistration {
         );
         String result = response.getBody();
 
-        System.out.println("result = " + result);
         assertThat(response.getStatusCode().equals(HttpStatus.OK));
     }
 }

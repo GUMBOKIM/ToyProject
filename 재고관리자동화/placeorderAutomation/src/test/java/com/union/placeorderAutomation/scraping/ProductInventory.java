@@ -95,7 +95,6 @@ public class ProductInventory {
                     break;
             }
         }
-        System.out.println("inventoryList = " + inventoryList);
         assertThat(response.getStatusCode().equals(HttpStatus.OK));
     }
 }

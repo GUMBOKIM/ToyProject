@@ -66,7 +66,7 @@ public class ManagePartService {
 
     @Transactional(readOnly = true)
     public List<PartResDto> getPartListByCompanyCode(String companyCode) {
-        List<Part> partList = partRepo.findByCompany(companyCode);
+        List<Part> partList = partRepo.findPartByCompany(companyCode);
         List<PartResDto> result = new ArrayList<>();
         partList.forEach(part -> result.add(new PartResDto(part)));
         return result;

@@ -31,10 +31,11 @@ public class OutgoingService {
     private final PartInventoryRepository partInventoryRepo;
     private final PartLogRepository partLogRepository;
 
-    public List<ProductPlanDto> inquirePlanAndInventory(String companyCode, String plantCode) {
+    @Transactional(readOnly = true)
+    public List<ProductPlanDto> findPlanAndInventory(String companyCode, String plantCode) {
         // 재고 찾기(공장) -> 회사 전체 부품으로 걸러냄
         HashMap<String, PartInventoryDto> partInvenMap = restTemplateService.getPartInventory(companyCode, plantCode);
-        List<Part> findPartList = partRepo.findByCompany(companyCode);
+        List<Part> findPartList = partRepo.findPartByCompany(companyCode);
         HashMap<String, PartInventoryDto> partInvenResult = new HashMap<>();
         for(Part part : findPartList){
             String bwCode = part.getBwCode();
@@ -49,7 +50,7 @@ public class OutgoingService {
         planBomMap.putAll(restTemplateService.getProductPlanning(companyCode, plantCode, "CP"));
         planBomMap.putAll(restTemplateService.getProductPlanning(companyCode, plantCode, "MC"));
         // 회사 제품이 들어간 BOM 필터링
-        List<Bom> findBomList = bomRepo.findByCompanyCode(companyCode);
+        List<Bom> findBomList = bomRepo.findByCompanyCode(Company.builder().companyCode(companyCode).build());
         List<ProductPlanDto> planBomResult = new ArrayList<>();
         for (Bom bom : findBomList){
             String bomBwCode = bom.getBwCode();

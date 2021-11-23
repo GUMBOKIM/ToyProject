@@ -57,6 +57,7 @@ public class CommonService {
     }
 
 
+    //Model 추가
     public void addCompanyList(Model model) {
         if (companyList == null) {
             companyList = getCompanyList();

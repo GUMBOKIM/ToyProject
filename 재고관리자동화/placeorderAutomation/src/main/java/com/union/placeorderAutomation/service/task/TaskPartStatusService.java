@@ -31,7 +31,7 @@ public class TaskPartStatusService {
     public List<PartLogDto> createPartStatus(String companyCode, String date){
         List<PartLogDto> result = new ArrayList<>();
 
-        List<Part> partList = partRepo.findByCompany(companyCode);
+        List<Part> partList = partRepo.findPartByCompany(companyCode);
         for(Part part : partList){
             PartLogDto partLogDto = new PartLogDto(part.getBwCode());
             Optional<PartLog> partLogOpt = partLogRepo.findPartLogByPartAndDate(part, date);

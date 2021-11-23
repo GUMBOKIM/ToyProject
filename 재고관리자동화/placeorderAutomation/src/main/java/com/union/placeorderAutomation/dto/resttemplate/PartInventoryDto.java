@@ -12,7 +12,7 @@ public class PartInventoryDto {
     private String partBwCode;
     private int stockQTY;
     private String uom;
-    private String rop;
+    private int rop;
     private int lotMin;
     private int lotMax;
 

@@ -13,14 +13,15 @@ import java.util.List;
 public interface BomRepository extends JpaRepository<Bom, String> {
 
     Bom findByBwCode(String bwCode);
-    @Query(value = "select b.bw_code from bom b " +
-            "inner join bom_part bp " +
-            "on b.bw_code = bp.bom_bw_code " +
-            "inner join part p " +
-            "on bp.part_bw_code = p.bw_code " +
-            "where p.company_id = ?1 " +
-            "GROUP BY b.bw_code " +
-            "order by b.bw_code ",
-            nativeQuery = true)
-    List<Bom> findByCompanyCode(String companyCode);
+
+    @Query(value = "select b from Bom b " +
+            "inner join BomPart bp " +
+            "on b = bp.bom " +
+            "inner join Part p " +
+            "on bp.part = p " +
+            "where p.company = ?1 " +
+            "and p.selectYn = 'N' " +
+            "GROUP BY b.bwCode " +
+            "order by b.bwCode ")
+    List<Bom> findByCompanyCode(Company company);
 }

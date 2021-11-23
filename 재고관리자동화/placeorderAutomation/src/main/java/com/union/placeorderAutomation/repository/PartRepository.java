@@ -18,7 +18,17 @@ public interface PartRepository extends JpaRepository<Part,String> {
             "INNER JOIN Company c " +
             "ON p.company = c.companyCode " +
             "WHERE c.companyCode = ?1 " +
+            "AND p.selectYn = 'N' " +
             "ORDER BY p.bwCode")
-    List<Part> findByCompany(String company);
+    List<Part> findPartByCompany(String company);
+
+    @Query(value ="SELECT p " +
+            "FROM Part p " +
+            "INNER JOIN Company c " +
+            "ON p.company = c.companyCode " +
+            "WHERE c.companyCode = ?1 " +
+            "AND p.selectYn = 'Y' " +
+            "ORDER BY p.bwCode")
+    List<Part> findSelectPartByCompany(String company);
 
 }

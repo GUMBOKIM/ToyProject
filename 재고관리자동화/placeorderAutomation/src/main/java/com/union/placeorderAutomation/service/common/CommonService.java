@@ -25,6 +25,52 @@ public class CommonService {
     private final OrderHistoryRepository orderHistoryRepo;
 
     private List<CompanyListDto> companyList;
+    private List<PlantDto> plantList;
+
+    @Transactional(readOnly = true)
+    public List<Integer> findCompanyOrderHistoryList(String companyCode, String plantCode, String date){
+        Company company = Company.builder().companyCode(companyCode).build();
+        Plant plant = Plant.builder().plantCode(plantCode).build();
+        List<Integer> findOrderHistory = orderHistoryRepo.findOrderHistory(company, plant, date);
+
+        List<Integer> result = new ArrayList<>();
+        for (int i = 1; i <= 20; i++) {
+            result.add(i);
+        }
+        for(Integer orderSeq : findOrderHistory){
+            result.remove(result.indexOf(orderSeq));
+        }
+        return result;
+    }
+
+    public void addCompanyOrderHistory(String companyCode, String plantCode, String date, int orderSeq){
+        Company company = Company.builder().companyCode(companyCode).build();
+        Plant plant = Plant.builder().plantCode(plantCode).build();
+        OrderHistory orderHistory = OrderHistory.builder()
+                .company(company)
+                .plant(plant)
+                .orderSeq(orderSeq)
+                .date(date)
+                .build();
+        orderHistoryRepo.save(orderHistory);
+    }
+
+
+    //Model 추가
+    public void addCompanyList(Model model) {
+        if (companyList == null) {
+            companyList = getCompanyList();
+        }
+        model.addAttribute("companyList", companyList);
+    }
+
+    public void addPlantList(Model model){
+        if(plantList == null){
+            plantList = getPlantList();
+        }
+        model.addAttribute("plantList", plantList);
+    }
+
 
     @Transactional(readOnly = true)
     public List<CompanyListDto> getCompanyList() {
@@ -40,28 +86,5 @@ public class CommonService {
         List<PlantDto> result = new ArrayList<>();
         plantList.forEach(plant -> result.add(new PlantDto(plant)));
         return result;
-    }
-
-    @Transactional(readOnly = true)
-    public List<Integer> findCompanyOrderHistoryList(String companyCode, String plantCode, String date){
-        Company company = Company.builder().companyCode(companyCode).build();
-        Plant plant = Plant.builder().plantCode(plantCode).build();
-        List<OrderHistory> findOrderHistory = orderHistoryRepo.findOrderHistoriesByCompanyAndPlantAndDate(company, plant, date);
-
-        List<Integer> result = new ArrayList<>();
-        for(OrderHistory orderHistory : findOrderHistory){
-            result.add(orderHistory.getOrderSeq());
-        }
-
-        return result;
-    }
-
-
-    //Model 추가
-    public void addCompanyList(Model model) {
-        if (companyList == null) {
-            companyList = getCompanyList();
-        }
-        model.addAttribute("companyList", companyList);
     }
 }

@@ -76,11 +76,27 @@ public class OutgoingService {
         return planBomResult;
     }
 
+    @Transactional(readOnly = true)
+    public List<PartInventoryDto> findSelectPartInventory(String companyCode, String plantCode) {
+        // 재고 찾기(공장) -> 회사 전체 부품으로 걸러냄
+        HashMap<String, PartInventoryDto> partInvenMap = restTemplateService.getPartInventory(companyCode, plantCode);
+        List<Part> findPartList = partRepo.findSelectPartByCompany(companyCode);
+        List<PartInventoryDto> partInvenResult = new ArrayList<>();
+        for(Part part : findPartList){
+            String bwCode = part.getBwCode();
+            if(partInvenMap.containsKey(bwCode)){
+                partInvenResult.add(partInvenMap.get(bwCode));
+            }
+        }
+        return partInvenResult;
+    }
+
     public List<CreateDeliveryDto> submitInventory(OutgoingSubmitDto submitDto) {
         List<CreateDeliveryDto> deliveryList = createDeliveryCard(submitDto);
         restTemplateService.createDeliveryCard(submitDto.getCompanyCode(),
                 submitDto.getPlantCode(),
                 submitDto.getDate(),
+                submitDto.getTime(),
                 deliveryList
         );
         restTemplateService.registryDelivery(submitDto.getCompanyCode(),

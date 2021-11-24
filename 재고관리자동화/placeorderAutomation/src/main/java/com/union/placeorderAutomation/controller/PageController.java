@@ -25,8 +25,17 @@ public class PageController {
     }
 
     @RequestMapping("/task/outgoing")
-    public String taskOutgoing() {
+    public String taskOutgoing(Model model) {
+        commonService.addCompanyList(model);
+        commonService.addPlantList(model);
         return "task-outgoing";
+    }
+
+    @RequestMapping("/task/outgoing-select")
+    public String taskOutgoingSelect(Model model) {
+        commonService.addCompanyList(model);
+        commonService.addPlantList(model);
+        return "task-outgoing-select";
     }
 
     @RequestMapping("/task/outgoing-manual")

@@ -83,7 +83,7 @@ public class ProductInventory {
                     inventory.setUom(temp);
                     break;
                 case 8:
-                    inventory.setRop(temp);
+                    inventory.setRop(Integer.parseInt(temp));
                     break;
                 case 9:
                     inventory.setLotMin(Integer.parseInt(temp));

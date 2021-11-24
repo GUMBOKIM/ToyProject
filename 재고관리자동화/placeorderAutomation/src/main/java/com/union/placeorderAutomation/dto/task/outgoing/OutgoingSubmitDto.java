@@ -11,5 +11,6 @@ public class OutgoingSubmitDto {
     private String date;
     private String plantCode;
     private String time;
+    private String orderSeq;
     List<OutgoingPartDto> partList;
 }

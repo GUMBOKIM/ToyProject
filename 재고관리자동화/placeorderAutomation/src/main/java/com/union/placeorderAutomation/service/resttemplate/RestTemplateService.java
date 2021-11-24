@@ -58,7 +58,7 @@ public class RestTemplateService {
         );
     }
 
-    public void createDeliveryCard(String companyCode, String plantCode, String date, List<CreateDeliveryDto> deliveryList) {
+    public void createDeliveryCard(String companyCode, String plantCode, String date, String orderSeq, List<CreateDeliveryDto> deliveryList) {
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -69,17 +69,16 @@ public class RestTemplateService {
         body.add("p_dml_gubun", "1");
         body.add("p_vendcd", companyCode);
         body.add("p_plant", plantCode);
-        // 차수
-        //        body.add("p_sno", "");
+        body.add("p_sno", orderSeq);
         body.add("P_descr", deliveryList.size() + " 품목");
-        body.add("p_income_date", date.replace("-", ""));//20210201 양식
+        body.add("p_income_date", date);//20210201 양식
 
         deliveryList.forEach(delivery -> {
             body.add("p_partno", delivery.getBwCode());
             body.add("p_partnm", delivery.getPartName());
             body.add("p_order_no", delivery.getPoCode());
             body.add("p_lotno", delivery.getLot());
-            body.add("p_qty", Integer.toString(delivery.getLoadAmount() * delivery.getBoxQuantity()));
+            body.add("p_qty", Integer.toString(delivery.getQuantity()));
             body.add("p_qty_per_box", Integer.toString(delivery.getLoadAmount()));
             body.add("p_qty_box", Integer.toString(delivery.getBoxQuantity()));
             body.add("p_remarks", delivery.getLocation());
@@ -131,7 +130,7 @@ public class RestTemplateService {
         deliveryList.forEach(delivery -> {
 
             body.add("p_partno", delivery.getBwCode());
-            body.add("p_menge", Integer.toString(delivery.getLoadAmount() * delivery.getBoxQuantity()));
+            body.add("p_menge", Integer.toString(delivery.getQuantity()));
             body.add("p_lgpbe", delivery.getLot());
             body.add("p_barco", "Y");
             body.add("p_seqno", "");
@@ -157,7 +156,7 @@ public class RestTemplateService {
 
     }
 
-    public HashMap<String ,ProductPlanDto> getProductPlanning(String companyCode, String plantCode, String lineCode) {
+    public HashMap<String, ProductPlanDto> getProductPlanning(String companyCode, String plantCode, String lineCode) {
         HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(
                 HttpClientBuilder.create().build());
         RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
@@ -191,8 +190,9 @@ public class RestTemplateService {
         Pattern pattern = Pattern.compile("(\\{value:\")(.*)(\"\\})", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(result);
 
-        int seq = 0;;
-        HashMap<String ,ProductPlanDto> planHashMap = new HashMap<>();
+        int seq = 0;
+        ;
+        HashMap<String, ProductPlanDto> planHashMap = new HashMap<>();
         ProductPlanDto plan = new ProductPlanDto();
         while (matcher.find()) {
             seq = (seq == 12) ? seq - 11 : seq + 1;

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="fragments/header.html :: fragment-header"></div>
+</head>
+
+<body id="page-top">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul th:replace="fragments/sidebar.html :: fragment-sidebar">
+
+    </ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+            <!-- TopBar -->
+            <nav th:replace="fragments/topbar.html :: fragment-topbar">
+            </nav>
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">고객사 선택품 납품</h1>
+                </div>
+
+                <div class="row justify-content-center mb-3">
+                    <div class="col-1">
+                        <select class="custom-select" id="companySelect">
+                            <option selected value="">회사</option>
+                            <option th:each="company : ${companyList}"
+                                    th:value="${company.companyCode}"
+                                    th:text="${company.companyName}"></option>
+                        </select>
+                    </div>
+                    <div class="col-1">
+                        <select class="custom-select" id="plantSelect">
+                            <option selected value="">공장</option>
+                            <option th:each="plant : ${plantList}"
+                                    th:value="${plant.plantCode}"
+                                    th:text="${plant.plantName}"></option>
+                        </select>
+                    </div>
+                    <div class="col-1">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="dateInput" placeholder="YYYYMMDD">
+                        </div>
+                    </div>
+                    <div class="col-1">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="orderInput" placeholder="차수">
+                        </div>
+                    </div>
+                    <div class="col-1">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="timeInput" placeholder="HH:MM">
+                        </div>
+                    </div>
+                    <div class="col-1">
+                        <button type="button" id="createButton" class="btn btn-primary" onclick="clickConfirmButton()">
+                            확인
+                        </button>
+                    </div>
+                </div>
+
+                <script>
+                    let companyCode;
+                    let plantCode;
+                    let date;
+                    let orderSeq;
+                    let time;
+                    window.onload = function () {
+                        let today = new Date();
+                        let year = today.getFullYear();
+                        let month = today.getMonth() + 1;
+                        let day = today.getDate()
+                        let dateStr = "" + year + (month < 10 ? "0" + month : month) + (day < 10 ? "0" + day : day);
+                        document.getElementById("dateInput").value = dateStr;
+                    }
+
+                    async function clickConfirmButton() {
+                        companyCode = findElementValue("companySelect");
+                        plantCode = findElementValue("plantSelect");
+                        date = findElementValue("dateInput");
+                        orderSeq = findElementValue("orderInput");
+                        time = findElementValue("timeInput");
+
+                        if (companyCode != "" && plantCode != "" && date != "" && orderSeq != "" && time != "") {
+                            if (await checkOrderHistory(companyCode, plantCode, date, orderSeq)) {
+                                const url = "/api/task/outgoing/inquire-select/"+companyCode+"/"+plantCode;
+                                let response = await fetch(url);
+                                if (response.status == 200) {
+                                    let data = await response.json();
+                                    console.log(data);
+                                }
+                            } else {
+                                const url = "/api/common/company-order/" + companyCode + "/" + plantCode + "/" + date;
+                                orderSeq = orderSeq * 1;
+                                let response = await fetch(url);
+                                let message = "납품 차수가 존재 합니다. " + "현재 가능한 차수는 \n";
+                                if (response.status == 200) {
+                                    let availableOrder = await response.json();
+                                    for (let i = 0; i < availableOrder.length; i++) {
+                                        message += availableOrder[i]+ "차 \n";
+                                    }
+                                }
+                                alert(message);
+                            }
+                        } else {
+                            alert("입력을 확인해주세요")
+                        }
+
+                    }
+
+
+                </script>
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer th:replace="fragments/footer.html :: fragment-footer">
+        </footer>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+</body>
+
+</html>

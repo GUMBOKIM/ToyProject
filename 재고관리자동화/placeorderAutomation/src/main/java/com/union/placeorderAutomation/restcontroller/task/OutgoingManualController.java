@@ -25,6 +25,7 @@ public class OutgoingManualController {
                 request.getCompanyCode(),
                 request.getPlantCode(),
                 request.getDate(),
+                request.getSeqNo(),
                 deliveryList
         );
         restTemplateService.registryDelivery(

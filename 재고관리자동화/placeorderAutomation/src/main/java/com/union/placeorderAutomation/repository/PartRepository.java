@@ -19,6 +19,7 @@ public interface PartRepository extends JpaRepository<Part,String> {
             "ON p.company = c.companyCode " +
             "WHERE c.companyCode = ?1 " +
             "AND p.selectYn = 'N' " +
+            "AND p.useYn = 'Y' " +
             "ORDER BY p.bwCode")
     List<Part> findPartByCompany(String company);
 
@@ -28,6 +29,7 @@ public interface PartRepository extends JpaRepository<Part,String> {
             "ON p.company = c.companyCode " +
             "WHERE c.companyCode = ?1 " +
             "AND p.selectYn = 'Y' " +
+            "AND p.useYn = 'Y' " +
             "ORDER BY p.bwCode")
     List<Part> findSelectPartByCompany(String company);
 

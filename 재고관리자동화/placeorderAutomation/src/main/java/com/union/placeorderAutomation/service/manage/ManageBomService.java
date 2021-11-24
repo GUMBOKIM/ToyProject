@@ -67,7 +67,6 @@ public class ManageBomService {
                     .bom(bom)
                     .part(part)
                     .amount(bomCreateDto.getUsage())
-                    .selectYn(bomCreateDto.getSelectYn())
                     .build();
             bomPartRepo.save(bomPart);
             return new BomPartDto(bomPart);

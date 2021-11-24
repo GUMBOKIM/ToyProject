@@ -9,13 +9,11 @@ public class BomPartDto {
     private String companyCode;
     private String bwCode;
     private int amount;
-    private String selectYn;
 
     public BomPartDto(BomPart bomPart) {
         Part part = bomPart.getPart();
         this.companyCode = part.getCompany().getCompanyCode();
         this.bwCode = part.getBwCode();
         this.amount = bomPart.getAmount();
-        this.selectYn = bomPart.getSelectYn();
     }
 }

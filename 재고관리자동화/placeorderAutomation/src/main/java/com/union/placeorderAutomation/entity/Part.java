@@ -48,6 +48,10 @@ public class Part {
     @ColumnDefault("'N'")
     private String selectYn;
 
+    @Column(length = 1)
+    @ColumnDefault("'N'")
+    private String useYn;
+
     @OneToMany(fetch = FetchType.LAZY)
     private List<BomPart> bomParts;
 

@@ -40,7 +40,10 @@ public class OutgoingService {
         for(Part part : findPartList){
             String bwCode = part.getBwCode();
             if(partInvenMap.containsKey(bwCode)){
-                partInvenResult.put(bwCode, partInvenMap.get(bwCode));
+                PartInventoryDto partInventoryDto = partInvenMap.get(bwCode);
+                partInventoryDto.setSpCode(part.getSpCode());
+                partInventoryDto.setLoadAmount(part.getLoadAmount());
+                partInvenResult.put(bwCode, partInventoryDto);
             }
         }
 
@@ -85,7 +88,10 @@ public class OutgoingService {
         for(Part part : findPartList){
             String bwCode = part.getBwCode();
             if(partInvenMap.containsKey(bwCode)){
-                partInvenResult.add(partInvenMap.get(bwCode));
+                PartInventoryDto partInventoryDto = partInvenMap.get(bwCode);
+                partInventoryDto.setSpCode(part.getSpCode());
+                partInventoryDto.setLoadAmount(part.getLoadAmount());
+                partInvenResult.add(partInventoryDto);
             }
         }
         return partInvenResult;

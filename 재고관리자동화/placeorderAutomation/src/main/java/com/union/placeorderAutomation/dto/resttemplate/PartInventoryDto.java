@@ -16,5 +16,7 @@ public class PartInventoryDto {
     private int lotMin;
     private int lotMax;
 
+    private String spCode;
     private int usage = 0;
+    private int loadAmount = 0;
 }

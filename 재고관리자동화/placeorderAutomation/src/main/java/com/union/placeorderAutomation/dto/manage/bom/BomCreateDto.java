@@ -8,5 +8,4 @@ public class BomCreateDto {
     private String bomBwCode;
     private String partBwCode;
     private int usage;
-    private String selectYn;
 }

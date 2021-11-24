@@ -156,7 +156,6 @@
                                     tr.innerHTML = `<td>` + companyName + `</td>`
                                         + `<td>` + bomPart.bwCode + `</td>`
                                         + `<td>` + bomPart.amount + `</td>`
-                                        + `<td>` + bomPart.selectYn + `</td>`
                                         + `<td><button type="button" onclick="clickBomPartDeleteButton(this)" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button></td>`
                                     tbody.append(tr);
                                 }
@@ -188,10 +187,8 @@
                                     let td3 = document.createElement("td");
                                     td3.innerHTML = `<input name="usage" type="text" class="form-control">`;
                                     let td4 = document.createElement("td");
-                                    td4.innerHTML = `<input name="selectYn" type="text" class="form-control">`;
-                                    let td5 = document.createElement("td");
-                                    td5.innerHTML = `<button type="button" class="btn btn-success btn-sm" onclick="createBomPart(this)"><i class="fas fa-check"></i></button>`;
-                                    tr.append(td1, td2, td3, td4, td5);
+                                    td4.innerHTML = `<button type="button" class="btn btn-success btn-sm" onclick="createBomPart(this)"><i class="fas fa-check"></i></button>`;
+                                    tr.append(td1, td2, td3, td4);
                                     tbody.insertBefore(tr, tbody.firstChild);
                                 }
                             }
@@ -241,7 +238,6 @@
                                     <th class="col-2">회사</th>
                                     <th class="col-2">부품 코드</th>
                                     <th class="col-1">USAGE</th>
-                                    <th class="col-1">선택품</th>
                                     <th class="col-1">
                                         <button type="button" class="btn btn-primary btn-sm"
                                                 onclick="clickBomPartCreateButton()"><i class="fas fa-plus"></i>

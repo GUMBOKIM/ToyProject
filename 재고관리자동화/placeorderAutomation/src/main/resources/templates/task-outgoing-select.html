@@ -84,7 +84,9 @@
                             <th class="col-1">전산 재고</th>
                             <th class="col-1">적입량</th>
                             <th class="col-1">입고량</th>
-                            <th class="col-1"></th>
+                            <th class="col-1">
+                                <button type="button" id="sendButton" class="btn btn-danger btn-sm" style="visibility:hidden;" onclick="sendOrder()">등록</button>
+                            </th>
                         </tr>
                         </thead>
                         <tbody id="findInventoryTbody">
@@ -94,11 +96,9 @@
                 </div>
 
                 <script>
-                    let companyCode;
-                    let plantCode;
-                    let date;
-                    let orderSeq;
-                    let time;
+                    let orderInfo = {};
+                    let partList = new Array();
+
                     window.onload = function () {
                         let today = new Date();
                         let year = today.getFullYear();
@@ -109,37 +109,51 @@
                     }
 
                     async function clickConfirmButton() {
-                        companyCode = findElementValue("companySelect");
-                        plantCode = findElementValue("plantSelect");
-                        date = findElementValue("dateInput");
-                        orderSeq = findElementValue("orderInput");
-                        time = findElementValue("timeInput");
+                        orderInfo.companyCode = findElementValue("companySelect");
+                        orderInfo.plantCode = findElementValue("plantSelect");
+                        orderInfo.date = findElementValue("dateInput");
+                        orderInfo.orderSeq = findElementValue("orderInput") * 1;
+                        orderInfo.time = findElementValue("timeInput");
 
-                        if (companyCode != "" && plantCode != "" && date != "" && orderSeq != "" && time != "") {
-                            if (await checkOrderHistory(companyCode, plantCode, date, orderSeq)) {
-                                const url = "/api/task/outgoing/inquire-select/" + companyCode + "/" + plantCode;
+
+                        if (orderInfo.companyCode != "" && orderInfo.plantCode != "" && orderInfo.date.length == 8
+                            && orderInfo.orderSeq != "" && orderInfo.time.length == 5) {
+                            if (await checkOrderHistory(orderInfo)) {
+                                disableElement("companySelect");
+                                disableElement("plantSelect");
+                                disableElement("dateInput");
+                                disableElement("orderInput");
+                                disableElement("timeInput");
+                                disableElement("createButton");
+                                visibleElement("sendButton");
+
+                                const url = "/api/task/outgoing/inquire-select/"
+                                    + orderInfo.companyCode
+                                    + "/" + orderInfo.plantCode;
                                 let response = await fetch(url);
                                 if (response.status == 200) {
                                     let data = await response.json();
                                     createInventoryTable(data);
                                     console.log(data);
                                 }
-                            } else {
-                                const url = "/api/common/company-order/" + companyCode + "/" + plantCode + "/" + date;
-                                orderSeq = orderSeq * 1;
-                                let response = await fetch(url);
-                                let message = "납품 차수가 존재 합니다. " + "현재 가능한 차수는 \n";
-                                if (response.status == 200) {
-                                    let availableOrder = await response.json();
-                                    for (let i = 0; i < availableOrder.length; i++) {
-                                        message += availableOrder[i] + "차 \n";
-                                    }
-                                }
-                                alert(message);
                             }
                         } else {
                             alert("입력을 확인해주세요")
                         }
+                    }
+
+                    async function sendOrder(){
+                        let table = document.getElementById("findInventoryTable");
+                        removeAllNode(table);
+                        orderInfo.partList = partList;
+                        const url = "/api/task/outgoing/submit"
+                        let response = await fetch(url, {
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            method: "POST",
+                            body: JSON.stringify(orderInfo)
+                        });
                     }
 
                     function createInventoryTable(data) {
@@ -149,6 +163,10 @@
                         for (let i = 0; i < data.length; i++) {
                             let temp = data[i]
                             let tr = document.createElement("tr");
+                            let calInputAmount = temp.lotMax - temp.stockQTY;
+                            if (calInputAmount < 0) {
+                                calInputAmount = 0;
+                            }
                             tr.innerHTML = `<td>` + temp.partBwCode + `</td>`
                                 + `<td>` + temp.spCode + `</td>`
                                 + `<td>` + temp.rop + `</td>`
@@ -156,13 +174,23 @@
                                 + `<td>` + temp.lotMax + `</td>`
                                 + `<td>` + temp.stockQTY + `</td>`
                                 + `<td>` + temp.loadAmount + `</td>`
-                                + `<td>` + `</td>`
-                                + `<td>` + `</td>`
-
+                                + `<td>` + `<div class="input-group"><input type="text" class="form-control" placeholder="수량" value="` + calInputAmount + `"></div>` + `</td>`
+                                + `<td>` + `<button type="button" class="btn btn-success btn-sm" onclick="enrollPart(this)"><i class="fas fa-check"></i></button>` + `</td>`
                             tbody.append(tr);
                         }
                     }
 
+                    function enrollPart(element) {
+                        let tr = element.parentNode.parentNode;
+                        let tdList = tr.childNodes;
+                        let bwCode = tdList[0].innerText;
+                        let amount = tdList[7].childNodes[0].childNodes[0].value * 1
+                        if (amount > 0) {
+                            partList.push({bwCode, amount});
+                        }
+                        tdList[7].childNodes[0].childNodes[0].disabled = true;
+                        tdList[8].childNodes[0].disabled = true;
+                    }
                 </script>
             </div>
             <!-- /.container-fluid -->

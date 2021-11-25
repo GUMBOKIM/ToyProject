@@ -52,12 +52,15 @@
                         <thead>
                         <tr>
                             <th class="col-1">회사</th>
-                            <th class="col-2">보그워너 코드</th>
+                            <th class="col-1">보그워너 코드</th>
+                            <th class="col-1">입고처리 코드</th>
                             <th class="col-2">이름</th>
-                            <th class="col-2">공급업체 코드</th>
-                            <th class="col-2">발주 번호</th>
+                            <th class="col-1">공급업체 코드</th>
+                            <th class="col-1">발주 번호</th>
                             <th class="col-1">적입량</th>
                             <th class="col-1">위치</th>
+                            <th class="col-1">선택품</th>
+                            <th class="col-1">사용여부</th>
                             <th class="col-1"></th>
                             <th class="col-1">
                                 <button type="button" class="btn btn-primary btn-sm" onclick="clickAddButton()"><i
@@ -70,11 +73,14 @@
                         <tr th:each="part : ${partList}">
                             <td th:text="${part.companyName}"></td>
                             <td th:text="${part.bwCode}"></td>
+                            <td th:text="${part.inventoryBwCode}"></td>
                             <td th:text="${part.partName}"></td>
                             <td th:text="${part.spCode}"></td>
                             <td th:text="${part.poCode}"></td>
                             <td th:text="${part.loadAmount}"></td>
                             <td th:text="${part.location}"></td>
+                            <td th:text="${part.selectYn}"></td>
+                            <td th:text="${part.useYn}"></td>
                             <td>
                                 <button type="button" class="btn btn-info btn-sm" onclick="clickModifyButton(this)">
                                     <i class="far fa-edit"></i>
@@ -160,12 +166,18 @@
         td6.innerHTML = `<input type="text" class="form-control">`;
         let td7 = document.createElement("td");
         td7.innerHTML = `<input type="text" class="form-control">`;
-        tr.append(td1, td2, td3, td4, td5, td6, td7);
-
+        let td8= document.createElement("td");
+        td8.innerHTML = `<input type="text" class="form-control">`;
         let td9 = document.createElement("td");
+        td9.innerHTML = `<input type="text" class="form-control">`;
         let td10 = document.createElement("td");
-        td10.innerHTML = `<button type="button" class="btn btn-success btn-sm" onclick="addPart()"><i class="fas fa-check"></i></button>`
-        tr.append(td9, td10);
+        td10.innerHTML = `<input type="text" class="form-control">`;
+        tr.append(td1, td2, td3, td4, td5, td6, td7, td8, td9,td10);
+
+        let td11 = document.createElement("td");
+        let td12 = document.createElement("td");
+        td12.innerHTML = `<button type="button" class="btn btn-success btn-sm" onclick="addPart()"><i class="fas fa-check"></i></button>`
+        tr.append(td11, td12);
         tbody.insertBefore(tr, tbody.firstChild);
     }
 
@@ -175,11 +187,14 @@
         let result = {
             companyCode: sel.options[sel.selectedIndex].value,
             bwCode: tdList[1].childNodes[0].value,
-            partName: tdList[2].childNodes[0].value,
-            spCode: tdList[3].childNodes[0].value,
-            poCode: tdList[4].childNodes[0].value,
-            loadAmount: parseInt(tdList[5].childNodes[0].value),
-            location: tdList[6].childNodes[0].value,
+            inventoryBwCode : tdList[2].childNodes[0].value,
+            partName: tdList[3].childNodes[0].value,
+            spCode: tdList[4].childNodes[0].value,
+            poCode: tdList[5].childNodes[0].value,
+            loadAmount: parseInt(tdList[6].childNodes[0].value),
+            location: tdList[7].childNodes[0].value,
+            selectYn: tdList[8].childNodes[0].value,
+            useYn: tdList[9].childNodes[0].value,
         }
         console.log(result);
 
@@ -228,12 +243,18 @@
         td7.innerHTML = `<input type="text" class="form-control">`;
         let td8 = document.createElement("td");
         td8.innerHTML = `<input type="text" class="form-control">`;
-        tr.append(td1, td2, td3, td4, td5, td7, td8);
-
         let td9 = document.createElement("td");
+        td9.innerHTML = `<input type="text" class="form-control">`;
         let td10 = document.createElement("td");
-        td10.innerHTML = `<button type="button" class="btn btn-success btn-sm" onclick="modifyPart()"><i class="fas fa-check"></i></button>`
-        tr.append(td9, td10);
+        td10.innerHTML = `<input type="text" class="form-control">`;
+        let td11 = document.createElement("td");
+        td11.innerHTML = `<input type="text" class="form-control">`;
+        tr.append(td1, td2, td3, td4, td5, td7, td8, td9, td10, td11);
+
+        let td12 = document.createElement("td");
+        let td13 = document.createElement("td");
+        td13.innerHTML = `<button type="button" class="btn btn-success btn-sm" onclick="modifyPart()"><i class="fas fa-check"></i></button>`
+        tr.append(td12, td13);
 
     }
 
@@ -244,11 +265,14 @@
         let result = {
             companyCode: sel.options[sel.selectedIndex].value,
             bwCode : tdList[1].innerText,
-            partName: tdList[2].childNodes[0].value,
-            spCode: tdList[3].childNodes[0].value,
-            poCode: tdList[4].childNodes[0].value,
-            loadAmount: parseInt(tdList[5].childNodes[0].value),
-            location: tdList[6].childNodes[0].value
+            inventoryBwCode : tdList[2].childNodes[0].value,
+            partName: tdList[3].childNodes[0].value,
+            spCode: tdList[4].childNodes[0].value,
+            poCode: tdList[5].childNodes[0].value,
+            loadAmount: parseInt(tdList[6].childNodes[0].value),
+            location: tdList[7].childNodes[0].value,
+            selectYn: tdList[8].childNodes[0].value,
+            useYn: tdList[9].childNodes[0].value,
         }
         const url = "/api/manage/part";
         fetch(url, {

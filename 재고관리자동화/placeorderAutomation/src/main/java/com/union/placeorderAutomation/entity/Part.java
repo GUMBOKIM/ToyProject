@@ -21,6 +21,9 @@ public class Part {
     @Column(unique = true, nullable = false)
     private String bwCode;
 
+    @Column
+    private String inventoryBwCode;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "companyId", nullable = false)
     private Company company;

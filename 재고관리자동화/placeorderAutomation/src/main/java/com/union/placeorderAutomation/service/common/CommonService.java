@@ -1,6 +1,7 @@
 package com.union.placeorderAutomation.service.common;
 
 import com.union.placeorderAutomation.dto.common.CompanyListDto;
+import com.union.placeorderAutomation.dto.common.OrderHistoryDto;
 import com.union.placeorderAutomation.dto.common.PlantDto;
 import com.union.placeorderAutomation.entity.Company;
 import com.union.placeorderAutomation.entity.OrderHistory;
@@ -28,10 +29,10 @@ public class CommonService {
     private List<PlantDto> plantList;
 
     @Transactional(readOnly = true)
-    public List<Integer> findCompanyOrderHistoryList(String companyCode, String plantCode, String date){
-        Company company = Company.builder().companyCode(companyCode).build();
-        Plant plant = Plant.builder().plantCode(plantCode).build();
-        List<Integer> findOrderHistory = orderHistoryRepo.findOrderHistory(company, plant, date);
+    public List<Integer> findCompanyOrderHistoryList(OrderHistoryDto orderHistoryDto){
+        Company company = Company.builder().companyCode(orderHistoryDto.getCompanyCode()).build();
+        Plant plant = Plant.builder().plantCode(orderHistoryDto.getPlantCode()).build();
+        List<Integer> findOrderHistory = orderHistoryRepo.findOrderHistory(company, plant, orderHistoryDto.getDate());
 
         List<Integer> result = new ArrayList<>();
         for (int i = 1; i <= 20; i++) {
@@ -43,14 +44,15 @@ public class CommonService {
         return result;
     }
 
-    public void addCompanyOrderHistory(String companyCode, String plantCode, String date, int orderSeq){
-        Company company = Company.builder().companyCode(companyCode).build();
-        Plant plant = Plant.builder().plantCode(plantCode).build();
+    public void addCompanyOrderHistory(OrderHistoryDto orderHistoryDto){
+        Company company = Company.builder().companyCode(orderHistoryDto.getCompanyCode()).build();
+        Plant plant = Plant.builder().plantCode(orderHistoryDto.getPlantCode()).build();
         OrderHistory orderHistory = OrderHistory.builder()
                 .company(company)
                 .plant(plant)
-                .orderSeq(orderSeq)
-                .date(date)
+                .orderSeq(orderHistoryDto.getOrderSeq())
+                .date(orderHistoryDto.getDate())
+                .time(orderHistoryDto.getTime())
                 .build();
         orderHistoryRepo.save(orderHistory);
     }

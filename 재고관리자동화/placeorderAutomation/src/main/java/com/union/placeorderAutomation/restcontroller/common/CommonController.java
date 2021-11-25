@@ -1,6 +1,7 @@
 package com.union.placeorderAutomation.restcontroller.common;
 
 import com.union.placeorderAutomation.dto.common.CompanyListDto;
+import com.union.placeorderAutomation.dto.common.OrderHistoryDto;
 import com.union.placeorderAutomation.service.common.CommonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,20 +23,15 @@ public class CommonController {
         return new ResponseEntity(companyList, HttpStatus.OK);
     }
 
-    @GetMapping("/company-order/{companyCode}/{plantCode}/{date}")
-    public ResponseEntity getOrderHistory(@PathVariable String companyCode,
-                                          @PathVariable String plantCode,
-                                          @PathVariable String date) {
-        List<Integer> orderList = commonService.findCompanyOrderHistoryList(companyCode, plantCode, date);
+    @PostMapping("/company-order/check")
+    public ResponseEntity findOrderHistory(@RequestBody OrderHistoryDto orderHistoryDto) {
+        List<Integer> orderList = commonService.findCompanyOrderHistoryList(orderHistoryDto);
         return new ResponseEntity(orderList, HttpStatus.OK);
     }
 
-    @PostMapping("/company-order/{companyCode}/{plantCode}/{date}/{orderSeq}")
-    public ResponseEntity saveOrderHistory(@PathVariable String companyCode,
-                                           @PathVariable String plantCode,
-                                           @PathVariable String date,
-                                           @PathVariable int orderSeq) {
-        commonService.addCompanyOrderHistory(companyCode, plantCode, date, orderSeq);
+    @PostMapping("/company-order/save")
+    public ResponseEntity saveOrderHistory(@RequestBody OrderHistoryDto orderHistoryDto) {
+        commonService.addCompanyOrderHistory(orderHistoryDto);
         return new ResponseEntity(HttpStatus.OK);
     }
 

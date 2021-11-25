@@ -1,5 +1,6 @@
 package com.union.placeorderAutomation.service.task;
 
+import com.union.placeorderAutomation.dto.common.OrderHistoryDto;
 import com.union.placeorderAutomation.dto.resttemplate.CreateDeliveryDto;
 import com.union.placeorderAutomation.dto.resttemplate.PartInventoryDto;
 import com.union.placeorderAutomation.dto.resttemplate.ProductPlanDto;
@@ -9,13 +10,13 @@ import com.union.placeorderAutomation.repository.BomRepository;
 import com.union.placeorderAutomation.repository.PartInventoryRepository;
 import com.union.placeorderAutomation.repository.PartLogRepository;
 import com.union.placeorderAutomation.repository.PartRepository;
+import com.union.placeorderAutomation.service.common.CommonService;
+import com.union.placeorderAutomation.service.common.PartLogService;
 import com.union.placeorderAutomation.service.resttemplate.RestTemplateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,20 +27,22 @@ import java.util.List;
 public class OutgoingService {
 
     private final RestTemplateService restTemplateService;
+    private final CommonService commonService;
+    private final PartLogService partLogService;
     private final BomRepository bomRepo;
     private final PartRepository partRepo;
     private final PartInventoryRepository partInventoryRepo;
-    private final PartLogRepository partLogRepository;
 
+    //일반 납품
     @Transactional(readOnly = true)
     public List<ProductPlanDto> findPlanAndInventory(String companyCode, String plantCode) {
         // 재고 찾기(공장) -> 회사 전체 부품으로 걸러냄
         HashMap<String, PartInventoryDto> partInvenMap = restTemplateService.getPartInventory(companyCode, plantCode);
         List<Part> findPartList = partRepo.findPartByCompany(companyCode);
         HashMap<String, PartInventoryDto> partInvenResult = new HashMap<>();
-        for(Part part : findPartList){
+        for (Part part : findPartList) {
             String bwCode = part.getBwCode();
-            if(partInvenMap.containsKey(bwCode)){
+            if (partInvenMap.containsKey(bwCode)) {
                 PartInventoryDto partInventoryDto = partInvenMap.get(bwCode);
                 partInventoryDto.setSpCode(part.getSpCode());
                 partInventoryDto.setLoadAmount(part.getLoadAmount());
@@ -55,17 +58,17 @@ public class OutgoingService {
         // 회사 제품이 들어간 BOM 필터링
         List<Bom> findBomList = bomRepo.findByCompanyCode(Company.builder().companyCode(companyCode).build());
         List<ProductPlanDto> planBomResult = new ArrayList<>();
-        for (Bom bom : findBomList){
+        for (Bom bom : findBomList) {
             String bomBwCode = bom.getBwCode();
-            if(planBomMap.containsKey(bomBwCode)){
+            if (planBomMap.containsKey(bomBwCode)) {
                 ProductPlanDto productPlanDto = planBomMap.get(bomBwCode);
                 List<BomPart> bomParts = bom.getBomParts();
                 List<PartInventoryDto> partInventory = new ArrayList<>();
-                for(BomPart bomPart : bomParts){
+                for (BomPart bomPart : bomParts) {
                     String partBwCode = bomPart.getPart().getBwCode();
                     int usage = bomPart.getAmount();
 
-                    if(partInvenResult.containsKey(partBwCode)){
+                    if (partInvenResult.containsKey(partBwCode)) {
                         PartInventoryDto partInventoryDto = partInvenResult.get(partBwCode);
                         partInventoryDto.setUsage(usage);
                         partInventory.add(partInventoryDto);
@@ -79,15 +82,16 @@ public class OutgoingService {
         return planBomResult;
     }
 
+    //선택품 찾기
     @Transactional(readOnly = true)
     public List<PartInventoryDto> findSelectPartInventory(String companyCode, String plantCode) {
         // 재고 찾기(공장) -> 회사 전체 부품으로 걸러냄
         HashMap<String, PartInventoryDto> partInvenMap = restTemplateService.getPartInventory(companyCode, plantCode);
         List<Part> findPartList = partRepo.findSelectPartByCompany(companyCode);
         List<PartInventoryDto> partInvenResult = new ArrayList<>();
-        for(Part part : findPartList){
+        for (Part part : findPartList) {
             String bwCode = part.getBwCode();
-            if(partInvenMap.containsKey(bwCode)){
+            if (partInvenMap.containsKey(bwCode)) {
                 PartInventoryDto partInventoryDto = partInvenMap.get(bwCode);
                 partInventoryDto.setSpCode(part.getSpCode());
                 partInventoryDto.setLoadAmount(part.getLoadAmount());
@@ -97,82 +101,69 @@ public class OutgoingService {
         return partInvenResult;
     }
 
-    public List<CreateDeliveryDto> submitInventory(OutgoingSubmitDto submitDto) {
+    public List<CreateDeliveryDto> submitPart(OutgoingSubmitDto submitDto) {
         List<CreateDeliveryDto> deliveryList = createDeliveryCard(submitDto);
-        restTemplateService.createDeliveryCard(submitDto.getCompanyCode(),
-                submitDto.getPlantCode(),
-                submitDto.getDate(),
-                submitDto.getTime(),
-                deliveryList
-        );
-        restTemplateService.registryDelivery(submitDto.getCompanyCode(),
-                submitDto.getPlantCode(),
-                submitDto.getDate(),
-                submitDto.getTime(),
-                deliveryList
-        );
+        submitDto.setPartList(null);
+        restTemplateService.createDeliveryCard(submitDto, deliveryList);
+        restTemplateService.registryDelivery(submitDto, deliveryList);
+        partLogService.createOutcomeLogs(submitDto, deliveryList);
 
+        commonService.addCompanyOrderHistory(
+                OrderHistoryDto.builder()
+                        .orderSeq(submitDto.getOrderSeq())
+                        .date(submitDto.getDate())
+                        .time(submitDto.getTime())
+                        .plantCode(submitDto.getPlantCode())
+                        .companyCode(submitDto.getCompanyCode())
+                        .build()
+        );
         return deliveryList;
     }
 
     private List<CreateDeliveryDto> createDeliveryCard(OutgoingSubmitDto submitDto) {
         List<CreateDeliveryDto> result = new ArrayList<>();
-        LocalDateTime date = LocalDate.parse(submitDto.getDate()).atStartOfDay();
         submitDto.getPartList().forEach(part -> {
             int amount = part.getAmount();
             List<CreateDeliveryDto> temp = new ArrayList<>();
-            List<PartInventory> inventoryList = partInventoryRepo.findInventoryListByPartBwCode(part.getBwCode());
-            for (PartInventory inventory : inventoryList) {
-                Part p = inventory.getPart();
-                if (amount > inventory.getStock()) {
-                    amount -= inventory.getStock();
-                    temp.add(
-                            CreateDeliveryDto
-                                    .builder()
-                                    .bwCode(p.getBwCode())
-                                    .partName(p.getPartName())
-                                    .poCode(p.getPoCode())
-                                    .lot(inventory.getLot())
-                                    .loadAmount(p.getLoadAmount())
-                                    .boxQuantity(inventory.getStock() / p.getLoadAmount())
-                                    .location(p.getLocation())
-                                    .build()
-                    );
-                    PartLog partLog = PartLog.builder()
-                            .part(inventory.getPart())
-                            .build();
-                    partLogRepository.save(partLog);
-
-                    inventory.setStock(0);
-                    partInventoryRepo.save(inventory);
-                } else {
-                    temp.add(
-                            CreateDeliveryDto
-                                    .builder()
-                                    .bwCode(p.getBwCode())
-                                    .partName(p.getPartName())
-                                    .poCode(p.getPoCode())
-                                    .lot(inventory.getLot())
-                                    .loadAmount(p.getLoadAmount())
-                                    .boxQuantity(amount / p.getLoadAmount())
-                                    .location(p.getLocation())
-                                    .build()
-                    );
-                    PartLog partLog = PartLog.builder()
-                            .part(inventory.getPart())
-                            .build();
-                    partLogRepository.save(partLog);
-
-                    inventory.setStock(inventory.getStock() - amount);
-                    partInventoryRepo.save(inventory);
-                    amount = 0;
+            // 총 수량 >= 납품 양
+            if (amount <= partInventoryRepo.sumPartStock(part.getBwCode())) {
+                List<PartInventory> inventoryList = partInventoryRepo.findInventoryListByPartBwCode(part.getBwCode());
+                for (PartInventory inventory : inventoryList) {
+                    Part p = inventory.getPart();
+                    if (amount > inventory.getStock()) {
+                        amount -= inventory.getStock();
+                        temp.add(
+                                CreateDeliveryDto
+                                        .builder()
+                                        .bwCode(p.getBwCode())
+                                        .partName(p.getPartName())
+                                        .inventoryBwCode(p.getInventoryBwCode())
+                                        .poCode(p.getPoCode())
+                                        .lot(inventory.getLot())
+                                        .loadAmount(p.getLoadAmount())
+                                        .location(p.getLocation())
+                                        .build()
+                        );
+                        inventory.setStock(0);
+                        partInventoryRepo.save(inventory);
+                    } else {
+                        temp.add(
+                                CreateDeliveryDto
+                                        .builder()
+                                        .bwCode(p.getBwCode())
+                                        .partName(p.getPartName())
+                                        .poCode(p.getPoCode())
+                                        .lot(inventory.getLot())
+                                        .loadAmount(p.getLoadAmount())
+                                        .location(p.getLocation())
+                                        .build()
+                        );
+                        inventory.setStock(inventory.getStock() - amount);
+                        partInventoryRepo.save(inventory);
+                        result.addAll(temp);
+                        break;
+                    }
                 }
-                if (amount == 0) {
-                    break;
-                }
-            }
-            if (amount == 0) {
-                result.addAll(temp);
             }
         });
         return result;

@@ -3,6 +3,7 @@ package com.union.placeorderAutomation.service.resttemplate;
 import com.union.placeorderAutomation.dto.resttemplate.CreateDeliveryDto;
 import com.union.placeorderAutomation.dto.resttemplate.PartInventoryDto;
 import com.union.placeorderAutomation.dto.resttemplate.ProductPlanDto;
+import com.union.placeorderAutomation.dto.task.outgoing.OutgoingSubmitDto;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -20,58 +21,21 @@ import java.util.regex.Pattern;
 @Service
 public class RestTemplateService {
 
-
-    public void createDeliveryCardManual(String companyCode, String plantCode, String date, String seqNo, List<CreateDeliveryDto> deliveryList) {
+    //납품 등록
+    public void createDeliveryCard(OutgoingSubmitDto submitDto, List<CreateDeliveryDto> deliveryList) {
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
-        setHeaderDeliveryCard(companyCode, httpHeaders);
+        setHeaderDeliveryCard(submitDto.getCompanyCode(), httpHeaders);
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("p_companycd", "00");
         body.add("p_dml_gubun", "1");
-        body.add("p_vendcd", companyCode);
-        body.add("p_plant", plantCode);
-        body.add("p_sno", seqNo);
+        body.add("p_vendcd", submitDto.getCompanyCode());
+        body.add("p_plant", submitDto.getPlantCode());
+        body.add("p_sno", Integer.toString(submitDto.getOrderSeq()));
         body.add("P_descr", deliveryList.size() + " 품목");
-        body.add("p_income_date", date.replace("-", ""));//20210201 양식
-
-        deliveryList.forEach(delivery -> {
-            body.add("p_partno", delivery.getBwCode());
-            body.add("p_partnm", delivery.getPartName());
-            body.add("p_order_no", delivery.getPoCode());
-            body.add("p_lotno", delivery.getLot());
-            body.add("p_qty", Integer.toString(delivery.getLoadAmount() * delivery.getBoxQuantity()));
-            body.add("p_qty_per_box", Integer.toString(delivery.getLoadAmount()));
-            body.add("p_qty_box", Integer.toString(delivery.getBoxQuantity()));
-            body.add("p_remarks", delivery.getLocation());
-        });
-
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, httpHeaders);
-
-        String url = "https://es-qms.borgwarner.com/qms/kqis91101.process";
-        ResponseEntity<String> response = restTemplate.exchange(
-                url,
-                HttpMethod.POST,
-                request,
-                String.class
-        );
-    }
-
-    public void createDeliveryCard(String companyCode, String plantCode, String date, String orderSeq, List<CreateDeliveryDto> deliveryList) {
-
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders httpHeaders = new HttpHeaders();
-        setHeaderDeliveryCard(companyCode, httpHeaders);
-
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("p_companycd", "00");
-        body.add("p_dml_gubun", "1");
-        body.add("p_vendcd", companyCode);
-        body.add("p_plant", plantCode);
-        body.add("p_sno", orderSeq);
-        body.add("P_descr", deliveryList.size() + " 품목");
-        body.add("p_income_date", date);//20210201 양식
+        body.add("p_income_date", submitDto.getDate());//20210201 양식
 
         deliveryList.forEach(delivery -> {
             body.add("p_partno", delivery.getBwCode());
@@ -80,7 +44,7 @@ public class RestTemplateService {
             body.add("p_lotno", delivery.getLot());
             body.add("p_qty", Integer.toString(delivery.getQuantity()));
             body.add("p_qty_per_box", Integer.toString(delivery.getLoadAmount()));
-            body.add("p_qty_box", Integer.toString(delivery.getBoxQuantity()));
+            body.add("p_qty_box", Integer.toString(delivery.getQuantity() / delivery.getLoadAmount()));
             body.add("p_remarks", delivery.getLocation());
         });
 
@@ -95,7 +59,11 @@ public class RestTemplateService {
         );
     }
 
-    public void registryDelivery(String companyCode, String plantCode, String date, String time, List<CreateDeliveryDto> deliveryList) {
+    //재고 등록
+    public void registryDelivery(OutgoingSubmitDto submitDto, List<CreateDeliveryDto> deliveryList) {
+        String companyCode = submitDto.getCompanyCode();
+        String plantCode = submitDto.getPlantCode();
+
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("authority", "es-qms.borgwarner.com");
@@ -123,13 +91,13 @@ public class RestTemplateService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("p_companycd", "00");
         body.add("p_dml_gubun", "1");
-        body.add("p_ym", date);
+        body.add("p_ym", submitDto.getDate());
         body.add("p_vendcd", companyCode);
-        body.add("p_time", time);
+        body.add("p_time", submitDto.getTime());
 
         deliveryList.forEach(delivery -> {
 
-            body.add("p_partno", delivery.getBwCode());
+            body.add("p_partno", delivery.getInventoryBwCode());
             body.add("p_menge", Integer.toString(delivery.getQuantity()));
             body.add("p_lgpbe", delivery.getLot());
             body.add("p_barco", "Y");
@@ -141,7 +109,6 @@ public class RestTemplateService {
             }
             body.add("p_po_no", delivery.getPoCode());
         });
-
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, httpHeaders);
 
@@ -371,11 +338,6 @@ public class RestTemplateService {
         httpHeaders.set(HttpHeaders.ACCEPT_ENCODING, "gzip");
     }
 
-
-    private void setHeaderGetProductPlanning(String companyCode, String plantCode, HttpHeaders httpHeaders) {
-
-    }
-
     private void setHeaderDeliveryCard(String companyCode, HttpHeaders httpHeaders) {
         httpHeaders.set("authority", "es-qms.borgwarner.com");
         httpHeaders.set("method", "POST");
@@ -397,6 +359,5 @@ public class RestTemplateService {
         httpHeaders.set("sec-fetch-user", "?1");
         httpHeaders.set("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36");
     }
-
 
 }

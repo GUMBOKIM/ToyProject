@@ -1,12 +1,15 @@
 package com.union.placeorderAutomation.service.common;
 
 import com.union.placeorderAutomation.dto.common.CreateLogDto;
+import com.union.placeorderAutomation.dto.resttemplate.CreateDeliveryDto;
+import com.union.placeorderAutomation.dto.task.outgoing.OutgoingSubmitDto;
 import com.union.placeorderAutomation.entity.*;
 import com.union.placeorderAutomation.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Transactional
@@ -53,19 +56,22 @@ public class PartLogService {
     }
 
 
-    public void createOutcomeLogs(CreateLogDto logDto) {
-        PartLog partLog = createPartLog(logDto.getPartBwCode(), logDto.getDate());
-        Plant plant = Plant.builder().plantCode(logDto.getPlantCode()).build();
+    public void createOutcomeLogs(OutgoingSubmitDto submitDto, List<CreateDeliveryDto> deliveryList) {
+        for(CreateDeliveryDto deliveryDto : deliveryList){
+            PartLog partLog = createPartLog(deliveryDto.getBwCode(), submitDto.getDate());
+            Plant plant = Plant.builder().plantCode(submitDto.getPlantCode()).build();
+            OutcomeLog outcomeLog = OutcomeLog.builder()
+                    .partLog(partLog)
+                    .plant(plant)
+                    .orderSeq(submitDto.getOrderSeq())
+                    .lot(deliveryDto.getLot())
+                    .amount(deliveryDto.getQuantity())
+                    .build();
+            outcomeLogRepo.save(outcomeLog);
+        }
 
-        OutcomeLog outcomeLog = OutcomeLog.builder()
-                .partLog(partLog)
-                .plant(plant)
-                .orderSeq(logDto.getOrderSeq())
-                .lot(logDto.getLot())
-                .amount(logDto.getAmount())
-                .build();
-        outcomeLogRepo.save(outcomeLog);
     }
+
 
     public PartLog createPartLog(String partBwCode, String date) {
         Part part = Part.builder().bwCode(partBwCode).build();
@@ -81,4 +87,5 @@ public class PartLogService {
         }
         return partLog.get();
     }
+
 }

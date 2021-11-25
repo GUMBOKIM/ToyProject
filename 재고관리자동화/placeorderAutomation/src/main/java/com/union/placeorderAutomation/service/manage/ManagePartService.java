@@ -35,10 +35,13 @@ public class ManagePartService {
                 .company(company)
                 .partName(request.getPartName())
                 .bwCode(request.getBwCode())
+                .inventoryBwCode(request.getInventoryBwCode())
                 .spCode(request.getSpCode())
                 .poCode(request.getPoCode())
                 .loadAmount(request.getLoadAmount())
                 .location(request.getLocation())
+                .selectYn(request.getSelectYn())
+                .useYn(request.getUseYn())
                 .build();
         partRepo.save(part);
         return new PartResDto(part);
@@ -52,10 +55,13 @@ public class ManagePartService {
                 .company(company)
                 .partName(request.getPartName())
                 .bwCode(request.getBwCode())
+                .inventoryBwCode(request.getInventoryBwCode())
                 .spCode(request.getSpCode())
                 .poCode(request.getPoCode())
                 .loadAmount(request.getLoadAmount())
                 .location(request.getLocation())
+                .selectYn(request.getSelectYn())
+                .useYn(request.getUseYn())
                 .build();
         partRepo.save(part);
     }

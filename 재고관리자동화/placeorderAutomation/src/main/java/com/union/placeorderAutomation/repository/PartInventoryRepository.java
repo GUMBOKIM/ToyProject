@@ -39,10 +39,19 @@ public interface PartInventoryRepository extends JpaRepository<PartInventory, Lo
             nativeQuery = true)
     List<Object[]> findPartStockInventoryListByCompanyCode(String companyCode);
 
+    @Query(value =
+            "SELECT SUM(STOCK)  AS STOCK " +
+                    "FROM part_inventory " +
+                    "WHERE part_id = ?1 ",
+            nativeQuery = true)
+    int sumPartStock(String bwCode);
+
     @Query(value = "SELECT * FROM part_inventory WHERE part_id = ?1 AND stock > 0 ORDER BY lot * 1 ASC", nativeQuery = true)
     List<PartInventory> findInventoryListByPartBwCode(String partBwCode);
 
     @Query(value = "SELECT * FROM part_inventory WHERE part_id = ?1 AND lot = ?2", nativeQuery = true)
     Optional<PartInventory> findByPartAndLot(String partBwCode, String lot);
+
+
 
 }

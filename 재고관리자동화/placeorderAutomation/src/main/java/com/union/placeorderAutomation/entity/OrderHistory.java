@@ -31,4 +31,7 @@ public class OrderHistory extends BaseTimeEntity{
 
     @Column
     private int orderSeq;
+
+    @Column
+    private String time;
 }

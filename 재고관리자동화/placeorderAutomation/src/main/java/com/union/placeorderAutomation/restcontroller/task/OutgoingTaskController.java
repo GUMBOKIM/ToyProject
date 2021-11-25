@@ -1,6 +1,5 @@
 package com.union.placeorderAutomation.restcontroller.task;
 
-import com.union.placeorderAutomation.dto.resttemplate.CreateDeliveryDto;
 import com.union.placeorderAutomation.dto.resttemplate.PartInventoryDto;
 import com.union.placeorderAutomation.dto.resttemplate.ProductPlanDto;
 import com.union.placeorderAutomation.dto.task.outgoing.OutgoingSubmitDto;
@@ -26,16 +25,16 @@ public class OutgoingTaskController {
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
-    @PostMapping("/submit")
-    public ResponseEntity submitInventory(@RequestBody OutgoingSubmitDto submitDto) {
-        List<CreateDeliveryDto> result = outgoingService.submitInventory(submitDto);
+    @GetMapping("/inquire-select/{companyCode}/{plantCode}")
+    public ResponseEntity inquireSelectPlanNInventory(@PathVariable String companyCode,
+                                                      @PathVariable String plantCode) {
+        List<PartInventoryDto> result = outgoingService.findSelectPartInventory(companyCode, plantCode);
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
-    @GetMapping("/inquire-select/{companyCode}/{plantCode}")
-    public ResponseEntity inquireSelectPlanNInventory(@PathVariable String companyCode,
-                                                @PathVariable String plantCode) {
-        List<PartInventoryDto> result = outgoingService.findSelectPartInventory(companyCode, plantCode);
-        return new ResponseEntity(result, HttpStatus.OK);
+    @PostMapping("/submit")
+    public ResponseEntity submitPartList(@RequestBody OutgoingSubmitDto request) {
+        outgoingService.submitPart(request);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

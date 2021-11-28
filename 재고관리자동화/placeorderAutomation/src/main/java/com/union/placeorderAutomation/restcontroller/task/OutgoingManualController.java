@@ -1,6 +1,5 @@
 package com.union.placeorderAutomation.restcontroller.task;
 
-import com.union.placeorderAutomation.dto.common.OrderHistoryDto;
 import com.union.placeorderAutomation.dto.resttemplate.CreateDeliveryDto;
 import com.union.placeorderAutomation.dto.task.outgoing.OutgoingManualDto;
 import com.union.placeorderAutomation.dto.task.outgoing.OutgoingSubmitDto;
@@ -21,18 +20,16 @@ import java.util.List;
 public class OutgoingManualController {
 
     private final RestTemplateService restTemplateService;
-    private final CommonService commonService;
     private final PartLogService partLogService;
 
     @PostMapping("")
     public ResponseEntity outgoingManual(@RequestBody OutgoingManualDto request) {
-        System.out.println("request = " + request);
         List<CreateDeliveryDto> deliveryList = Arrays.asList(request.getDeliveryList());
         OutgoingSubmitDto submitDto = OutgoingSubmitDto.builder()
                 .companyCode(request.getCompanyCode())
                 .plantCode(request.getPlantCode())
                 .date(request.getDate())
-                .orderSeq(10)
+                .orderSeq(Integer.parseInt(request.getSeqNo()))
                 .time(request.getTime())
                 .build();
         restTemplateService.createDeliveryCard(
@@ -43,18 +40,7 @@ public class OutgoingManualController {
                 submitDto,
                 deliveryList);
         partLogService.createOutcomeLogs(submitDto, deliveryList);
-
-        commonService.addCompanyOrderHistory(
-                OrderHistoryDto.builder()
-                        .orderSeq(submitDto.getOrderSeq())
-                        .date(submitDto.getDate())
-                        .time(submitDto.getTime())
-                        .plantCode(submitDto.getPlantCode())
-                        .companyCode(submitDto.getCompanyCode())
-                        .build()
-        );
-
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(deliveryList, HttpStatus.OK);
     }
 
     @GetMapping("/{companyCode}/{date}/{plantCode}")

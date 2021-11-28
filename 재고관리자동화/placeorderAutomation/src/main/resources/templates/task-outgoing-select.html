@@ -85,7 +85,7 @@
                             <th class="col-1">적입량</th>
                             <th class="col-1">입고량</th>
                             <th class="col-1">
-                                <button type="button" id="sendButton" class="btn btn-danger btn-sm" style="visibility:hidden;" onclick="sendOrder()">등록</button>
+                                <button type="button" id="sendButton" class="btn btn-danger btn-sm" style="visibility:hidden;" onclick="clickEnrollButton()">등록</button>
                             </th>
                         </tr>
                         </thead>
@@ -93,6 +93,40 @@
                         </tbody>
                     </table>
 
+                </div>
+
+                <div class="row justify-content-center mb-3" style="visibility: hidden;" id="submitTableRow">
+                    <table class="table col-4">
+                        <thead>
+                        <tr>
+                            <th class="col-2">보그워너 코드</th>
+                            <th class="col-1">수량</th>
+                            <th class="col-1">
+                                <button type="button" id="submitButton" class="btn btn-danger btn-sm"
+                                        onclick="clickSubmitButton()">등록
+                                </button>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody id="submitTbody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row justify-content-center mb-3" style="visibility: hidden;" id="resultTableRow">
+                    <table class="table col-6">
+                        <thead>
+                        <tr>
+                            <th class="col-2">보그워너 코드</th>
+                            <th class="col-1">로트</th>
+                            <th class="col-1">적입량</th>
+                            <th class="col-1">수량</th>
+                            <th class="col-1">박스수</th>
+                        </tr>
+                        </thead>
+                        <tbody id="resultTbody">
+                        </tbody>
+                    </table>
                 </div>
 
                 <script>
@@ -142,20 +176,6 @@
                         }
                     }
 
-                    async function sendOrder(){
-                        let table = document.getElementById("findInventoryTable");
-                        removeAllNode(table);
-                        orderInfo.partList = partList;
-                        const url = "/api/task/outgoing/submit"
-                        let response = await fetch(url, {
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            method: "POST",
-                            body: JSON.stringify(orderInfo)
-                        });
-                    }
-
                     function createInventoryTable(data) {
                         let tbody = document.getElementById("findInventoryTbody");
                         removeChildNode(tbody);
@@ -187,9 +207,66 @@
                         let amount = tdList[7].childNodes[0].childNodes[0].value * 1
                         if (amount > 0) {
                             partList.push({bwCode, amount});
+                            tdList[7].childNodes[0].childNodes[0].disabled = true;
+                            tdList[8].childNodes[0].disabled = true;
+                        } else{
+                            alert("수량을 다시 입력하세요");
                         }
-                        tdList[7].childNodes[0].childNodes[0].disabled = true;
-                        tdList[8].childNodes[0].disabled = true;
+
+                    }
+
+
+                    function clickEnrollButton() {
+                        let tableRow = document.getElementById("findInventoryTable")
+                        removeAllNode(tableRow);
+
+                        visibleElement("submitTableRow");
+
+                        let tbody = document.getElementById("submitTbody");
+
+                        for (let i = 0; i < partList.length; i++) {
+                            let temp = partList[i];
+                            let tr = document.createElement("tr");
+
+                            tr.innerHTML = `<td>` + temp.bwCode + `</td>`
+                                + `<td>` + temp.amount + `</td>`
+                                + `<td>` + '' + `</td>`;
+                            tbody.append(tr);
+                        }
+
+                    }
+
+                    async function clickSubmitButton() {
+                        orderInfo.partList = partList;
+                        const url = "/api/task/outgoing/submit"
+                        let response = await fetch(url, {
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            method: "POST",
+                            body: JSON.stringify(orderInfo)
+                        });
+
+                        if (response.status == 200) {
+                            let data = await response.json();
+                            let tableRow = document.getElementById("submitTableRow")
+                            removeAllNode(tableRow);
+                            visibleElement("resultTableRow");
+                            let tbody = document.getElementById("resultTbody");
+
+                            for (let i = 0; i < data.length; i++) {
+                                let temp = data[i];
+                                let tr = document.createElement("tr");
+                                tr.innerHTML = `<td>` + temp.bwCode + `</td>`
+                                    + `<td>` + temp.lot + `</td>`
+                                    + `<td>` + temp.loadAmount + `</td>`
+                                    + `<td>` + temp.quantity + `</td>`
+                                    + `<td>` + Math.ceil(temp.quantity/temp.loadAmount) + `</td>`;
+                                tbody.append(tr);
+                            }
+                        }
+
+
                     }
                 </script>
             </div>

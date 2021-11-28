@@ -8,7 +8,6 @@ import com.union.placeorderAutomation.dto.task.outgoing.OutgoingSubmitDto;
 import com.union.placeorderAutomation.entity.*;
 import com.union.placeorderAutomation.repository.BomRepository;
 import com.union.placeorderAutomation.repository.PartInventoryRepository;
-import com.union.placeorderAutomation.repository.PartLogRepository;
 import com.union.placeorderAutomation.repository.PartRepository;
 import com.union.placeorderAutomation.service.common.CommonService;
 import com.union.placeorderAutomation.service.common.PartLogService;
@@ -78,7 +77,6 @@ public class OutgoingService {
                 planBomResult.add(productPlanDto);
             }
         }
-
         return planBomResult;
     }
 

@@ -32,6 +32,11 @@ public class OutgoingService {
     private final PartRepository partRepo;
     private final PartInventoryRepository partInventoryRepo;
 
+    @Transactional(readOnly = true)
+    public int findPartStock(String bwCode) {
+        return partInventoryRepo.sumPartStock(bwCode);
+    }
+
     //일반 납품
     @Transactional(readOnly = true)
     public List<ProductPlanDto> findPlanAndInventory(String companyCode, String plantCode) {

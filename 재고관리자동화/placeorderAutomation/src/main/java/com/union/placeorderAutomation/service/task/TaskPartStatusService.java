@@ -28,14 +28,16 @@ public class TaskPartStatusService {
     private final OutcomeLogRepository outcomeLogRepo;
 
     @Transactional(readOnly = true)
-    public List<PartLogDto> createPartStatus(String companyCode, String date){
+    public List<PartLogDto> createPartStatus(String companyCode, String date) {
         List<PartLogDto> result = new ArrayList<>();
 
-        List<Part> partList = partRepo.findPartByCompany(companyCode);
-        for(Part part : partList){
-            PartLogDto partLogDto = new PartLogDto(part.getBwCode());
+        List<Part> partList = new ArrayList<>();
+        partList.addAll(partRepo.findPartByCompany(companyCode));
+        partList.addAll(partRepo.findSelectPartByCompany(companyCode));
+        for (Part part : partList) {
+            PartLogDto partLogDto = new PartLogDto(part.getBwCode(), part.getSpCode());
             Optional<PartLog> partLogOpt = partLogRepo.findPartLogByPartAndDate(part, date);
-            if(partLogOpt.isPresent()){
+            if (partLogOpt.isPresent()) {
                 PartLog partLog = partLogOpt.get();
                 //입고
                 partLogDto.setIncomeLog(incomeLogRepo.sumQuantityByPartLog(partLog));

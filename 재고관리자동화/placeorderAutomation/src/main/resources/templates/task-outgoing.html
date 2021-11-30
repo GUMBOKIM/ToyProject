@@ -126,6 +126,11 @@
                 </div>
 
                 <div class="row justify-content-center mb-3" style="visibility: hidden;" id="resultTableRow">
+                    <div class="row">
+                        <button type="button" id="reportButton" class="btn btn-success"
+                                onclick="openReport()">납품카드
+                        </button>
+                    </div>
                     <table class="table col-6">
                         <thead>
                         <tr>
@@ -238,7 +243,7 @@
                                 if (calInputAmount > (temp.lotMax - temp.stockQTY)) {
                                     calInputAmount = (temp.lotMax - temp.stockQTY);
                                 }
-                                if (calInputAmount < 0){
+                                if (calInputAmount < 0) {
                                     calInputAmount = 0;
                                 }
                                 html += `<td>` + temp.partBwCode + `</td>`
@@ -257,15 +262,22 @@
                         }
                     }
 
-                    function enrollPart(element) {
+                    async function enrollPart(element) {
                         let tr = element.parentNode.parentNode;
                         let tdList = tr.childNodes;
                         let bwCode = tdList[10].innerText;
                         let amount = tdList[18].childNodes[0].childNodes[0].value * 1
+
                         if (amount > 0) {
-                            partList.push({bwCode, amount});
-                            tdList[18].childNodes[0].childNodes[0].disabled = true;
-                            tdList[19].childNodes[0].disabled = true;
+                            const url = "/api/task/outgoing/checkPart/" + bwCode + "/" + amount;
+                            let response = await fetch(url);
+                            if (response.status == 200) {
+                                partList.push({bwCode, amount});
+                                tdList[18].childNodes[0].childNodes[0].disabled = true;
+                                tdList[19].childNodes[0].disabled = true;
+                            } else {
+                                alert("입력하신 수량이 현 재고량보다 많습니다.");
+                            }
                         } else {
                             alert("수량을 다시 입력하세요");
                         }
@@ -321,8 +333,10 @@
                                 tbody.append(tr);
                             }
                         }
+                    }
 
-
+                    function openReport() {
+                        window.open(`https://es-qms.borgwarner.com/qms/payment_card2.main?p_companycd=00&p_vendcd=&p_plant=${orderInfo.companyCode}&p_income_date=${orderInfo.date}&p_sno=${orderInfo.orderSeq})`)
                     }
                 </script>
 

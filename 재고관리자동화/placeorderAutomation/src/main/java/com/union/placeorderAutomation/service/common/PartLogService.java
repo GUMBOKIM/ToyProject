@@ -10,23 +10,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Transactional
 @RequiredArgsConstructor
 @Service
 public class PartLogService {
 
-    private final PartLogRepository partLogRepo;
     private final DefectiveLogRepository defectiveLogRepo;
     private final IncomeLogRepository incomeLogRepo;
     private final ModifyLogRepository modifyLogRepo;
     private final OutcomeLogRepository outcomeLogRepo;
 
     public void createDefectiveLog(CreateLogDto logDto) {
-        PartLog partLog = createPartLog(logDto.getPartBwCode(), logDto.getDate());
         DefectiveLog defectiveLog = DefectiveLog.builder()
-                .partLog(partLog)
+                .part(Part.builder().bwCode(logDto.getPartBwCode()).build())
+                .date(logDto.getDate())
                 .lot(logDto.getLot())
                 .amount(logDto.getAmount())
                 .build();
@@ -34,9 +32,9 @@ public class PartLogService {
     }
 
     public void createIncomeLog(CreateLogDto logDto) {
-        PartLog partLog = createPartLog(logDto.getPartBwCode(), logDto.getDate());
         IncomeLog incomeLog = IncomeLog.builder()
-                .partLog(partLog)
+                .part(Part.builder().bwCode(logDto.getPartBwCode()).build())
+                .date(logDto.getDate())
                 .orderSeq(logDto.getOrderSeq())
                 .lot(logDto.getLot())
                 .amount(logDto.getAmount())
@@ -45,9 +43,9 @@ public class PartLogService {
     }
 
     public void createModifyLogs(CreateLogDto logDto) {
-        PartLog partLog = createPartLog(logDto.getPartBwCode(), logDto.getDate());
         ModifyLog modifyLog = ModifyLog.builder()
-                .partLog(partLog)
+                .part(Part.builder().bwCode(logDto.getPartBwCode()).build())
+                .date(logDto.getDate())
                 .orderSeq(logDto.getOrderSeq())
                 .lot(logDto.getLot())
                 .amount(logDto.getAmount())
@@ -57,11 +55,13 @@ public class PartLogService {
 
 
     public void createOutcomeLogs(OutgoingSubmitDto submitDto, List<CreateDeliveryDto> deliveryList) {
+        Plant plant = Plant.builder().plantCode(submitDto.getPlantCode()).build();
+        Company company = Company.builder().companyCode(submitDto.getCompanyCode()).build();
         for(CreateDeliveryDto deliveryDto : deliveryList){
-            PartLog partLog = createPartLog(deliveryDto.getBwCode(), submitDto.getDate());
-            Plant plant = Plant.builder().plantCode(submitDto.getPlantCode()).build();
             OutcomeLog outcomeLog = OutcomeLog.builder()
-                    .partLog(partLog)
+                    .part(Part.builder().bwCode(deliveryDto.getBwCode()).build())
+                    .company(company)
+                    .date(submitDto.getDate())
                     .plant(plant)
                     .orderSeq(submitDto.getOrderSeq())
                     .lot(deliveryDto.getLot())
@@ -70,22 +70,6 @@ public class PartLogService {
             outcomeLogRepo.save(outcomeLog);
         }
 
-    }
-
-
-    public PartLog createPartLog(String partBwCode, String date) {
-        Part part = Part.builder().bwCode(partBwCode).build();
-
-        Optional<PartLog> partLog = partLogRepo.findPartLogByPartAndDate(part, date);
-        if (partLog.isEmpty()) {
-            PartLog newPartLog = PartLog.builder()
-                    .part(part)
-                    .date(date)
-                    .build();
-            partLogRepo.save(newPartLog);
-            return newPartLog;
-        }
-        return partLog.get();
     }
 
 }

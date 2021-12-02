@@ -41,7 +41,7 @@ public class TaskPartStockService {
     @Transactional(readOnly = true)
     public List<PartStockDetailDto> getPartStockDetailList(String partBwCode) {
         List<PartStockDetailDto> partStockDetailList = new ArrayList<>();
-        List<PartInventory> partInventories = partInventoryRepo.findInventoryListByPartBwCode(partBwCode);
+        List<PartInventory> partInventories = partInventoryRepo.findInventoryListByPart(partBwCode);
         partInventories.forEach(partInventory -> partStockDetailList.add(new PartStockDetailDto(partInventory)));
         return partStockDetailList;
     }

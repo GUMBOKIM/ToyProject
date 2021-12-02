@@ -113,16 +113,31 @@
                                 + `<td>` + temp.date + `</td>`
                                 + `<td>` + temp.orderSeq + `</td>`
                                 + `<td>` + temp.time + `</td>`
-                                + `<td>` + `<button type="button" id="cancelOrderButton" class="btn btn-danger btn-sm" onclick="cancelOrder(${temp.orderSeq})">취소</button>` + `</td>`;
+                                + `<td>` + `<button type="button" id="cancelOrderButton" class="btn btn-danger btn-sm" onclick="cancelOrder(this)">취소</button>` + `</td>`;
                             tbody.append(tr);
                         }
                     }
 
-                    async function cancelOrder(orderSeq) {
-                        const url = `/api/task/order-history/cancel-order/${companyCode}/${date}/${orderSeq}`
-                        let response = await fetch(url, {method: "DELETE"});
+                    async function cancelOrder(element) {
+                        let tr = element.parentNode.parentNode;
+                        let tdList = tr.childNodes;
+
+                        const url = `/api/task/order-history/cancel-order`;
+                        let response = await fetch(url, {
+                            method: "DELETE",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                companyCode: tdList[0].innerText,
+                                date: tdList[2].innerText,
+                                plantCode: tdList[1].innerText,
+                                time: tdList[4].innerText,
+                                orderSeq: tdList[3].innerText
+                            })
+                        });
                         if (response.status == 200) {
-                            // window.location.reload();
+                            removeAllNode(tr);
                         }
                     }
 

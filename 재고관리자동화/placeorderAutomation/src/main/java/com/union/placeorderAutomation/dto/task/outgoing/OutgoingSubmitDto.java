@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -17,5 +18,5 @@ public class OutgoingSubmitDto {
     private String plantCode;
     private String time;
     private int orderSeq;
-    List<OutgoingPartDto> partList;
+    List<OutgoingPartDto> partList = new ArrayList<>();
 }

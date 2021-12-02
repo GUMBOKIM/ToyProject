@@ -128,7 +128,7 @@
                     }
 
                     function createOutComeRow(tr, data) {
-                        for (let i = 0; i < 20; i++) {
+                        for (let i = 1; i < 21; i++) {
                             let td = document.createElement("td");
                             let find = data.find(log => log.orderSeq == i);
                             if (find != undefined) {
@@ -164,7 +164,7 @@
                             <th colspan="5" class="table-info">입고</th>
                             <th colspan="5" class="table-warning">보정</th>
                             <th colspan="20" class="table-success">1공장</th>
-                            <th colspan="20" class="table-success">2공장</th>
+                            <th colspan="20" class="table-success">2공장(신공장)</th>
                             <th colspan="1" class="table-danger" style="white-space: nowrap">불량</th>
                         </tr>
                         <tr>

@@ -13,6 +13,7 @@ import com.union.placeorderAutomation.service.common.CommonService;
 import com.union.placeorderAutomation.service.common.PartLogService;
 import com.union.placeorderAutomation.service.resttemplate.RestTemplateService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+@Slf4j
 @Transactional
 @RequiredArgsConstructor
 @Service
@@ -34,7 +36,7 @@ public class OutgoingService {
 
     @Transactional(readOnly = true)
     public int findPartStock(String bwCode) {
-        return partInventoryRepo.sumPartStock(bwCode);
+        return partInventoryRepo.sumPartStock(bwCode).intValue();
     }
 
     //일반 납품
@@ -106,11 +108,14 @@ public class OutgoingService {
 
     public List<CreateDeliveryDto> submitPart(OutgoingSubmitDto submitDto) {
         List<CreateDeliveryDto> deliveryList = createDeliveryCard(submitDto);
+        System.out.println("deliveryList = " + deliveryList);
         submitDto.setPartList(null);
         restTemplateService.createDeliveryCard(submitDto, deliveryList);
+        log.info("납입카드 성공");
         restTemplateService.registryDelivery(submitDto, deliveryList);
+        log.info("재고 등록 성공");
         partLogService.createOutcomeLogs(submitDto, deliveryList);
-
+        log.info("로그 생성 성공");
         commonService.addCompanyOrderHistory(
                 OrderHistoryDto.builder()
                         .orderSeq(submitDto.getOrderSeq())
@@ -120,6 +125,7 @@ public class OutgoingService {
                         .companyCode(submitDto.getCompanyCode())
                         .build()
         );
+        log.info("주문 기록 생성 성공");
         return deliveryList;
     }
 
@@ -129,10 +135,10 @@ public class OutgoingService {
             int amount = part.getAmount();
             List<CreateDeliveryDto> temp = new ArrayList<>();
             // 총 수량 >= 납품 양
-            if (amount <= partInventoryRepo.sumPartStock(part.getBwCode())) {
-                List<PartInventory> inventoryList = partInventoryRepo.findInventoryListByPartBwCode(part.getBwCode());
+            if (amount <= partInventoryRepo.sumPartStock(part.getBwCode()).intValue()) {
+                List<PartInventory> inventoryList = partInventoryRepo.findInventoryListByPart(part.getBwCode());
+                Part p = partRepo.getById(part.getBwCode());
                 for (PartInventory inventory : inventoryList) {
-                    Part p = inventory.getPart();
                     if (amount > inventory.getStock()) {
                         amount -= inventory.getStock();
                         temp.add(
@@ -142,6 +148,7 @@ public class OutgoingService {
                                         .partName(p.getPartName())
                                         .inventoryBwCode(p.getInventoryBwCode())
                                         .poCode(p.getPoCode())
+                                        .quantity(inventory.getStock())
                                         .lot(inventory.getLot())
                                         .loadAmount(p.getLoadAmount())
                                         .location(p.getLocation())
@@ -155,8 +162,10 @@ public class OutgoingService {
                                         .builder()
                                         .bwCode(p.getBwCode())
                                         .partName(p.getPartName())
+                                        .inventoryBwCode(p.getInventoryBwCode())
                                         .poCode(p.getPoCode())
                                         .lot(inventory.getLot())
+                                        .quantity(amount)
                                         .loadAmount(p.getLoadAmount())
                                         .location(p.getLocation())
                                         .build()

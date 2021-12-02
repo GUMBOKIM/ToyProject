@@ -19,12 +19,20 @@ public class OutcomeLog extends BaseTimeEntity {
     private Long outcomeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "partLogId")
-    private PartLog partLog;
+    @JoinColumn(name = "bwCode")
+    private Part part;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "companyCode")
+    private Company company;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plantCode")
     private Plant plant;
+
+
+    @Column(nullable = false, length = 8)
+    private String date;
 
     @Column
     private String lot;

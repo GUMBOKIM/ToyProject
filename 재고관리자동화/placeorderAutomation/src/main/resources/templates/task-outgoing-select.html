@@ -30,7 +30,7 @@
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">고객사 선택품 납품</h1>
+                    <h1 class="h3 mb-0 text-gray-800">선택품 납품</h1>
                 </div>
 
                 <div class="row justify-content-center mb-3">
@@ -219,7 +219,8 @@
                                 tdList[7].childNodes[0].childNodes[0].disabled = true;
                                 tdList[8].childNodes[0].disabled = true;
                             } else {
-                                alert("입력하신 수량이 현 재고량보다 많습니다.");
+                                let data = await response.json();
+                                alert(`입력하신 수량이 현 재고량보다 많습니다. - 현재고 : ${data}`);
                             }
                         } else {
                             alert("수량을 다시 입력하세요");
@@ -228,21 +229,25 @@
 
 
                     function clickEnrollButton() {
-                        let tableRow = document.getElementById("findInventoryTable")
-                        removeAllNode(tableRow);
+                        if (partList.length != 0) {
+                            let tableRow = document.getElementById("findInventoryTable")
+                            removeAllNode(tableRow);
 
-                        visibleElement("submitTableRow");
+                            visibleElement("submitTableRow");
 
-                        let tbody = document.getElementById("submitTbody");
+                            let tbody = document.getElementById("submitTbody");
 
-                        for (let i = 0; i < partList.length; i++) {
-                            let temp = partList[i];
-                            let tr = document.createElement("tr");
+                            for (let i = 0; i < partList.length; i++) {
+                                let temp = partList[i];
+                                let tr = document.createElement("tr");
 
-                            tr.innerHTML = `<td>` + temp.bwCode + `</td>`
-                                + `<td>` + temp.amount + `</td>`
-                                + `<td>` + '' + `</td>`;
-                            tbody.append(tr);
+                                tr.innerHTML = `<td>` + temp.bwCode + `</td>`
+                                    + `<td>` + temp.amount + `</td>`
+                                    + `<td>` + '' + `</td>`;
+                                tbody.append(tr);
+                            }
+                        } else {
+                            alert("등록된 자재가 없습니다. 등록해주세요")
                         }
 
                     }
@@ -282,7 +287,7 @@
                     }
 
                     function openReport() {
-                        window.open(`https://es-qms.borgwarner.com/qms/payment_card2.main?p_companycd=00&p_vendcd=&p_plant=${orderInfo.companyCode}&p_income_date=${orderInfo.date}&p_sno=${orderInfo.orderSeq}`)
+                        window.open(`https://es-qms.borgwarner.com/qms/payment_card2.main?p_companycd=00&p_vendcd=${orderInfo.companyCode}&p_plant=${orderInfo.plantCode}&p_income_date=${orderInfo.date}&p_sno=${orderInfo.orderSeq}`)
                     }
                 </script>
             </div>

@@ -1,6 +1,7 @@
 package com.union.placeorderAutomation.restcontroller.task;
 
 import com.union.placeorderAutomation.dto.task.outgoing.OrderHistoryDto;
+import com.union.placeorderAutomation.dto.task.outgoing.OutgoingSubmitDto;
 import com.union.placeorderAutomation.service.task.OrderHistoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,9 +23,9 @@ public class OrderHistoryController {
             return new ResponseEntity(orderHistoryList, HttpStatus.OK);
     }
 
-    @DeleteMapping("/cancel-order/{companyCode}/{date}/{orderSeq}")
-    public ResponseEntity cancelHistoryList(@PathVariable String companyCode, @PathVariable String date, @PathVariable int orderSeq){
-        orderHistoryService.cancelOrder(companyCode, date, orderSeq);
+    @DeleteMapping("/cancel-order")
+    public ResponseEntity cancelHistoryList(@RequestBody OutgoingSubmitDto outgoingSubmitDto){
+        orderHistoryService.cancelOrder(outgoingSubmitDto);
         return new ResponseEntity(HttpStatus.OK);
     }
 }

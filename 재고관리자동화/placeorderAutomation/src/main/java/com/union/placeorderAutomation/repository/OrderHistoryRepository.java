@@ -20,6 +20,9 @@ public interface OrderHistoryRepository  extends JpaRepository<OrderHistory, Lon
     @Query(value ="select o from OrderHistory o where o.company = :company and o.date = :date")
     List<OrderHistory> findOrderHistoryList(@Param("company") Company company, @Param("date") String date);
 
+    @Query(value ="select o from OrderHistory o where o.company = :company and o.plant = :plant and o.date = :date and o.orderSeq = :orderSeq")
+    OrderHistory findOrderHistoryForDelete(@Param("company") Company company, @Param("plant") Plant plant, @Param("date") String date, @Param("orderSeq") int orderSeq);
+
 
 
 }

@@ -21,12 +21,13 @@ public class Part {
     @Column(unique = true, nullable = false)
     private String bwCode;
 
-    @Column
-    private String inventoryBwCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "companyId", nullable = false)
     private Company company;
+
+    @Column
+    private String inventoryBwCode;
 
     @Column
     private String partName;
@@ -62,6 +63,4 @@ public class Part {
     @Where(clause = "stock > 0 and use_yn = 'Y'")
     private List<PartInventory> partInventories;
 
-    @OneToMany(mappedBy = "part", fetch = FetchType.LAZY)
-    private List<PartLog> partLogs;
 }

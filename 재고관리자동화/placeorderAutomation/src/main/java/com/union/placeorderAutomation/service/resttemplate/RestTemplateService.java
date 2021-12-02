@@ -95,12 +95,14 @@ public class RestTemplateService {
         body.add("p_vendcd", companyCode);
         body.add("p_time", submitDto.getTime());
 
-        deliveryList.forEach(delivery -> {
+        for(CreateDeliveryDto delivery : deliveryList){
+            System.out.println("submitDto = " + submitDto);
+            System.out.println("delivery = " + delivery);
 
             body.add("p_partno", delivery.getInventoryBwCode());
             body.add("p_menge", Integer.toString(delivery.getQuantity()));
             body.add("p_lgpbe", delivery.getLot());
-            body.add("p_barco", "Y");
+            body.add("p_barco", "");
             body.add("p_seqno", "");
             if (plantCode.equals("5300")) {
                 body.add("p_plant", "01");
@@ -108,7 +110,7 @@ public class RestTemplateService {
                 body.add("p_plant", "03");
             }
             body.add("p_po_no", delivery.getPoCode());
-        });
+        };
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, httpHeaders);
 

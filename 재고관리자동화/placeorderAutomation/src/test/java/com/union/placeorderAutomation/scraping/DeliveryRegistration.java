@@ -48,7 +48,7 @@ public class DeliveryRegistration {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("p_companycd","00");
         body.add("p_dml_gubun","1");
-        body.add("p_ym","20211110");
+        body.add("p_ym","20211204");
         body.add("p_vendcd","106076");
         body.add("p_time","23:40");
 

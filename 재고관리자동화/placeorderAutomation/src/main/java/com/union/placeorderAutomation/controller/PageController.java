@@ -21,7 +21,7 @@ public class PageController {
 
     @RequestMapping("/")
     public String mainPage() {
-        return "redirect:task/outgoing-manual";
+        return "redirect:/task/outgoing";
     }
 
     @RequestMapping("/task/outgoing")
@@ -41,7 +41,7 @@ public class PageController {
     @RequestMapping("/task/order-history")
     public String orderList(Model model) {
         commonService.addCompanyList(model);
-        return "order-history";
+        return "task-order-history";
     }
 
     @RequestMapping("/task/outgoing-manual")

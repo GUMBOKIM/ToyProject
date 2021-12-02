@@ -19,8 +19,11 @@ public class DefectiveLog extends BaseTimeEntity {
     private Long defectiveId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "partLogId")
-    private PartLog partLog;
+    @JoinColumn(name = "bwCode")
+    private Part part;
+
+    @Column(nullable = false, length = 8)
+    private String date;
 
     @Column
     private String lot;

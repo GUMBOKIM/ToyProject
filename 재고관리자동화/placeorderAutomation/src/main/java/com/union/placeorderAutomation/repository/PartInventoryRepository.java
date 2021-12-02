@@ -44,10 +44,10 @@ public interface PartInventoryRepository extends JpaRepository<PartInventory, Lo
                     "FROM part_inventory " +
                     "WHERE part_id = ?1 ",
             nativeQuery = true)
-    int sumPartStock(String bwCode);
+    Long sumPartStock(String bwCode);
 
-    @Query(value = "SELECT * FROM part_inventory WHERE part_id = ?1 AND stock > 0 ORDER BY lot * 1 ASC", nativeQuery = true)
-    List<PartInventory> findInventoryListByPartBwCode(String partBwCode);
+    @Query(value = "SELECT * FROM part_inventory WHERE part_id = ?1 AND stock > 0 ORDER BY IF(lot RLIKE '[A-Z][A-Z][A-Z]', 1, 2), lot", nativeQuery = true)
+    List<PartInventory> findInventoryListByPart(String bwCode);
 
     @Query(value = "SELECT * FROM part_inventory WHERE part_id = ?1 AND lot = ?2", nativeQuery = true)
     Optional<PartInventory> findByPartAndLot(String partBwCode, String lot);

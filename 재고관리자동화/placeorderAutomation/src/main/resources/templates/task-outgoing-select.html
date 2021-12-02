@@ -65,9 +65,12 @@
                             <input type="text" class="form-control" id="timeInput" placeholder="HH:MM">
                         </div>
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <button type="button" id="createButton" class="btn btn-primary" onclick="clickConfirmButton()">
                             확인
+                        </button>
+                        <button type="button" id="reportButton" style="visibility: hidden;" class="btn btn-success"
+                                onclick="openReport()">납품카드
                         </button>
                     </div>
                 </div>
@@ -116,11 +119,6 @@
                 </div>
 
                 <div class="row justify-content-center mb-3" style="visibility: hidden;" id="resultTableRow">
-                    <div class="row">
-                        <button type="button" id="reportButton" class="btn btn-success"
-                                onclick="openReport()">납품카드
-                        </button>
-                    </div>
                     <table class="table col-6">
                         <thead>
                         <tr>
@@ -264,6 +262,7 @@
                             let data = await response.json();
                             let tableRow = document.getElementById("submitTableRow")
                             removeAllNode(tableRow);
+                            visibleElement("reportButton");
                             visibleElement("resultTableRow");
                             let tbody = document.getElementById("resultTbody");
 
@@ -283,7 +282,7 @@
                     }
 
                     function openReport() {
-                        window.open(`https://es-qms.borgwarner.com/qms/payment_card2.main?p_companycd=00&p_vendcd=&p_plant=${orderInfo.companyCode}&p_income_date=${orderInfo.date}&p_sno=${orderInfo.orderSeq})`)
+                        window.open(`https://es-qms.borgwarner.com/qms/payment_card2.main?p_companycd=00&p_vendcd=&p_plant=${orderInfo.companyCode}&p_income_date=${orderInfo.date}&p_sno=${orderInfo.orderSeq}`)
                     }
                 </script>
             </div>

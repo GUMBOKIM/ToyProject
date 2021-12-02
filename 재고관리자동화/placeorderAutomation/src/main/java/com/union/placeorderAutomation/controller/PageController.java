@@ -38,6 +38,12 @@ public class PageController {
         return "task-outgoing-select";
     }
 
+    @RequestMapping("/task/order-history")
+    public String orderList(Model model) {
+        commonService.addCompanyList(model);
+        return "order-history";
+    }
+
     @RequestMapping("/task/outgoing-manual")
     public String taskOutgoingManual(Model model) {
         return "task-outgoing-manual";

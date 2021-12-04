@@ -31,6 +31,7 @@ public class PartManageController {
 
     @PutMapping("")
     public ResponseEntity putPart(@RequestBody PartReqDto request){
+        System.out.println("request = " + request);
         partService.modifyPart(request);
         return new ResponseEntity("수정 완료", HttpStatus.OK);
     }

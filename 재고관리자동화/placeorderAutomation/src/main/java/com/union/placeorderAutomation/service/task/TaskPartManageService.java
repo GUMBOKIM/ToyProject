@@ -36,7 +36,6 @@ public class TaskPartManageService {
                 partCheckDto.setCheck("Y");
                 partCheckDto.setCompanyName(part.getCompany().getCompanyName());
                 partCheckDto.setSpCode(part.getSpCode());
-                partCheckDto.setPoCode(part.getPoCode());
                 partCheckDto.setName(part.getPartName());
             } else {
                 partCheckDto.setCheck("N");

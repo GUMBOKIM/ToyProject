@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Transactional
 @RequiredArgsConstructor
@@ -37,9 +38,11 @@ public class ManagePartService {
                 .bwCode(request.getBwCode())
                 .inventoryBwCode(request.getInventoryBwCode())
                 .spCode(request.getSpCode())
-                .poCode(request.getPoCode())
+                .poCode1(request.getPoCode1())
+                .poCode2(request.getPoCode2())
+                .location1(request.getLocation1())
+                .location2(request.getLocation2())
                 .loadAmount(request.getLoadAmount())
-                .location(request.getLocation())
                 .selectYn(request.getSelectYn())
                 .useYn(request.getUseYn())
                 .build();
@@ -51,19 +54,23 @@ public class ManagePartService {
         Company company = Company.builder()
                 .companyCode(request.getCompanyCode())
                 .build();
-        Part part = Part.builder()
-                .company(company)
-                .partName(request.getPartName())
-                .bwCode(request.getBwCode())
-                .inventoryBwCode(request.getInventoryBwCode())
-                .spCode(request.getSpCode())
-                .poCode(request.getPoCode())
-                .loadAmount(request.getLoadAmount())
-                .location(request.getLocation())
-                .selectYn(request.getSelectYn())
-                .useYn(request.getUseYn())
-                .build();
-        partRepo.save(part);
+        Optional<Part> partOpt = partRepo.findByBwCode(request.getBwCode());
+        if (partOpt.isPresent()) {
+            Part part = partOpt.get();
+            part.setCompany(company);
+            part.setPartName(request.getPartName());
+            part.setBwCode(request.getBwCode());
+            part.setInventoryBwCode(request.getInventoryBwCode());
+            part.setSpCode(request.getSpCode());
+            part.setPoCode1(request.getPoCode1());
+            part.setPoCode2(request.getPoCode2());
+            part.setLocation1(request.getLocation1());
+            part.setLocation2(request.getLocation2());
+            part.setLoadAmount(request.getLoadAmount());
+            part.setSelectYn(request.getSelectYn());
+            part.setUseYn(request.getUseYn());
+            partRepo.save(part);
+        }
     }
 
     public void deletePart(String partBwCode) {

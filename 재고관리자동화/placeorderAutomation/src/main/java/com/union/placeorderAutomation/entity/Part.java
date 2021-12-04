@@ -38,15 +38,21 @@ public class Part {
 
     // 발주 번호
     @Column(unique = true, nullable = false)
-    private String poCode;
+    private String poCode1;
+
+    @Column(unique = true, nullable = false)
+    private String poCode2;
+
+    //SAP 위치
+    @Column
+    private String location1;
+
+    @Column
+    private String location2;
 
     //적입량
     @Column(nullable = false)
     private int loadAmount;
-
-    //SAP 위치
-    @Column
-    private String location;
 
     @Column(length = 1)
     @ColumnDefault("'N'")

@@ -9,9 +9,11 @@ public class PartReqDto {
     private String companyCode;
     private String partName;
     private String spCode;
-    private String poCode;
+    private String poCode1;
+    private String poCode2;
+    private String location1;
+    private String location2;
     private int loadAmount;
-    private String location;
     private String selectYn;
     private String useYn;
 

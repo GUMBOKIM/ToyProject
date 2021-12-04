@@ -43,7 +43,8 @@
                         </select>
                     </div>
                     <div class="col-1">
-                        <button type="button" class="btn btn-primary btn-sm" onclick="findPartByCompanyCode()"><i class="fas fa-search"></i></button>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="findPartByCompanyCode()"><i
+                                class="fas fa-search"></i></button>
                     </div>
                 </div>
 
@@ -56,9 +57,11 @@
                             <th class="col-1">납품등록 품번</th>
                             <th class="col-2">품명</th>
                             <th class="col-1">공급업체 품번</th>
-                            <th class="col-1">발주 번호</th>
                             <th class="col-1">적입량</th>
-                            <th class="col-1">위치</th>
+                            <th class="col-1">발주 번호(1공장)</th>
+                            <th class="col-1">위치(1공장)</th>
+                            <th class="col-1">발주 번호(2공장)</th>
+                            <th class="col-1">위치(2공장)</th>
                             <th class="col-1">선택품</th>
                             <th class="col-1">사용여부</th>
                             <th class="col-1"></th>
@@ -76,9 +79,11 @@
                             <td th:text="${part.inventoryBwCode}"></td>
                             <td th:text="${part.partName}"></td>
                             <td th:text="${part.spCode}"></td>
-                            <td th:text="${part.poCode}"></td>
                             <td th:text="${part.loadAmount}"></td>
-                            <td th:text="${part.location}"></td>
+                            <td th:text="${part.poCode1}"></td>
+                            <td th:text="${part.getLocation1}"></td>
+                            <td th:text="${part.poCode2}"></td>
+                            <td th:text="${part.getLocation2}"></td>
                             <td th:text="${part.selectYn}"></td>
                             <td th:text="${part.useYn}"></td>
                             <td>
@@ -129,15 +134,15 @@
     let companyCode;
     let inputColumn = false;
 
-    function setCompanyCode(value){
+    function setCompanyCode(value) {
         companyCode = value;
     }
 
     function findPartByCompanyCode() {
-        if(companyCode == undefined){
+        if (companyCode == undefined) {
             document.location.href = "/manage/part/part";
         } else {
-        document.location.href = "/manage/part/part/" + companyCode;
+            document.location.href = "/manage/part/part/" + companyCode;
         }
     }
 
@@ -166,35 +171,42 @@
         td6.innerHTML = `<input type="text" class="form-control">`;
         let td7 = document.createElement("td");
         td7.innerHTML = `<input type="text" class="form-control">`;
-        let td8= document.createElement("td");
+        let td8 = document.createElement("td");
         td8.innerHTML = `<input type="text" class="form-control">`;
         let td9 = document.createElement("td");
         td9.innerHTML = `<input type="text" class="form-control">`;
         let td10 = document.createElement("td");
         td10.innerHTML = `<input type="text" class="form-control">`;
-        tr.append(td1, td2, td3, td4, td5, td6, td7, td8, td9,td10);
-
         let td11 = document.createElement("td");
+        td11.innerHTML = `<input type="text" class="form-control">`;
         let td12 = document.createElement("td");
-        td12.innerHTML = `<button type="button" class="btn btn-success btn-sm" onclick="addPart()"><i class="fas fa-check"></i></button>`
-        tr.append(td11, td12);
+        td12.innerHTML = `<input type="text" class="form-control">`;
+
+        tr.append(td1, td2, td3, td4, td5, td6, td7, td8, td9, td10, td11, td12);
+
+        let td13 = document.createElement("td");
+        let td14 = document.createElement("td");
+        td14.innerHTML = `<button type="button" class="btn btn-success btn-sm" onclick="addPart()"><i class="fas fa-check"></i></button>`
+        tr.append(td13, td14);
         tbody.insertBefore(tr, tbody.firstChild);
     }
 
     function addPart() {
-        let tdList = document.getElementById("add").childNodes;
+        let tdList = document.getElementById("add").children;
         let sel = tdList[0].childNodes[0];
         let result = {
             companyCode: sel.options[sel.selectedIndex].value,
             bwCode: tdList[1].childNodes[0].value,
-            inventoryBwCode : tdList[2].childNodes[0].value,
+            inventoryBwCode: tdList[2].childNodes[0].value,
             partName: tdList[3].childNodes[0].value,
             spCode: tdList[4].childNodes[0].value,
-            poCode: tdList[5].childNodes[0].value,
-            loadAmount: parseInt(tdList[6].childNodes[0].value),
-            location: tdList[7].childNodes[0].value,
-            selectYn: tdList[8].childNodes[0].value,
-            useYn: tdList[9].childNodes[0].value,
+            loadAmount: parseInt(tdList[5].childNodes[0].value),
+            poCode1: tdList[6].childNodes[0].value,
+            location1: tdList[7].childNodes[0].value,
+            poCode2: tdList[8].childNodes[0].value,
+            location2: tdList[9].childNodes[0].value,
+            selectYn: tdList[10].childNodes[0].value,
+            useYn: tdList[11].childNodes[0].value,
         }
         console.log(result);
 
@@ -216,10 +228,13 @@
 
     function clickModifyButton(input) {
         let tr = input.parentNode.parentNode;
-        let bwCode = tr.childNodes[3].innerText;
-        removeChildNode(tr);
+        let tdList = tr.children;
+        for(let i = 0; i<tdList.length; i++){
+            console.log(i);
+            console.log(tdList[i]);
+        }
+        let bwCode = tdList[1].innerText;
 
-        tr.id = 'modify';
         let td1 = document.createElement("td");
         let inner = ''
         for (let i = 0; i < companyList.length; i++) {
@@ -232,47 +247,50 @@
         let td2 = document.createElement("td");
         td2.innerText = bwCode;
         let td3 = document.createElement("td");
-        td3.innerHTML = `<input type="text" class="form-control">`;
+        td3.innerHTML = `<input type="text" class="form-control" value="${tdList[2].innerText}"/>`;
         let td4 = document.createElement("td");
-        td4.innerHTML = `<input type="text" class="form-control">`;
+        td4.innerHTML = `<input type="text" class="form-control" value="${tdList[3].innerText}"/>`;
         let td5 = document.createElement("td");
-        td5.innerHTML = `<input type="text" class="form-control">`;
+        td5.innerHTML = `<input type="text" class="form-control" value="${tdList[4].innerText}"/>`;
         let td6 = document.createElement("td");
-        td6.innerHTML = `<input type="text" class="form-control">`;
+        td6.innerHTML = `<input type="text" class="form-control" value="${tdList[5].innerText}"/>`;
         let td7 = document.createElement("td");
-        td7.innerHTML = `<input type="text" class="form-control">`;
+        td7.innerHTML = `<input type="text" class="form-control" value="${tdList[6].innerText}"/>`;
         let td8 = document.createElement("td");
-        td8.innerHTML = `<input type="text" class="form-control">`;
+        td8.innerHTML = `<input type="text" class="form-control" value="${tdList[7].innerText}"/>`;
         let td9 = document.createElement("td");
-        td9.innerHTML = `<input type="text" class="form-control">`;
+        td9.innerHTML = `<input type="text" class="form-control" value="${tdList[8].innerText}"/>`;
         let td10 = document.createElement("td");
-        td10.innerHTML = `<input type="text" class="form-control">`;
+        td10.innerHTML = `<input type="text" class="form-control" value="${tdList[9].innerText}"/>`;
         let td11 = document.createElement("td");
-        td11.innerHTML = `<input type="text" class="form-control">`;
-        tr.append(td1, td2, td3, td4, td5, td7, td8, td9, td10, td11);
-
+        td11.innerHTML = `<input type="text" class="form-control" value="${tdList[10].innerText}"/>`;
         let td12 = document.createElement("td");
+        td12.innerHTML = `<input type="text" class="form-control" value="${tdList[11].innerText}"/>`;
         let td13 = document.createElement("td");
-        td13.innerHTML = `<button type="button" class="btn btn-success btn-sm" onclick="modifyPart()"><i class="fas fa-check"></i></button>`
-        tr.append(td12, td13);
-
+        let td14 = document.createElement("td");
+        td14.innerHTML = `<button type="button" class="btn btn-success btn-sm" onclick="modifyPart()"><i class="fas fa-check"></i></button>`
+        removeChildNode(tr);
+        tr.id = 'modify';
+        tr.append(td1, td2, td3, td4, td5, td6, td7, td8, td9, td10, td11, td12, td13, td14);
     }
 
     function modifyPart() {
-        let tdList = document.getElementById("modify").childNodes;
+        let tdList = document.getElementById("modify").children;
         console.log(tdList);
         let sel = tdList[0].childNodes[0];
         let result = {
             companyCode: sel.options[sel.selectedIndex].value,
-            bwCode : tdList[1].innerText,
-            inventoryBwCode : tdList[2].childNodes[0].value,
+            bwCode: tdList[1].innerText,
+            inventoryBwCode: tdList[2].childNodes[0].value,
             partName: tdList[3].childNodes[0].value,
             spCode: tdList[4].childNodes[0].value,
-            poCode: tdList[5].childNodes[0].value,
-            loadAmount: parseInt(tdList[6].childNodes[0].value),
-            location: tdList[7].childNodes[0].value,
-            selectYn: tdList[8].childNodes[0].value,
-            useYn: tdList[9].childNodes[0].value,
+            loadAmount: parseInt(tdList[5].childNodes[0].value),
+            poCode1: tdList[6].childNodes[0].value,
+            location1: tdList[7].childNodes[0].value,
+            poCode2: tdList[8].childNodes[0].value,
+            location2: tdList[9].childNodes[0].value,
+            selectYn: tdList[10].childNodes[0].value,
+            useYn: tdList[11].childNodes[0].value,
         }
         const url = "/api/manage/part";
         fetch(url, {
@@ -291,7 +309,7 @@
     }
 
     function clickDeleteButton(input) {
-        let bwCode = input.parentNode.parentNode.childNodes[3].innerText;
+        let bwCode = input.parentNode.parentNode.children[1].innerText;
         const url = "/api/manage/part/" + bwCode;
         fetch(url, {
             method: "DELETE",

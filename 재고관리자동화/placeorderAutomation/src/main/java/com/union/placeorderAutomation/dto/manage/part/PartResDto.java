@@ -10,9 +10,11 @@ public class PartResDto {
     private String bwCode;
     private String inventoryBwCode;
     private String spCode;
-    private String poCode;
+    private String poCode1;
+    private String poCode2;
+    private String location1;
+    private String location2;
     private int loadAmount;
-    private String location;
     private String selectYn;
     private String useYn;
 
@@ -22,9 +24,11 @@ public class PartResDto {
         this.bwCode = part.getBwCode();
         this.inventoryBwCode = part.getInventoryBwCode();
         this.spCode = part.getSpCode();
-        this.poCode = part.getPoCode();
+        this.poCode1 = part.getPoCode1();
+        this.poCode2 = part.getPoCode2();
         this.loadAmount = part.getLoadAmount();
-        this.location = part.getLocation();
+        this.location1 = part.getLocation1();
+        this.location2 = part.getLocation2();
         this.selectYn = part.getSelectYn();
         this.useYn = part.getUseYn();
     }

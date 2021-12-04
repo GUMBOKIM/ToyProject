@@ -13,9 +13,11 @@ public class CreateDeliveryDto {
     private String bwCode;
     private String inventoryBwCode;
     private String partName;
-    private String poCode;
+    private String poCode1;
+    private String poCode2;
     private String lot;
     private int quantity;
     private int loadAmount;
-    private String location;
+    private String location1;
+    private String location2;
 }

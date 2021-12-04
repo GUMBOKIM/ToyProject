@@ -157,11 +157,13 @@ public class OutgoingService {
                                         .bwCode(p.getBwCode())
                                         .partName(p.getPartName())
                                         .inventoryBwCode(p.getInventoryBwCode())
-                                        .poCode(p.getPoCode())
+                                        .poCode1(p.getPoCode1())
+                                        .poCode2(p.getPoCode2())
                                         .quantity(inventory.getStock())
                                         .lot(inventory.getLot())
                                         .loadAmount(p.getLoadAmount())
-                                        .location(p.getLocation())
+                                        .location1(p.getLocation1())
+                                        .location2(p.getLocation2())
                                         .build()
                         );
                         inventory.setStock(0);
@@ -173,11 +175,13 @@ public class OutgoingService {
                                         .bwCode(p.getBwCode())
                                         .partName(p.getPartName())
                                         .inventoryBwCode(p.getInventoryBwCode())
-                                        .poCode(p.getPoCode())
+                                        .poCode1(p.getPoCode1())
+                                        .poCode2(p.getPoCode2())
                                         .lot(inventory.getLot())
                                         .quantity(amount)
                                         .loadAmount(p.getLoadAmount())
-                                        .location(p.getLocation())
+                                        .location1(p.getLocation1())
+                                        .location2(p.getLocation2())
                                         .build()
                         );
                         inventory.setStock(inventory.getStock() - amount);

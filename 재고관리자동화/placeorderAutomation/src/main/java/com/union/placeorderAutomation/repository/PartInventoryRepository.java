@@ -16,7 +16,7 @@ public interface PartInventoryRepository extends JpaRepository<PartInventory, Lo
     // 파트 재고 조회에서 사용
     // 부품별 파트 재고 - 전체
     @Query(value =
-            "SELECT c.company_name, b.bw_code, b.po_code, b.sp_code, SUM(STOCK)  AS STOCK " +
+            "SELECT c.company_name, b.bw_code, b.sp_code, SUM(STOCK)  AS STOCK " +
                     "FROM part_inventory a " +
                     "INNER JOIN part b on a.part_id = b.bw_code " +
                     "INNER JOIN company c on b.company_id = c.company_code " +
@@ -28,7 +28,7 @@ public interface PartInventoryRepository extends JpaRepository<PartInventory, Lo
 
     // 부품별 파트 재고 - 회사
     @Query(value =
-            "SELECT c.company_name, b.bw_code, b.po_code, b.sp_code, SUM(STOCK)  AS STOCK " +
+            "SELECT c.company_name, b.bw_code, b.sp_code, SUM(STOCK) AS STOCK " +
                     "FROM part_inventory a " +
                     "INNER JOIN part b on a.part_id = b.bw_code " +
                     "INNER JOIN company c on b.company_id = c.company_code " +

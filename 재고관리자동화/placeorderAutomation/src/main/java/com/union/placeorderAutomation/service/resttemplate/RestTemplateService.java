@@ -23,16 +23,18 @@ public class RestTemplateService {
 
     //납품 등록
     public void createDeliveryCard(OutgoingSubmitDto submitDto, List<CreateDeliveryDto> deliveryList) {
+        String companyCode = submitDto.getCompanyCode();
+        String plantCode = submitDto.getPlantCode();
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
-        setHeaderDeliveryCard(submitDto.getCompanyCode(), httpHeaders);
+        setHeaderDeliveryCard(companyCode, httpHeaders);
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("p_companycd", "00");
         body.add("p_dml_gubun", "1");
-        body.add("p_vendcd", submitDto.getCompanyCode());
-        body.add("p_plant", submitDto.getPlantCode());
+        body.add("p_vendcd", companyCode);
+        body.add("p_plant", plantCode);
         body.add("p_sno", Integer.toString(submitDto.getOrderSeq()));
         body.add("P_descr", deliveryList.size() + " 품목");
         body.add("p_income_date", submitDto.getDate());//20210201 양식
@@ -40,12 +42,18 @@ public class RestTemplateService {
         deliveryList.forEach(delivery -> {
             body.add("p_partno", delivery.getBwCode());
             body.add("p_partnm", delivery.getPartName());
-            body.add("p_order_no", delivery.getPoCode());
+            if(plantCode.equals("5300")) {
+                body.add("p_order_no", delivery.getPoCode1());
+                body.add("p_remarks", delivery.getLocation1());
+            } else if(plantCode.equals("5330")){
+                body.add("p_order_no", delivery.getPoCode2());
+                body.add("p_remarks", delivery.getLocation2());
+
+            }
             body.add("p_lotno", delivery.getLot());
             body.add("p_qty", Integer.toString(delivery.getQuantity()));
             body.add("p_qty_per_box", Integer.toString(delivery.getLoadAmount()));
             body.add("p_qty_box", Integer.toString(delivery.getQuantity() / delivery.getLoadAmount()));
-            body.add("p_remarks", delivery.getLocation());
         });
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, httpHeaders);
@@ -96,9 +104,6 @@ public class RestTemplateService {
         body.add("p_time", submitDto.getTime());
 
         for(CreateDeliveryDto delivery : deliveryList){
-            System.out.println("submitDto = " + submitDto);
-            System.out.println("delivery = " + delivery);
-
             body.add("p_partno", delivery.getInventoryBwCode());
             body.add("p_menge", Integer.toString(delivery.getQuantity()));
             body.add("p_lgpbe", delivery.getLot());
@@ -106,12 +111,12 @@ public class RestTemplateService {
             body.add("p_seqno", "");
             if (plantCode.equals("5300")) {
                 body.add("p_plant", "01");
+                body.add("p_po_no", delivery.getPoCode1());
             } else if (plantCode.equals("5330")) {
                 body.add("p_plant", "03");
+                body.add("p_po_no", delivery.getPoCode2());
             }
-            body.add("p_po_no", delivery.getPoCode());
-        };
-
+        }
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, httpHeaders);
 
         String url = "https://es-qms.borgwarner.com/qms/MIS1150_t_new.PROCESS";

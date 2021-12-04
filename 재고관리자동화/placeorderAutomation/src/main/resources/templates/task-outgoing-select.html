@@ -76,14 +76,11 @@
                 </div>
 
                 <div class="row" id="findInventoryTable">
-                    <table class="table table-striped">
+                    <table class="table table-striped text-center">
                         <thead>
                         <tr>
-                            <th class="col-2">보그워너 코드</th>
-                            <th class="col-2">공급업체 코드</th>
-                            <th class="col-1">rop</th>
-                            <th class="col-1">lotMin</th>
-                            <th class="col-1">lotMax</th>
+                            <th class="col-2">보그워너 품번</th>
+                            <th class="col-1">전산 적입량</th>
                             <th class="col-1">전산 재고</th>
                             <th class="col-1">적입량</th>
                             <th class="col-1">입고량</th>
@@ -92,6 +89,7 @@
                                         style="visibility:hidden;" onclick="clickEnrollButton()">등록
                                 </button>
                             </th>
+                            <th class="col-1">사내 재고</th>
                         </tr>
                         </thead>
                         <tbody id="findInventoryTbody">
@@ -104,7 +102,7 @@
                     <table class="table col-4">
                         <thead>
                         <tr>
-                            <th class="col-2">보그워너 코드</th>
+                            <th class="col-2">보그워너 품번</th>
                             <th class="col-1">수량</th>
                             <th class="col-1">
                                 <button type="button" id="submitButton" class="btn btn-danger btn-sm"
@@ -122,7 +120,7 @@
                     <table class="table col-6">
                         <thead>
                         <tr>
-                            <th class="col-2">보그워너 코드</th>
+                            <th class="col-2">보그워너 품번</th>
                             <th class="col-1">로트</th>
                             <th class="col-1">적입량</th>
                             <th class="col-1">수량</th>
@@ -188,19 +186,18 @@
                         for (let i = 0; i < data.length; i++) {
                             let temp = data[i]
                             let tr = document.createElement("tr");
-                            let calInputAmount = temp.lotMax - temp.stockQTY;
-                            if (calInputAmount < 0) {
-                                calInputAmount = 0;
-                            }
+                            let calInputAmount = 0;
+                            // let calInputAmount = temp.lotMax - temp.stockQTY;
+                            // if (calInputAmount < 0) {
+                            //     calInputAmount = 0;
+                            // }
                             tr.innerHTML = `<td>` + temp.partBwCode + `</td>`
-                                + `<td>` + temp.spCode + `</td>`
                                 + `<td>` + temp.rop + `</td>`
-                                + `<td>` + temp.lotMin + `</td>`
-                                + `<td>` + temp.lotMax + `</td>`
                                 + `<td>` + temp.stockQTY + `</td>`
                                 + `<td>` + temp.loadAmount + `</td>`
                                 + `<td>` + `<div class="input-group"><input type="text" class="form-control" placeholder="수량" value="` + calInputAmount + `"></div>` + `</td>`
                                 + `<td>` + `<button type="button" class="btn btn-success btn-sm" onclick="enrollPart(this)"><i class="fas fa-check"></i></button>` + `</td>`
+                                + `<td class="table-warning">` + temp.stock + `</td>`
                             tbody.append(tr);
                         }
                     }
@@ -209,15 +206,15 @@
                         let tr = element.parentNode.parentNode;
                         let tdList = tr.childNodes;
                         let bwCode = tdList[0].innerText;
-                        let amount = tdList[7].childNodes[0].childNodes[0].value * 1
+                        let amount = tdList[4].childNodes[0].childNodes[0].value * 1
 
                         if (amount > 0) {
                             const url = "/api/task/outgoing/checkPart/" + bwCode + "/" + amount;
                             let response = await fetch(url);
                             if (response.status == 200) {
                                 partList.push({bwCode, amount});
-                                tdList[7].childNodes[0].childNodes[0].disabled = true;
-                                tdList[8].childNodes[0].disabled = true;
+                                tdList[4].childNodes[0].childNodes[0].disabled = true;
+                                tdList[5].childNodes[0].disabled = true;
                             } else {
                                 let data = await response.json();
                                 alert(`입력하신 수량이 현 재고량보다 많습니다. - 현재고 : ${data}`);

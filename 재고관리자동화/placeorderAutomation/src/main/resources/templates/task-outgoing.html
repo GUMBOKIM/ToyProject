@@ -76,24 +76,21 @@
                 </div>
 
                 <div class="row justify-content-center mb-3" style="overflow: auto" id="inquireTableRow">
-                    <table class="table">
+                    <table class="table text-center">
                         <thead>
                         <tr>
                             <th scope="col-1">라인</th>
                             <th scope="col-1">공장</th>
                             <th scope="col-1">순번</th>
-                            <th scope="col-2">보그워너 코드</th>
-                            <th scope="col-1">deliveredQTY</th>
-                            <th scope="col-1">remainQTY</th>
-                            <th scope="col-1">totalQTY</th>
-                            <th scope="col-1">ttime</th>
-                            <th scope="col-1">rtime</th>
+                            <th scope="col-2">보그워너 품번</th>
+                            <th scope="col-1">완성수량</th>
+                            <th scope="col-1">잔량(진행중)</th>
+                            <th scope="col-1">총수량</th>
+                            <th scope="col-1">전체시간</th>
+                            <th scope="col-1">잔여시간</th>
                             <th scope="col-1"></th>
-                            <th class="col-2">보그워너 코드</th>
-                            <th class="col-2">공급업체 코드</th>
-                            <th class="col-1">rop</th>
-                            <th class="col-1">lotMin</th>
-                            <th class="col-1">lotMax</th>
+                            <th class="col-2">보그워너 품번</th>
+                            <th class="col-1">전산 적입량</th>
                             <th class="col-1">전산 재고</th>
                             <th class="col-1">적입량</th>
                             <th class="col-1">USAGE</th>
@@ -103,6 +100,7 @@
                                         style="visibility: visible;" onclick="clickEnrollButton()">등록
                                 </button>
                             </th>
+                            <th class="col-1">사내 재고</th>
                         </tr>
                         </thead>
                         <tbody id="bomTbody">
@@ -114,7 +112,7 @@
                     <table class="table col-4">
                         <thead>
                         <tr>
-                            <th class="col-2">보그워너 코드</th>
+                            <th class="col-2">보그워너 품번</th>
                             <th class="col-1">수량</th>
                             <th class="col-1">
                                 <button type="button" id="submitButton" class="btn btn-danger btn-sm"
@@ -132,7 +130,7 @@
                     <table class="table col-6">
                         <thead>
                         <tr>
-                            <th class="col-2">보그워너 코드</th>
+                            <th class="col-2">보그워너 품번</th>
                             <th class="col-1">로트</th>
                             <th class="col-1">적입량</th>
                             <th class="col-1">수량</th>
@@ -181,17 +179,17 @@
                                 let response = await fetch(url);
                                 if (response.status == 200) {
                                     let data = await response.json();
-                                    data = data.sort(function (a, b) {
-                                        let x = a.seq.toLowerCase();
-                                        let y = b.seq.toLowerCase();
-                                        if (x < y) {
-                                            return -1;
-                                        }
-                                        if (x > y) {
-                                            return 1;
-                                        }
-                                        return 0;
-                                    });
+                                    // data = data.sort(function (a, b) {
+                                    //     let x = a.seq.toLowerCase();
+                                    //     let y = b.seq.toLowerCase();
+                                    //     if (x < y) {
+                                    //         return -1;
+                                    //     }
+                                    //     if (x > y) {
+                                    //         return 1;
+                                    //     }
+                                    //     return 0;
+                                    // });
                                     console.log(data);
                                     createTable(data);
 
@@ -207,53 +205,75 @@
                         for (let i = 0; i < data.length; i++) {
                             let bom = data[i];
                             let partInventory = bom.partInventory;
-                            for (let j = 0; j < partInventory.length; j++) {
-                                let html;
+                            if (partInventory != null) {
+                                for (let j = 0; j < partInventory.length; j++) {
+                                    let html;
+                                    let tr = document.createElement("tr");
+                                    if (j == 0) {
+                                        html =
+                                            `<td>` + bom.workCenter + `</td>`
+                                            + `<td>` + bom.plant + `</td>`
+                                            + `<td>` + bom.seq + `</td>`
+                                            + `<td>` + bom.bomBwCode + `</td>`
+                                            + `<td>` + bom.deliveredQTY + `</td>`
+                                            + `<td>` + bom.remainQTY + `</td>`
+                                            + `<td>` + bom.totalQTY + `</td>`
+                                            + `<td>` + bom.ttime + `</td>`
+                                            + `<td>` + bom.rtime + `</td>`
+                                            + `<td class="table-active">` + `</td>`
+                                    } else {
+                                        html =
+                                            `<td>` + `</td>`
+                                            + `<td>` + `</td>`
+                                            + `<td>` + `</td>`
+                                            + `<td>` + `</td>`
+                                            + `<td>` + `</td>`
+                                            + `<td>` + `</td>`
+                                            + `<td>` + `</td>`
+                                            + `<td>` + `</td>`
+                                            + `<td>` + `</td>`
+                                            + `<td class="table-active">` + `</td>`
+                                    }
+                                    let temp = partInventory[j];
+                                    let calInputAmount = 0
+                                    // let calInputAmount = (bom.remainQTY * temp.usage);
+                                    // if (calInputAmount > (temp.lotMax - temp.stockQTY)) {
+                                    //     calInputAmount = (temp.lotMax - temp.stockQTY);
+                                    // }
+                                    // if (calInputAmount < 0) {
+                                    //     calInputAmount = 0;
+                                    // }
+                                    html += `<td>` + temp.partBwCode + `</td>`
+                                        + `<td>` + temp.rop + `</td>`
+                                        + `<td>` + temp.stockQTY + `</td>`
+                                        + `<td>` + temp.loadAmount + `</td>`
+                                        + `<td>` + temp.usage + `</td>`
+                                        + `<td>` + `<div class="input-group"><input type="text" class="form-control" placeholder="수량" value="` + calInputAmount + `"></div>` + `</td>`
+                                        + `<td>` + `<button type="button" class="btn btn-success btn-sm" onclick="enrollPart(this)"><i class="fas fa-check"></i></button>` + `</td>`
+                                        + `<td class="table-warning">` + temp.stock + `</td>`
+                                    tr.innerHTML = html;
+                                    tbody.append(tr);
+                                }
+                            } else {
                                 let tr = document.createElement("tr");
-                                if (j == 0) {
-                                    html =
-                                        `<td>` + bom.workCenter + `</td>`
-                                        + `<td>` + bom.plant + `</td>`
-                                        + `<td>` + bom.seq + `</td>`
-                                        + `<td>` + bom.bomBwCode + `</td>`
-                                        + `<td>` + bom.deliveredQTY + `</td>`
-                                        + `<td>` + bom.remainQTY + `</td>`
-                                        + `<td>` + bom.totalQTY + `</td>`
-                                        + `<td>` + bom.ttime + `</td>`
-                                        + `<td>` + bom.rtime + `</td>`
-                                        + `<td class="table-active">` + `</td>`
-                                } else {
-                                    html =
-                                        `<td>` + `</td>`
-                                        + `<td>` + `</td>`
-                                        + `<td>` + `</td>`
-                                        + `<td>` + `</td>`
-                                        + `<td>` + `</td>`
-                                        + `<td>` + `</td>`
-                                        + `<td>` + `</td>`
-                                        + `<td>` + `</td>`
-                                        + `<td>` + `</td>`
-                                        + `<td class="table-active">` + `</td>`
-                                }
-                                let temp = partInventory[j];
-                                let calInputAmount = (bom.remainQTY * temp.usage);
-                                if (calInputAmount > (temp.lotMax - temp.stockQTY)) {
-                                    calInputAmount = (temp.lotMax - temp.stockQTY);
-                                }
-                                if (calInputAmount < 0) {
-                                    calInputAmount = 0;
-                                }
-                                html += `<td>` + temp.partBwCode + `</td>`
-                                    + `<td>` + temp.spCode + `</td>`
-                                    + `<td>` + temp.rop + `</td>`
-                                    + `<td>` + temp.lotMin + `</td>`
-                                    + `<td>` + temp.lotMax + `</td>`
-                                    + `<td>` + temp.stockQTY + `</td>`
-                                    + `<td>` + temp.loadAmount + `</td>`
-                                    + `<td>` + temp.usage + `</td>`
-                                    + `<td>` + `<div class="input-group"><input type="text" class="form-control" placeholder="수량" value="` + calInputAmount + `"></div>` + `</td>`
-                                    + `<td>` + `<button type="button" class="btn btn-success btn-sm" onclick="enrollPart(this)"><i class="fas fa-check"></i></button>` + `</td>`
-                                tr.innerHTML = html;
+                                tr.innerHTML = `<td>` + bom.workCenter + `</td>`
+                                    + `<td>` + bom.plant + `</td>`
+                                    + `<td>` + bom.seq + `</td>`
+                                    + `<td>` + bom.bomBwCode + `</td>`
+                                    + `<td>` + bom.deliveredQTY + `</td>`
+                                    + `<td>` + bom.remainQTY + `</td>`
+                                    + `<td>` + bom.totalQTY + `</td>`
+                                    + `<td>` + bom.ttime + `</td>`
+                                    + `<td>` + bom.rtime + `</td>`
+                                    + `<td class="table-active">` + `</td>`
+                                    + `<td>` + `</td>`
+                                    + `<td>` + `</td>`
+                                    + `<td>` + `</td>`
+                                    + `<td>` + `</td>`
+                                    + `<td>` + `</td>`
+                                    + `<td>` + `</td>`
+                                    + `<td>` + `</td>`
+                                    + `<td class="table-warning">` + `</td>`
                                 tbody.append(tr);
                             }
                         }
@@ -263,15 +283,15 @@
                         let tr = element.parentNode.parentNode;
                         let tdList = tr.childNodes;
                         let bwCode = tdList[10].innerText;
-                        let amount = tdList[18].childNodes[0].childNodes[0].value * 1
+                        let amount = tdList[15].childNodes[0].childNodes[0].value * 1
 
                         if (amount > 0) {
                             const url = "/api/task/outgoing/checkPart/" + bwCode + "/" + amount;
                             let response = await fetch(url);
                             if (response.status == 200) {
                                 partList.push({bwCode, amount});
-                                tdList[18].childNodes[0].childNodes[0].disabled = true;
-                                tdList[19].childNodes[0].disabled = true;
+                                tdList[15].childNodes[0].childNodes[0].disabled = true;
+                                tdList[16].childNodes[0].disabled = true;
                             } else {
                                 alert(`입력하신 수량이 현 재고량보다 많습니다. - 현재고 : ${response.data}`);
                             }

@@ -125,7 +125,7 @@ public class RestTemplateService {
 
     }
 
-    public HashMap<String, ProductPlanDto> getProductPlanning(String companyCode, String plantCode, String lineCode) {
+    public List<ProductPlanDto> getProductPlanning(String companyCode, String plantCode, String lineCode) {
         HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(
                 HttpClientBuilder.create().build());
         RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
@@ -161,7 +161,7 @@ public class RestTemplateService {
 
         int seq = 0;
         ;
-        HashMap<String, ProductPlanDto> planHashMap = new HashMap<>();
+       List<ProductPlanDto> planList = new ArrayList<>();
         ProductPlanDto plan = new ProductPlanDto();
         while (matcher.find()) {
             seq = (seq == 12) ? seq - 11 : seq + 1;
@@ -195,12 +195,12 @@ public class RestTemplateService {
                     break;
                 case 12:
                     plan.setTTime(Integer.parseInt(temp));
-                    planHashMap.put(plan.getBomBwCode(), plan);
+                    planList.add(plan);
                     plan = new ProductPlanDto();
                     break;
             }
         }
-        return planHashMap;
+        return planList;
     }
 
     public String[] findDeliveryCard(String companyCode, String date, String plantCode) {
@@ -307,10 +307,10 @@ public class RestTemplateService {
                     inventory.setRop(Integer.parseInt(temp));
                     break;
                 case 9:
-                    inventory.setLotMin(Integer.parseInt(temp));
+//                    inventory.setLotMin(Integer.parseInt(temp));
                     break;
                 case 10:
-                    inventory.setLotMax(Integer.parseInt(temp));
+//                    inventory.setLotMax(Integer.parseInt(temp));
                     if (inventory.getPlant().equals(plantCode)) {
                         inventoryMap.put(inventory.getPartBwCode(), inventory);
                     }

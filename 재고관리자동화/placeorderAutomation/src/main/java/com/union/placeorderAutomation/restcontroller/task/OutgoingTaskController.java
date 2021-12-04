@@ -37,7 +37,7 @@ public class OutgoingTaskController {
     }
 
     @GetMapping("/inquire-select/{companyCode}/{plantCode}")
-    public ResponseEntity inquireSelectPlanNInventory(@PathVariable String companyCode,
+    public ResponseEntity inquireSelectInventory(@PathVariable String companyCode,
                                                       @PathVariable String plantCode) {
         List<PartInventoryDto> result = outgoingService.findSelectPartInventory(companyCode, plantCode);
         return new ResponseEntity(result, HttpStatus.OK);

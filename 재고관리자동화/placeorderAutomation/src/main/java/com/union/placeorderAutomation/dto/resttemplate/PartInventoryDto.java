@@ -13,10 +13,10 @@ public class PartInventoryDto {
     private int stockQTY;
     private String uom;
     private int rop;
-    private int lotMin;
-    private int lotMax;
 
     private String spCode;
     private int usage = 0;
     private int loadAmount = 0;
+    private int stock;
+
 }

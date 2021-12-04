@@ -36,7 +36,12 @@ public class OutgoingService {
 
     @Transactional(readOnly = true)
     public int findPartStock(String bwCode) {
-        return partInventoryRepo.sumPartStock(bwCode).intValue();
+        Long partStock = partInventoryRepo.sumPartStock(bwCode);
+        if(partStock == null){
+            return 0;
+        } else {
+            return partStock.intValue();
+        }
     }
 
     //일반 납품
@@ -50,25 +55,27 @@ public class OutgoingService {
             String bwCode = part.getBwCode();
             if (partInvenMap.containsKey(bwCode)) {
                 PartInventoryDto partInventoryDto = partInvenMap.get(bwCode);
-                partInventoryDto.setSpCode(part.getSpCode());
                 partInventoryDto.setLoadAmount(part.getLoadAmount());
+                partInventoryDto.setStock(findPartStock(part.getBwCode()));
                 partInvenResult.put(bwCode, partInventoryDto);
             }
         }
 
         // 생산계획(BOM) 찾기(공장, 라인으로 검색)
-        HashMap<String, ProductPlanDto> planBomMap = new HashMap<>();
-        planBomMap.putAll(restTemplateService.getProductPlanning(companyCode, plantCode, "CS"));
-        planBomMap.putAll(restTemplateService.getProductPlanning(companyCode, plantCode, "CP"));
-        planBomMap.putAll(restTemplateService.getProductPlanning(companyCode, plantCode, "MC"));
+        List<ProductPlanDto> planList = new ArrayList<>();
+        planList.addAll(restTemplateService.getProductPlanning(companyCode, plantCode, "CS"));
+        planList.addAll(restTemplateService.getProductPlanning(companyCode, plantCode, "CP"));
+        planList.addAll(restTemplateService.getProductPlanning(companyCode, plantCode, "MC"));
         // 회사 제품이 들어간 BOM 필터링
         List<Bom> findBomList = bomRepo.findByCompanyCode(Company.builder().companyCode(companyCode).build());
-        List<ProductPlanDto> planBomResult = new ArrayList<>();
-        for (Bom bom : findBomList) {
-            String bomBwCode = bom.getBwCode();
-            if (planBomMap.containsKey(bomBwCode)) {
-                ProductPlanDto productPlanDto = planBomMap.get(bomBwCode);
-                List<BomPart> bomParts = bom.getBomParts();
+        HashMap<String, Bom> bomMap = new HashMap<>();
+        for(Bom bom : findBomList){
+            bomMap.put(bom.getBwCode(), bom);
+        }
+        for(ProductPlanDto plan : planList){
+            String bomBwCode = plan.getBomBwCode();
+            if(bomMap.containsKey(bomBwCode)){
+                List<BomPart> bomParts = bomMap.get(bomBwCode).getBomParts();
                 List<PartInventoryDto> partInventory = new ArrayList<>();
                 for (BomPart bomPart : bomParts) {
                     String partBwCode = bomPart.getPart().getBwCode();
@@ -80,11 +87,12 @@ public class OutgoingService {
                         partInventory.add(partInventoryDto);
                     }
                 }
-                productPlanDto.setPartInventory(partInventory);
-                planBomResult.add(productPlanDto);
+                plan.setPartInventory(partInventory);
             }
         }
-        return planBomResult;
+        System.out.println("planList = " + planList);
+
+        return planList;
     }
 
     //선택품 찾기
@@ -99,7 +107,9 @@ public class OutgoingService {
             if (partInvenMap.containsKey(bwCode)) {
                 PartInventoryDto partInventoryDto = partInvenMap.get(bwCode);
                 partInventoryDto.setSpCode(part.getSpCode());
+                partInventoryDto.setPartBwCode(part.getBwCode());
                 partInventoryDto.setLoadAmount(part.getLoadAmount());
+                partInventoryDto.setStock(findPartStock(part.getBwCode()));
                 partInvenResult.add(partInventoryDto);
             }
         }

@@ -64,12 +64,14 @@ public class PageController {
     public String taskPartStock(Model model) {
         commonService.addCompanyList(model);
         model.addAttribute("partStockList", partStockService.getPartStockListAll());
+        model.addAttribute("companyCode", null);
         return "task-part-stock";
     }
     @RequestMapping("/task/part/stock/{companyCode}")
-    public String taskPartCompanyCode(@PathVariable String companyCode, Model model) {
+    public String taskPartStockCompanyCode(@PathVariable String companyCode, Model model) {
         commonService.addCompanyList(model);
         model.addAttribute("partStockList", partStockService.getPartStockList(companyCode));
+        model.addAttribute("companyCode", companyCode);
         return "task-part-stock";
     }
 

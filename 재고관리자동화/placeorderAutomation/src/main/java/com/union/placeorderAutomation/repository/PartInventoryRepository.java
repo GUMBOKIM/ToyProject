@@ -1,5 +1,6 @@
 package com.union.placeorderAutomation.repository;
 
+import com.union.placeorderAutomation.entity.Company;
 import com.union.placeorderAutomation.entity.Part;
 import com.union.placeorderAutomation.entity.PartInventory;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -52,6 +53,7 @@ public interface PartInventoryRepository extends JpaRepository<PartInventory, Lo
     @Query(value = "SELECT * FROM part_inventory WHERE part_id = ?1 AND lot = ?2", nativeQuery = true)
     Optional<PartInventory> findByPartAndLot(String partBwCode, String lot);
 
-
+    @Query(value = "SELECT i FROM PartInventory i INNER JOIN i.part p WHERE p.company = :company order by i.part.bwCode, i.lot")
+    List<PartInventory> findPartInventoryByCompany(@Param("company") Company company);
 
 }

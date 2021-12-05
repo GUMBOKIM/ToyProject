@@ -42,10 +42,14 @@
                                     th:text="${company.companyName}"></option>
                         </select>
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <button type="button" class="btn btn-primary btn-sm" onclick="findPartByCompanyCode()"><i
                                 class="fas fa-search"></i></button>
+                        <button type="button" class="btn btn-success btn-sm" onclick="clickExcelButton()"><i
+                                class="far fa-file-excel"></i>
+                        </button>
                     </div>
+
                 </div>
 
                 <div class="row justify-content-center">
@@ -87,24 +91,46 @@
                     </div>
                 </div>
             </div>
-            <!-- /.container-fluid -->
+
+            <div class="row justify-content-center" style="visibility: hidden">
+                <div class="col" style="overflow:auto; overflow-x: hidden; height: 70vh">
+                    <table class="table table-striped" id="excelTable">
+                        <thead>
+                        <tr>
+                            <th class="col">보그워너 품번</th>
+                            <th class="col">로트</th>
+                            <th class="col">적입량</th>
+                            <th class="col">수량</th>
+                            <th class="col">박스량</th>
+                        </tr>
+                        </thead>
+                        <tbody id="excelTbody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-        <!-- Footer -->
-        <footer th:replace="fragments/footer.html :: fragment-footer">
-        </footer>
-
+        <!-- /.container-fluid -->
     </div>
-    <!-- End of Main Content -->
+    <!-- Footer -->
+    <footer th:replace="fragments/footer.html :: fragment-footer">
+    </footer>
+
+</div>
+<!-- End of Main Content -->
 
 
-    <!-- End of Footer -->
+<!-- End of Footer -->
 </div>
 <!-- End of Content Wrapper -->
 </div>
 <!-- End of Page Wrapper -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    let companyCode = /*[[ ${companyCode} ]]*/;
+    /*]]*/
+</script>
 <script>
-    let companyCode;
-
     function setCompanyCode(value) {
         companyCode = value;
     }
@@ -171,23 +197,54 @@
 
         let url = "/api/task/part-stock/inventory/" + id;
 
-        let response = await fetch(url,{
+        let response = await fetch(url, {
             headers: {
                 "Content-Type": "application/json",
             },
             method: "PUT",
-                body: JSON.stringify({
-                    lot,
-                    loadAmount
-                })
+            body: JSON.stringify({
+                lot,
+                loadAmount
+            })
         });
         if (response.status == 200) {
             removeChildNode(tr);
             tr.innerHTML = `<td>` + lot + `</td>`
                 + `<td>` + quantity + `</td>`
-                + `<td>` + loadAmount +`</td>`
+                + `<td>` + loadAmount + `</td>`
                 + `<td>` + `<button type="button" class="btn btn-info btn-sm" onclick="modifyInventory(this)"><i
                 class="fas fa-edit"></i></button>` + `</td>`;
+        }
+    }
+
+    async function clickExcelButton() {
+        let url = "/api/task/part-stock/inventory/total/" + companyCode;
+        let response = await fetch(url);
+        if (response.status == 200) {
+            let data = await response.json();
+            createExcelTable(data);
+        }
+
+        let wb = XLSX.utils.table_to_book(document.getElementById('excelTable'), {
+            sheet: companyCode,
+            raw: true
+        });
+        XLSX.writeFile(wb, (`${companyCode}-재고 목록.xlsx`));
+    }
+
+    function createExcelTable(data) {
+        let tbody = document.getElementById("excelTbody");
+        removeChildNode(tbody);
+        for (let i = 0; i < data.length; i++) {
+            let temp = data[i];
+            let tr = document.createElement("tr");
+            tr.innerHTML =
+                `<td>` + temp.bwCode + `</td>` +
+                `<td>` + temp.lot + `</td>` +
+                `<td>` + temp.loadAmount + `</td>` +
+                `<td>` + temp.stock + `</td>` +
+                `<td>` + temp.boxQuantity + `</td>`;
+            tbody.append(tr);
         }
     }
 </script>

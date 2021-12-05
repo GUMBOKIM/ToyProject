@@ -2,6 +2,7 @@ package com.union.placeorderAutomation.restcontroller.task.part;
 
 import com.union.placeorderAutomation.dto.task.part.stock.PartStockDetailDto;
 import com.union.placeorderAutomation.dto.task.part.stock.PartStockDto;
+import com.union.placeorderAutomation.dto.task.part.stock.PartStockExcelDto;
 import com.union.placeorderAutomation.dto.task.part.stock.PartStockModifyDto;
 import com.union.placeorderAutomation.service.task.TaskPartStockService;
 import lombok.RequiredArgsConstructor;
@@ -36,4 +37,9 @@ public class PartStockStatusController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    @GetMapping("/inventory/total/{companyCode}")
+    public ResponseEntity getInventoryTotal(@PathVariable String companyCode) {
+        List<PartStockExcelDto> excelDto = partStockService.getInventoryTotal(companyCode);
+        return new ResponseEntity(excelDto, HttpStatus.OK);
+    }
 }

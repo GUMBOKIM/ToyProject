@@ -1,7 +1,9 @@
 package com.union.placeorderAutomation.service.task;
 
 import com.union.placeorderAutomation.dto.task.part.stock.PartStockDetailDto;
+import com.union.placeorderAutomation.dto.task.part.stock.PartStockExcelDto;
 import com.union.placeorderAutomation.dto.task.part.stock.PartStockModifyDto;
+import com.union.placeorderAutomation.entity.Company;
 import com.union.placeorderAutomation.entity.PartInventory;
 import com.union.placeorderAutomation.repository.PartInventoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -56,5 +58,16 @@ public class TaskPartStockService {
             partInventory.setLoadAmount(modifyDto.getLoadAmount());
             partInventoryRepo.save(partInventory);
         }
+    }
+
+    public List<PartStockExcelDto> getInventoryTotal(String companyCode) {
+        Company company = Company.builder().companyCode(companyCode).build();
+        List<PartInventory> partInventoryList = partInventoryRepo.findPartInventoryByCompany(company);
+
+        List<PartStockExcelDto> result = new ArrayList<>();
+        for(PartInventory partInventory : partInventoryList){
+            result.add(new PartStockExcelDto(partInventory));
+        }
+        return result;
     }
 }

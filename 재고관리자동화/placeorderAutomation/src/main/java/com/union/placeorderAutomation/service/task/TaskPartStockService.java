@@ -1,6 +1,7 @@
 package com.union.placeorderAutomation.service.task;
 
 import com.union.placeorderAutomation.dto.task.part.stock.PartStockDetailDto;
+import com.union.placeorderAutomation.dto.task.part.stock.PartStockModifyDto;
 import com.union.placeorderAutomation.entity.PartInventory;
 import com.union.placeorderAutomation.repository.PartInventoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 // 재고 조회 페이지에서 사용
 @Transactional
@@ -46,5 +48,13 @@ public class TaskPartStockService {
         return partStockDetailList;
     }
 
-
+    public void modifyInventory(Long inventoryId, PartStockModifyDto modifyDto) {
+        Optional<PartInventory> inventoryOpt = partInventoryRepo.findById(inventoryId);
+        if(inventoryOpt.isPresent()){
+            PartInventory partInventory = inventoryOpt.get();
+            partInventory.setLot(modifyDto.getLot());
+            partInventory.setLoadAmount(modifyDto.getLoadAmount());
+            partInventoryRepo.save(partInventory);
+        }
+    }
 }

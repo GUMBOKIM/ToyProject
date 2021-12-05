@@ -2,6 +2,7 @@ package com.union.placeorderAutomation.restcontroller.task.part;
 
 import com.union.placeorderAutomation.dto.task.part.stock.PartStockDetailDto;
 import com.union.placeorderAutomation.dto.task.part.stock.PartStockDto;
+import com.union.placeorderAutomation.dto.task.part.stock.PartStockModifyDto;
 import com.union.placeorderAutomation.service.task.TaskPartStockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,12 @@ public class PartStockStatusController {
     public ResponseEntity getPartStockList(@PathVariable String partBwCode) {
         List<PartStockDetailDto> partDetailList = partStockService.getPartStockDetailList(partBwCode);
         return new ResponseEntity(partDetailList, HttpStatus.OK);
+    }
+
+    @PutMapping("/inventory/{inventoryId}")
+    public ResponseEntity modifyPartStock(@PathVariable Long inventoryId, @RequestBody PartStockModifyDto modifyDto) {
+        partStockService.modifyInventory(inventoryId, modifyDto);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 }

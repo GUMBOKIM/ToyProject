@@ -70,13 +70,14 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col-3">
+                        <div class="col-4">
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
                                     <th class="col-1">로트</th>
                                     <th class="col-1">수량</th>
                                     <th class="col-1">적입량</th>
+                                    <th class="col-1"></th>
                                 </tr>
                                 </thead>
                                 <tbody id="inventory-table">
@@ -121,7 +122,6 @@
 
     function clickPartRow(tr) {
         partBwCode = tr.childNodes[3].innerText;
-
         const url = `/api/task/part-stock/inventory/` + partBwCode;
         fetch(url).then(response => {
             if (response.status == 200) {
@@ -136,7 +136,6 @@
     function createInventoryTable() {
         let tbody = document.getElementById("inventory-table");
         removeChildNode(tbody);
-
         for (let i = 0; i < inventory.length; i++) {
             let temp = inventory[i];
             let tr = document.createElement("tr");
@@ -144,7 +143,51 @@
             tr.innerHTML = `<td>` + temp.lot + `</td>`
                 + `<td>` + temp.stock + `</td>`
                 + `<td>` + temp.loadAmount + `</td>`
+                + `<td>` + `<button type="button" class="btn btn-info btn-sm" onclick="clickModifyButton(this)"><i class="far fa-edit"></i></button>` + `</td>`
             tbody.append(tr);
+        }
+    }
+
+    function clickModifyButton(element) {
+        let tr = element.parentNode.parentNode;
+        let tdList = tr.children;
+        let lot = tdList[0].innerText;
+        let quantity = tdList[1].innerText * 1;
+        let loadAmount = tdList[2].innerText * 1;
+        removeChildNode(tr);
+        tr.innerHTML = `<td>` + `<input type="text" class="form-control" value="${lot}">` + `</td>`
+            + `<td>` + quantity + `</td>`
+            + `<td>` + `<input type="text" class="form-control" value="${loadAmount}">` + `</td>`
+            + `<td>` + `<button type="button" class="btn btn-success btn-sm" onclick="modifyInventory(this)"><i class="fas fa-check"></i></button>` + `</td>`;
+    }
+
+    async function modifyInventory(element) {
+        let tr = element.parentNode.parentNode;
+        let id = tr.id;
+        let tdList = tr.children;
+        let lot = tdList[0].children[0].value;
+        let quantity = tdList[1].innerText * 1;
+        let loadAmount = tdList[2].children[0].value * 1;
+
+        let url = "/api/task/part-stock/inventory/" + id;
+
+        let response = await fetch(url,{
+            headers: {
+                "Content-Type": "application/json",
+            },
+            method: "PUT",
+                body: JSON.stringify({
+                    lot,
+                    loadAmount
+                })
+        });
+        if (response.status == 200) {
+            removeChildNode(tr);
+            tr.innerHTML = `<td>` + lot + `</td>`
+                + `<td>` + quantity + `</td>`
+                + `<td>` + loadAmount +`</td>`
+                + `<td>` + `<button type="button" class="btn btn-info btn-sm" onclick="modifyInventory(this)"><i
+                class="fas fa-edit"></i></button>` + `</td>`;
         }
     }
 </script>

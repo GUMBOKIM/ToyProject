@@ -144,21 +144,22 @@
                             let rows = XLSX.utils.sheet_to_json(workBook.Sheets[workBook.SheetNames[0]]);
                             for (let i = 0; i < rows.length; i++) {
                                 let temp = rows[i];
-                                if (i >= 1) {
-                                    if (temp[Object.keys(temp)[0]] == '') {
-                                        break;
-                                    }
-                                    partCheck.push({
-                                        companyName: "",
-                                        spCode: "",
-                                        poCode: "",
-                                        name: "",
-                                        check: "",
-                                        bwCode: temp[Object.keys(temp)[0]],
-                                        lot: temp[Object.keys(temp)[1]],
-                                        quantity: temp[Object.keys(temp)[2]] * 1
-                                    });
+
+                                if (temp[Object.keys(temp)[0]] == '') {
+                                    break;
                                 }
+                                partCheck.push({
+                                    companyName: "",
+                                    spCode: "",
+                                    poCode: "",
+                                    name: "",
+                                    check: "",
+                                    bwCode: temp[Object.keys(temp)[0]],
+                                    lot: temp[Object.keys(temp)[1]],
+                                    quantity: temp[Object.keys(temp)[2]] * 1,
+                                    loadAmount: temp[Object.keys(temp)[3]] * 1
+                                });
+
                             }
                         }
                         reader.readAsBinaryString(excelFile);
@@ -177,11 +178,12 @@
                                 + `<td>` + temp.name + `</td>`
                                 + `<td>` + temp.lot + `</td>`
                                 + `<td>` + temp.quantity + `</td>`
+                                + `<td>` + temp.loadAmount + `</td>`
                                 + `<td>` + temp.check + `</td>`;
                             if (temp.check == "N") {
                                 tr.className = "table-danger";
                                 checkPass = false;
-                            } else if (temp.check == "Y"){
+                            } else if (temp.check == "Y") {
                                 tr.className = "table-primary";
                             }
                             tbody.append(tr);
@@ -292,6 +294,7 @@
                                 <th class="col-2">이름</th>
                                 <th class="col-1">로트</th>
                                 <th class="col-1">수량</th>
+                                <th class="col-1">적입량</th>
                                 <th class="col-1"></th>
                             </tr>
                             </thead>

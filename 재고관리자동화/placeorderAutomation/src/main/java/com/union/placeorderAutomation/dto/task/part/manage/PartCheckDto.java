@@ -10,5 +10,6 @@ public class PartCheckDto {
     private String name;
     private String lot;
     private int quantity;
+    private int loadAmount;
     private String check;
 }

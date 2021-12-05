@@ -75,6 +75,7 @@ public class TaskPartManageService {
                 PartInventory newPartInventory = PartInventory.builder()
                         .part(part)
                         .lot(lot)
+                        .loadAmount(partCheck.getLoadAmount())
                         .stock(afterStock)
                         .build();
                 partInventoryRepo.save(newPartInventory);

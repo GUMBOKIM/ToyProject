@@ -26,6 +26,9 @@ public class PartInventory {
     private String lot;
 
     @Column(nullable = false)
+    private int loadAmount;
+
+    @Column(nullable = false)
     private int stock;
 
     @Column(length = 1)

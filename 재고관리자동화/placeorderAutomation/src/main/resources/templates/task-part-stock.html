@@ -76,6 +76,7 @@
                                 <tr>
                                     <th class="col-1">로트</th>
                                     <th class="col-1">수량</th>
+                                    <th class="col-1">적입량</th>
                                 </tr>
                                 </thead>
                                 <tbody id="inventory-table">
@@ -142,6 +143,7 @@
             tr.id = temp.partInventoryId;
             tr.innerHTML = `<td>` + temp.lot + `</td>`
                 + `<td>` + temp.stock + `</td>`
+                + `<td>` + temp.loadAmount + `</td>`
             tbody.append(tr);
         }
     }

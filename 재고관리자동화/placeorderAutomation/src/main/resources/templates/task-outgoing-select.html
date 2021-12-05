@@ -186,16 +186,21 @@
                         for (let i = 0; i < data.length; i++) {
                             let temp = data[i]
                             let tr = document.createElement("tr");
-                            let calInputAmount = 0;
                             // let calInputAmount = temp.lotMax - temp.stockQTY;
                             // if (calInputAmount < 0) {
                             //     calInputAmount = 0;
                             // }
+                            let boxQTY;
+                            if(temp.rop != 0){
+                                boxQTY = (temp.stockQTY/temp.rop).toFixed(1);
+                            } else {
+                                boxQTY = '-'
+                            }
                             tr.innerHTML = `<td>` + temp.partBwCode + `</td>`
                                 + `<td>` + temp.rop + `</td>`
                                 + `<td>` + temp.stockQTY + `</td>`
-                                + `<td>` + temp.loadAmount + `</td>`
-                                + `<td>` + `<div class="input-group"><input type="text" class="form-control" placeholder="수량" value="` + calInputAmount + `"></div>` + `</td>`
+                                + `<td>` + temp.loadAmount + `(${boxQTY})` + `</td>`
+                                + `<td>` + `<div class="input-group"><input type="text" class="form-control" placeholder="수량" onclick="onclickInput(this)"></div>` + `</td>`
                                 + `<td>` + `<button type="button" class="btn btn-success btn-sm" onclick="enrollPart(this)"><i class="fas fa-check"></i></button>` + `</td>`
                                 + `<td class="table-warning">` + temp.stock + `</td>`
                             tbody.append(tr);
@@ -279,12 +284,35 @@
                                 tbody.append(tr);
                             }
                         }
-
-
                     }
 
                     function openReport() {
                         window.open(`https://es-qms.borgwarner.com/qms/payment_card2.main?p_companycd=00&p_vendcd=${orderInfo.companyCode}&p_plant=${orderInfo.plantCode}&p_income_date=${orderInfo.date}&p_sno=${orderInfo.orderSeq}`)
+                    }
+
+                    async function  onclickInput(element) {
+                        console.log(element)
+                        let tr = element.parentNode.parentNode.parentNode;
+                        console.log(tr)
+                        let tdList = tr.childNodes;
+                        console.log(tdList)
+                        let bwCode = tdList[0].innerText;
+                        console.log(bwCode);
+
+                        const url = "/api/task/part-stock/inventory/" + bwCode;
+                        let response = await fetch(url);
+                        if (response.status == 200) {
+                            let data = await response.json();
+                            console.log(data)
+                            let message = "";
+                            for (let i = 0; i<data.length; i++){
+                                let temp = data[i]
+                                message += `로트 : ${temp.lot}, 적입량 : ${temp.loadAmount}, 수량 : ${temp.stock}\n`
+                            }
+                            let amount = prompt(message, "")
+                            element.value = amount;
+                        }
+
                     }
                 </script>
             </div>

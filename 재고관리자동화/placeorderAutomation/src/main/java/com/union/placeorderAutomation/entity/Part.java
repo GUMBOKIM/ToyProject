@@ -7,8 +7,6 @@ import org.hibernate.annotations.Where;
 import javax.persistence.*;
 import java.util.List;
 
-
-
 @Data
 @Builder
 @AllArgsConstructor
@@ -33,14 +31,14 @@ public class Part {
     private String partName;
 
     // 공급자 코드
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String spCode;
 
     // 발주 번호
-    @Column(unique = true, nullable = false)
+    @Column
     private String poCode1;
 
-    @Column(unique = true, nullable = false)
+    @Column
     private String poCode2;
 
     //SAP 위치

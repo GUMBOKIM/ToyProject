@@ -42,10 +42,10 @@ public class RestTemplateService {
         deliveryList.forEach(delivery -> {
             body.add("p_partno", delivery.getBwCode());
             body.add("p_partnm", delivery.getPartName());
-            if(plantCode.equals("5300")) {
+            if (plantCode.equals("5300")) {
                 body.add("p_order_no", delivery.getPoCode1());
                 body.add("p_remarks", delivery.getLocation1());
-            } else if(plantCode.equals("5330")){
+            } else if (plantCode.equals("5330")) {
                 body.add("p_order_no", delivery.getPoCode2());
                 body.add("p_remarks", delivery.getLocation2());
 
@@ -103,18 +103,20 @@ public class RestTemplateService {
         body.add("p_vendcd", companyCode);
         body.add("p_time", submitDto.getTime());
 
-        for(CreateDeliveryDto delivery : deliveryList){
-            body.add("p_partno", delivery.getInventoryBwCode());
-            body.add("p_menge", Integer.toString(delivery.getQuantity()));
-            body.add("p_lgpbe", delivery.getLot());
-            body.add("p_barco", "");
-            body.add("p_seqno", "");
-            if (plantCode.equals("5300")) {
-                body.add("p_plant", "01");
-                body.add("p_po_no", delivery.getPoCode1());
-            } else if (plantCode.equals("5330")) {
-                body.add("p_plant", "03");
-                body.add("p_po_no", delivery.getPoCode2());
+        for (CreateDeliveryDto delivery : deliveryList) {
+            if ((plantCode.equals("5300") && delivery.getPoCode1() != null) || (plantCode.equals("5330") && delivery.getPoCode2() != null)) {
+                body.add("p_partno", delivery.getInventoryBwCode());
+                body.add("p_menge", Integer.toString(delivery.getQuantity()));
+                body.add("p_lgpbe", delivery.getLot());
+                body.add("p_barco", "");
+                body.add("p_seqno", "");
+                if (plantCode.equals("5300")) {
+                    body.add("p_plant", "01");
+                    body.add("p_po_no", delivery.getPoCode1());
+                } else if (plantCode.equals("5330")) {
+                    body.add("p_plant", "03");
+                    body.add("p_po_no", delivery.getPoCode2());
+                }
             }
         }
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, httpHeaders);
@@ -165,8 +167,7 @@ public class RestTemplateService {
         Matcher matcher = pattern.matcher(result);
 
         int seq = 0;
-        ;
-       List<ProductPlanDto> planList = new ArrayList<>();
+        List<ProductPlanDto> planList = new ArrayList<>();
         ProductPlanDto plan = new ProductPlanDto();
         while (matcher.find()) {
             seq = (seq == 12) ? seq - 11 : seq + 1;

@@ -217,7 +217,11 @@
                             const url = "/api/task/outgoing/checkPart/" + bwCode + "/" + amount;
                             let response = await fetch(url);
                             if (response.status == 200) {
-                                partList.push({bwCode, amount});
+                                if(partList.findIndex(v => v.bwCode === bwCode) == -1){
+                                    partList.push({bwCode, amount});
+                                } else {
+                                    alert("이미 등록한 자재입니다. 수량은 반영되지 않습니다.")
+                                }
                                 tdList[4].childNodes[0].childNodes[0].disabled = true;
                                 tdList[5].childNodes[0].disabled = true;
                             } else {
@@ -234,8 +238,16 @@
                         if (partList.length != 0) {
                             let tableRow = document.getElementById("findInventoryTable")
                             removeAllNode(tableRow);
-
                             visibleElement("submitTableRow");
+
+                            partList.sort(function(a, b){
+                                const upperCaseA = a.bwCode.toUpperCase();
+                                const upperCaseB = b.bwCode.toUpperCase();
+
+                                if(upperCaseA > upperCaseB) return 1;
+                                if(upperCaseA < upperCaseB) return -1;
+                                if(upperCaseA === upperCaseB) return 0;
+                            })
 
                             let tbody = document.getElementById("submitTbody");
 
@@ -307,7 +319,7 @@
                             let message = "";
                             for (let i = 0; i<data.length; i++){
                                 let temp = data[i]
-                                message += `로트 : ${temp.lot}, 적입량 : ${temp.loadAmount}, 수량 : ${temp.stock}\n`
+                                message += `로트 : ${temp.lot}, 적입량 : ${temp.loadAmount}, 수량 : ${temp.stock}, 박스량 : ${temp.stock/temp.loadAmount}\n`
                             }
                             let amount = prompt(message, "")
                             element.value = amount;

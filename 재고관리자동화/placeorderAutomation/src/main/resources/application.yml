@@ -1,9 +1,11 @@
+
+
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/ltl?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&useSSL=false
-    username: ltl
-    password: ltl1234!
+    url: jdbc:mysql://localhost:3306/union?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: 921001
 
   jpa:
     database: mysql
@@ -29,3 +31,6 @@ logging:
   level:
     org:
       hibernate: info
+
+server:
+  port: 8081

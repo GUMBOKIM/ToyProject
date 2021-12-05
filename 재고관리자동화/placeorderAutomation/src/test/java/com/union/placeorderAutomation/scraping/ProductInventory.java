@@ -86,10 +86,10 @@ public class ProductInventory {
                     inventory.setRop(Integer.parseInt(temp));
                     break;
                 case 9:
-                    inventory.setLotMin(Integer.parseInt(temp));
+//                    inventory.setLotMin(Integer.parseInt(temp));
                     break;
                 case 10:
-                    inventory.setLotMax(Integer.parseInt(temp));
+//                    inventory.setLotMax(Integer.parseInt(temp));
                         inventoryList.add(inventory);
                     inventory = new PartInventoryDto();
                     break;

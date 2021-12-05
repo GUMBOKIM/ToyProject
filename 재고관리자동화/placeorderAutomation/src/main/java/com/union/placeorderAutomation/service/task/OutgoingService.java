@@ -90,8 +90,6 @@ public class OutgoingService {
                 plan.setPartInventory(partInventory);
             }
         }
-        System.out.println("planList = " + planList);
-
         return planList;
     }
 
@@ -118,7 +116,6 @@ public class OutgoingService {
 
     public List<CreateDeliveryDto> submitPart(OutgoingSubmitDto submitDto) {
         List<CreateDeliveryDto> deliveryList = createDeliveryCard(submitDto);
-        System.out.println("deliveryList = " + deliveryList);
         submitDto.setPartList(null);
         restTemplateService.createDeliveryCard(submitDto, deliveryList);
         log.info("납입카드 성공");

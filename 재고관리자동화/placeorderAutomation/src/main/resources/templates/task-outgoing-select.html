@@ -171,7 +171,6 @@
                                 if (response.status == 200) {
                                     let data = await response.json();
                                     createInventoryTable(data);
-                                    console.log(data);
                                 }
                             }
                         } else {
@@ -303,19 +302,14 @@
                     }
 
                     async function  onclickInput(element) {
-                        console.log(element)
                         let tr = element.parentNode.parentNode.parentNode;
-                        console.log(tr)
                         let tdList = tr.childNodes;
-                        console.log(tdList)
                         let bwCode = tdList[0].innerText;
-                        console.log(bwCode);
 
                         const url = "/api/task/part-stock/inventory/" + bwCode;
                         let response = await fetch(url);
                         if (response.status == 200) {
                             let data = await response.json();
-                            console.log(data)
                             let message = "";
                             for (let i = 0; i<data.length; i++){
                                 let temp = data[i]

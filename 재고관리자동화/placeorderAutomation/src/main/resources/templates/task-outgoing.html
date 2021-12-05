@@ -190,7 +190,6 @@
                                     //     }
                                     //     return 0;
                                     // });
-                                    console.log(data);
                                     createTable(data);
 
                                 }
@@ -375,13 +374,9 @@
                     }
 
                     async function  onclickInput(element) {
-                        console.log(element)
                         let tr = element.parentNode.parentNode.parentNode;
-                        console.log(tr)
                         let tdList = tr.children;
-                        console.log(tdList)
                         let bwCode = tdList[10].innerText;
-                        console.log(bwCode);
 
                         const url = "/api/task/part-stock/inventory/" + bwCode;
                         let response = await fetch(url);

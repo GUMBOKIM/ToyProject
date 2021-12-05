@@ -208,7 +208,6 @@
             selectYn: tdList[10].childNodes[0].value,
             useYn: tdList[11].childNodes[0].value,
         }
-        console.log(result);
 
         const url = "/api/manage/part";
         fetch(url, {
@@ -229,10 +228,6 @@
     function clickModifyButton(input) {
         let tr = input.parentNode.parentNode;
         let tdList = tr.children;
-        for(let i = 0; i<tdList.length; i++){
-            console.log(i);
-            console.log(tdList[i]);
-        }
         let bwCode = tdList[1].innerText;
 
         let td1 = document.createElement("td");
@@ -276,7 +271,6 @@
 
     function modifyPart() {
         let tdList = document.getElementById("modify").children;
-        console.log(tdList);
         let sel = tdList[0].childNodes[0];
         let result = {
             companyCode: sel.options[sel.selectedIndex].value,

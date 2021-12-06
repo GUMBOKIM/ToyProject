@@ -212,7 +212,6 @@ public class OutgoingService {
         }
 
         for (Map.Entry<String, List<CreateDeliveryDto>> mapList : dtoMap.entrySet()) {
-            System.out.println("mapList = " + mapList.getKey());
             result.add(summaryCreateDeliveryCard(mapList.getValue()));
         }
 
@@ -220,10 +219,20 @@ public class OutgoingService {
     }
 
     private CreateDeliveryDto summaryCreateDeliveryCard(List<CreateDeliveryDto> input) {
-        CreateDeliveryDto result = input.get(0);
+        CreateDeliveryDto origin = input.get(0);
+        CreateDeliveryDto result = CreateDeliveryDto.builder()
+                .bwCode(origin.getBwCode())
+                .inventoryBwCode(origin.getInventoryBwCode())
+                .partName(origin.getPartName())
+                .poCode1(origin.getPoCode1())
+                .poCode2(origin.getPoCode2())
+                .loadAmount(origin.getLoadAmount())
+                .location1(origin.getLocation1())
+                .location2(origin.getLocation2())
+                .build();
         List<String> lotList = new ArrayList<>();
         List<Integer> quantityList = new ArrayList<>();
-        for(CreateDeliveryDto dto : input){
+        for (CreateDeliveryDto dto : input) {
             lotList.add(dto.getLot());
             quantityList.add(dto.getQuantity());
         }
@@ -232,7 +241,7 @@ public class OutgoingService {
         return result;
     }
 
-    private String summaryLot(List<String> lotList){
+    private String summaryLot(List<String> lotList) {
         HashMap<String, HashMap<String, List<String>>> lotMap = new HashMap<>();
         for (String lot : lotList) {
             String[] lotArr = lot.split("");
@@ -281,9 +290,9 @@ public class OutgoingService {
         return resultLot.toString();
     }
 
-    private int summaryQuantity(List<Integer> quantityList){
+    private int summaryQuantity(List<Integer> quantityList) {
         int result = 0;
-        for (int quantity: quantityList) {
+        for (int quantity : quantityList) {
             result += quantity;
         }
         return result;

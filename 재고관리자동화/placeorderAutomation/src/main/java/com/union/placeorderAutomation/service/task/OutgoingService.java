@@ -18,9 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Transactional
@@ -118,7 +116,7 @@ public class OutgoingService {
     public List<CreateDeliveryDto> submitPart(OutgoingSubmitDto submitDto) {
         List<CreateDeliveryDto> deliveryList = createDeliveryCard(submitDto);
         submitDto.setPartList(null);
-        restTemplateService.createDeliveryCard(submitDto, deliveryList);
+        restTemplateService.createDeliveryCard(submitDto, convertForCreateDeliverCard(deliveryList));
         log.info("납입카드 성공");
         restTemplateService.registryDelivery(submitDto, deliveryList);
         log.info("재고 등록 성공");
@@ -189,6 +187,104 @@ public class OutgoingService {
                     }
                 }
             }
+        }
+        return result;
+    }
+
+
+    // 추가
+    private List<CreateDeliveryDto> convertForCreateDeliverCard(List<CreateDeliveryDto> input) {
+        List<CreateDeliveryDto> result = new ArrayList<>();
+
+        LinkedHashMap<String, List<CreateDeliveryDto>> dtoMap = new LinkedHashMap<>();
+
+        for (CreateDeliveryDto dto : input) {
+            String bwCode = dto.getBwCode();
+            List<CreateDeliveryDto> deliveryDtos = new ArrayList<>();
+            if (dtoMap.containsKey(bwCode)) {
+                deliveryDtos = dtoMap.get(bwCode);
+                deliveryDtos.add(dto);
+                dtoMap.put(bwCode, deliveryDtos);
+            } else {
+                deliveryDtos.add(dto);
+                dtoMap.put(bwCode, deliveryDtos);
+            }
+        }
+
+        for (Map.Entry<String, List<CreateDeliveryDto>> mapList : dtoMap.entrySet()) {
+            System.out.println("mapList = " + mapList.getKey());
+            result.add(summaryCreateDeliveryCard(mapList.getValue()));
+        }
+
+        return result;
+    }
+
+    private CreateDeliveryDto summaryCreateDeliveryCard(List<CreateDeliveryDto> input) {
+        CreateDeliveryDto result = input.get(0);
+        List<String> lotList = new ArrayList<>();
+        List<Integer> quantityList = new ArrayList<>();
+        for(CreateDeliveryDto dto : input){
+            lotList.add(dto.getLot());
+            quantityList.add(dto.getQuantity());
+        }
+        result.setLot(summaryLot(lotList));
+        result.setQuantity(summaryQuantity(quantityList));
+        return result;
+    }
+
+    private String summaryLot(List<String> lotList){
+        HashMap<String, HashMap<String, List<String>>> lotMap = new HashMap<>();
+        for (String lot : lotList) {
+            String[] lotArr = lot.split("");
+            if (lotMap.containsKey(lotArr[0])) {
+                HashMap<String, List<String>> secondMap = lotMap.get(lotArr[0]);
+                if (secondMap.containsKey(lotArr[1])) {
+                    List<String> thirdList = secondMap.get(lotArr[1]);
+                    thirdList.add(lotArr[2]);
+                    secondMap.put(lotArr[1], thirdList);
+                } else {
+                    List<String> thirdList = new ArrayList<>();
+                    thirdList.add(lotArr[2]);
+                    secondMap.put(lotArr[1], thirdList);
+                }
+                lotMap.put(lotArr[0], secondMap);
+            } else {
+                HashMap<String, List<String>> secondMap = new HashMap<>();
+                List<String> thirdList = new ArrayList<>();
+                thirdList.add(lotArr[2]);
+                secondMap.put(lotArr[1], thirdList);
+                lotMap.put(lotArr[0], secondMap);
+            }
+        }
+
+        StringBuilder resultLot = new StringBuilder();
+        for (Map.Entry<String, HashMap<String, List<String>>> secondEntry : lotMap.entrySet()) {
+            String firstChar = secondEntry.getKey();
+            resultLot.append(firstChar);
+            HashMap<String, List<String>> secondMap = secondEntry.getValue();
+            for (Map.Entry<String, List<String>> thirdEntry : secondMap.entrySet()) {
+                String secondChar = thirdEntry.getKey();
+                resultLot.append(secondChar);
+                List<String> thirdCharList = thirdEntry.getValue();
+                for (String thirdChar : thirdCharList) {
+                    resultLot.append(thirdChar);
+                    resultLot.append(".");
+                }
+                resultLot.deleteCharAt(resultLot.length() - 1);
+                resultLot.append(".");
+            }
+            resultLot.deleteCharAt(resultLot.length() - 1);
+            resultLot.append(".");
+        }
+        resultLot.deleteCharAt(resultLot.length() - 1);
+
+        return resultLot.toString();
+    }
+
+    private int summaryQuantity(List<Integer> quantityList){
+        int result = 0;
+        for (int quantity: quantityList) {
+            result += quantity;
         }
         return result;
     }

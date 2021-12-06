@@ -207,7 +207,6 @@
                         let rowColor = ["table-light", "table-info"];
                         for (let i = 0; i < data.length; i++) {
                             let bom = data[i];
-
                             if (nowLine != (bom.workCenter + "")) {
                                 nowLine = bom.workCenter + "";
                                 lineSeq += 1;
@@ -235,11 +234,11 @@
                     }
 
                     function createBomPart(index) {
-                        let partList = findData[index].partInventory;
+                        let tempList = findData[index].partInventory;
                         let tbody = document.getElementById("bomPartTbody");
                         removeChildNode(tbody);
-                        for (let i = 0; i < partList.length; i++) {
-                            let temp = partList[i]
+                        for (let i = 0; i < tempList.length; i++) {
+                            let temp = tempList[i]
                             console.log(temp);
                             let tr = document.createElement("tr");
                             let boxQTY;
@@ -248,13 +247,20 @@
                             } else {
                                 boxQTY = '-'
                             }
-                            tr.innerHTML = `<td>` + temp.partBwCode + `</td>`
+                            let html = `<td>` + temp.partBwCode + `</td>`
                                 + `<td>` + temp.rop + `</td>`
                                 + `<td>` + temp.stockQTY + `</td>`
                                 + `<td>` + temp.loadAmount + `(${boxQTY})` + `</td>`
-                                + `<td>` + `<div class="input-group"><input type="text" class="form-control" placeholder="수량" onclick="onclickInput(this)"></div>` + `</td>`
-                                + `<td>` + `<button type="button" class="btn btn-success btn-sm" onclick="enrollPart(this)"><i class="fas fa-check"></i></button>` + `</td>`
-                                + `<td class="table-warning">` + temp.stock + `</td>`
+                            if (partList.findIndex(v => v.bwCode === temp.partBwCode) == -1) {
+                                html += `<td>` + `<div class="input-group"><input type="text" class="form-control" placeholder="수량" onclick="onclickInput(this)"></div>` + `</td>`
+                                    + `<td>` + `<button type="button" class="btn btn-success btn-sm" onclick="enrollPart(this)"><i class="fas fa-check"></i></button>` + `</td>`
+                                    + `<td class="table-warning">` + temp.stock + `</td>`
+                            } else {
+                                html += `<td>` + `<div class="input-group"><input type="text" class="form-control" disabled placeholder="수량"></div>` + `</td>`
+                                    + `<td>` + `</td>`
+                                    + `<td class="table-warning">` + temp.stock + `</td>`
+                            }
+                            tr.innerHTML = html;
                             tbody.append(tr);
                         }
                     }
@@ -264,20 +270,15 @@
                         let tdList = tr.children;
                         let bwCode = tdList[0].innerText;
                         let amount = tdList[4].childNodes[0].childNodes[0].value * 1
+                        let totalStock = tdList[6].innerText * 1;
 
                         if (amount > 0) {
-                            const url = "/api/task/outgoing/checkPart/" + bwCode + "/" + amount;
-                            let response = await fetch(url);
-                            if (response.status == 200) {
-                                if (partList.findIndex(v => v.bwCode === bwCode) == -1) {
-                                    partList.push({bwCode, amount});
-                                } else {
-                                    alert("이미 등록한 자재입니다. 반영되지 않습니다.")
-                                }
+                            if (amount <= totalStock) {
+                                partList.push({bwCode, amount});
                                 tdList[4].childNodes[0].childNodes[0].disabled = true;
                                 tdList[5].childNodes[0].disabled = true;
                             } else {
-                                alert(`입력하신 수량이 현 재고량보다 많습니다. - 현재고 : ${response.data}`);
+                                alert(`입력하신 수량이 현 재고량보다 많습니다. - 현재고 : ${totalStock}`);
                             }
                         } else {
                             alert("수량을 다시 입력하세요");

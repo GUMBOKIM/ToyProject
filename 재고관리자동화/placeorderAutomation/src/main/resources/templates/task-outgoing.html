@@ -76,35 +76,47 @@
                 </div>
 
                 <div class="row justify-content-center mb-3" style="overflow: auto" id="inquireTableRow">
-                    <table class="table text-center">
-                        <thead>
-                        <tr>
-                            <th scope="col-1">라인</th>
-                            <th scope="col-1">공장</th>
-                            <th scope="col-1">순번</th>
-                            <th scope="col-2">보그워너 품번</th>
-                            <th scope="col-1">완성수량</th>
-                            <th scope="col-1">잔량(진행중)</th>
-                            <th scope="col-1">총수량</th>
-                            <th scope="col-1">전체시간</th>
-                            <th scope="col-1">잔여시간</th>
-                            <th scope="col-1"></th>
-                            <th class="col-2">보그워너 품번</th>
-                            <th class="col-1">전산 재고</th>
-                            <th class="col-1">적입량</th>
-                            <th class="col-1">USAGE</th>
-                            <th class="col-1">입고량</th>
-                            <th class="col-1">
-                                <button type="button" id="sendButton" class="btn btn-danger btn-sm"
-                                        style="visibility: visible;" onclick="clickEnrollButton()">등록
-                                </button>
-                            </th>
-                            <th class="col-1">사내 재고</th>
-                        </tr>
-                        </thead>
-                        <tbody id="bomTbody">
-                        </tbody>
-                    </table>
+                    <div class="col" style="overflow-y: scroll; height: 70vh;">
+                        <table class="table text-center">
+                            <thead>
+                            <tr>
+                                <th scope="col-1">라인</th>
+                                <th scope="col-1">공장</th>
+                                <th scope="col-1">순번</th>
+                                <th scope="col-2">보그워너 품번</th>
+                                <th scope="col-1">완성수량</th>
+                                <th scope="col-1">잔량(진행중)</th>
+                                <th scope="col-1">총수량</th>
+                                <th scope="col-1">전체시간</th>
+                                <th scope="col-1">잔여시간</th>
+                            </tr>
+                            </thead>
+                            <tbody id="bomTbody">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col">
+                        <table class="table text-center">
+                            <thead>
+                            <tr>
+                                <th class="col-2">보그워너 품번</th>
+                                <th class="col-1">전산 재고</th>
+                                <th class="col-1">적입량</th>
+                                <th class="col-1">USAGE</th>
+                                <th class="col-1">입고량</th>
+                                <th class="col-1">
+                                    <button type="button" id="sendButton" class="btn btn-danger btn-sm"
+                                            style="visibility: visible;" onclick="clickEnrollButton()">등록
+                                    </button>
+                                </th>
+                                <th class="col-1">사내 재고</th>
+                            </tr>
+                            </thead>
+                            <tbody id="bomPartTbody">
+                            </tbody>
+                        </table>
+                    </div>
+
                 </div>
 
                 <div class="row justify-content-center mb-3" style="visibility: hidden;" id="submitTableRow">
@@ -145,6 +157,7 @@
                 <script>
                     let orderInfo = {};
                     let partList = new Array();
+                    let findData;
 
                     window.onload = function () {
                         let today = new Date();
@@ -177,19 +190,8 @@
                                     + "/" + orderInfo.plantCode;
                                 let response = await fetch(url);
                                 if (response.status == 200) {
-                                    let data = await response.json();
-                                    // data = data.sort(function (a, b) {
-                                    //     let x = a.seq.toLowerCase();
-                                    //     let y = b.seq.toLowerCase();
-                                    //     if (x < y) {
-                                    //         return -1;
-                                    //     }
-                                    //     if (x > y) {
-                                    //         return 1;
-                                    //     }
-                                    //     return 0;
-                                    // });
-                                    createTable(data);
+                                    findData = await response.json();
+                                    createBomTable(findData);
 
                                 }
                             }
@@ -198,108 +200,82 @@
                         }
                     }
 
-                    function createTable(data) {
+                    function createBomTable(data) {
                         let tbody = document.getElementById("bomTbody");
                         let nowLine = "";
                         let lineSeq = 0;
-                        let rowColor = ["table-light","table-info"];
+                        let rowColor = ["table-light", "table-info"];
                         for (let i = 0; i < data.length; i++) {
                             let bom = data[i];
-                            let partInventory = bom.partInventory;
-                            if(nowLine != (bom.workCenter + "")){
+
+                            if (nowLine != (bom.workCenter + "")) {
                                 nowLine = bom.workCenter + "";
                                 lineSeq += 1;
                             }
-                            if (partInventory != null) {
-                                for (let j = 0; j < partInventory.length; j++) {
-                                    let html;
-                                    let tr = document.createElement("tr");
-                                    addClassName(tr, rowColor[lineSeq % 2])
-                                    if (j == 0) {
-                                        html =
-                                            `<td>` + bom.workCenter + `</td>`
-                                            + `<td>` + bom.plant + `</td>`
-                                            + `<td>` + bom.seq + `</td>`
-                                            + `<td>` + bom.bomBwCode + `</td>`
-                                            + `<td>` + bom.deliveredQTY + `</td>`
-                                            + `<td>` + bom.remainQTY + `</td>`
-                                            + `<td>` + bom.totalQTY + `</td>`
-                                            + `<td>` + bom.ttime + `</td>`
-                                            + `<td>` + bom.rtime + `</td>`
-                                            + `<td class="table-active">` + `</td>`
-                                    } else {
-                                        html =
-                                            `<td>` + `</td>`
-                                            + `<td>` + `</td>`
-                                            + `<td>` + `</td>`
-                                            + `<td>` + `</td>`
-                                            + `<td>` + `</td>`
-                                            + `<td>` + `</td>`
-                                            + `<td>` + `</td>`
-                                            + `<td>` + `</td>`
-                                            + `<td>` + `</td>`
-                                            + `<td class="table-active">` + `</td>`
-                                    }
-                                    let temp = partInventory[j];
-                                    let boxQTY;
-                                    if (temp.rop != 0) {
-                                        boxQTY = (temp.stockQTY / temp.rop).toFixed(1);
-                                    } else {
-                                        boxQTY = '-'
-                                    }
-                                    html += `<td>` + temp.partBwCode + `</td>`
-                                        + `<td>` + temp.stockQTY + ` (${boxQTY})` + `</td>`
-                                        + `<td>` + temp.loadAmount + `</td>`
-                                        + `<td>` + temp.usage + `</td>`
-                                        + `<td>` + `<div class="input-group"><input type="text" class="form-control" placeholder="수량" onclick="onclickInput(this)"></div>` + `</td>`
-                                        + `<td>` + `<button type="button" class="btn btn-success btn-sm" onclick="enrollPart(this)"><i class="fas fa-check"></i></button>` + `</td>`
-                                        + `<td class="table-warning">` + temp.stock + `</td>`
-                                    tr.innerHTML = html;
-                                    tbody.append(tr);
-                                }
+                            let tr = document.createElement("tr");
+                            tr.id = i;
+                            addClassName(tr, rowColor[lineSeq % 2])
+
+                            let html = `<td>` + bom.workCenter + `</td>`
+                                + `<td>` + bom.plant + `</td>`
+                                + `<td>` + bom.seq + `</td>`
+                            if (bom.partInventory != null) {
+                                html += `<td class="bg-success" onclick="createBomPart(${i})">` + bom.bomBwCode + `</td>`
                             } else {
-                                let tr = document.createElement("tr");
-                                addClassName(tr, rowColor[lineSeq % 2])
-                                tr.innerHTML = `<td>` + bom.workCenter + `</td>`
-                                    + `<td>` + bom.plant + `</td>`
-                                    + `<td>` + bom.seq + `</td>`
-                                    + `<td>` + bom.bomBwCode + `</td>`
-                                    + `<td>` + bom.deliveredQTY + `</td>`
-                                    + `<td>` + bom.remainQTY + `</td>`
-                                    + `<td>` + bom.totalQTY + `</td>`
-                                    + `<td>` + bom.ttime + `</td>`
-                                    + `<td>` + bom.rtime + `</td>`
-                                    + `<td class="table-active">` + `</td>`
-                                    + `<td>` + `</td>`
-                                    + `<td>` + `</td>`
-                                    + `<td>` + `</td>`
-                                    + `<td>` + `</td>`
-                                    + `<td>` + `</td>`
-                                    + `<td>` + `</td>`
-                                    + `<td>` + `</td>`
-                                    + `<td class="table-warning">` + `</td>`
-                                tbody.append(tr);
+                                html += `<td>` + bom.bomBwCode + `</td>`
                             }
+                            html += `<td>` + bom.deliveredQTY + `</td>`
+                                + `<td>` + bom.remainQTY + `</td>`
+                                + `<td>` + bom.totalQTY + `</td>`
+                                + `<td>` + bom.ttime + `</td>`
+                                + `<td>` + bom.rtime + `</td>`;
+                            tr.innerHTML = html;
+                            tbody.append(tr);
+                        }
+                    }
+
+                    function createBomPart(index) {
+                        let partList = findData[index].partInventory;
+                        let tbody = document.getElementById("bomPartTbody");
+                        removeChildNode(tbody);
+                        for (let i = 0; i < partList.length; i++) {
+                            let temp = partList[i]
+                            console.log(temp);
+                            let tr = document.createElement("tr");
+                            let boxQTY;
+                            if (temp.rop != 0) {
+                                boxQTY = (temp.stockQTY / temp.rop).toFixed(1);
+                            } else {
+                                boxQTY = '-'
+                            }
+                            tr.innerHTML = `<td>` + temp.partBwCode + `</td>`
+                                + `<td>` + temp.rop + `</td>`
+                                + `<td>` + temp.stockQTY + `</td>`
+                                + `<td>` + temp.loadAmount + `(${boxQTY})` + `</td>`
+                                + `<td>` + `<div class="input-group"><input type="text" class="form-control" placeholder="수량" onclick="onclickInput(this)"></div>` + `</td>`
+                                + `<td>` + `<button type="button" class="btn btn-success btn-sm" onclick="enrollPart(this)"><i class="fas fa-check"></i></button>` + `</td>`
+                                + `<td class="table-warning">` + temp.stock + `</td>`
+                            tbody.append(tr);
                         }
                     }
 
                     async function enrollPart(element) {
                         let tr = element.parentNode.parentNode;
-                        let tdList = tr.childNodes;
-                        let bwCode = tdList[10].innerText;
-                        let amount = tdList[14].childNodes[0].childNodes[0].value * 1
+                        let tdList = tr.children;
+                        let bwCode = tdList[0].innerText;
+                        let amount = tdList[4].childNodes[0].childNodes[0].value * 1
 
                         if (amount > 0) {
                             const url = "/api/task/outgoing/checkPart/" + bwCode + "/" + amount;
                             let response = await fetch(url);
                             if (response.status == 200) {
-                                if(partList.findIndex(v => v.bwCode === bwCode) == -1){
+                                if (partList.findIndex(v => v.bwCode === bwCode) == -1) {
                                     partList.push({bwCode, amount});
                                 } else {
-                                    alert("이미 등록한 자재입니다. 수량은 반영되지 않습니다.")
+                                    alert("이미 등록한 자재입니다. 반영되지 않습니다.")
                                 }
-                                tdList[15].childNodes[0].childNodes[0].disabled = true;
-                                tdList[16].childNodes[0].disabled = true;
+                                tdList[4].childNodes[0].childNodes[0].disabled = true;
+                                tdList[5].childNodes[0].disabled = true;
                             } else {
                                 alert(`입력하신 수량이 현 재고량보다 많습니다. - 현재고 : ${response.data}`);
                             }
@@ -315,13 +291,13 @@
                             removeAllNode(tableRow);
                             visibleElement("submitTableRow");
 
-                            partList.sort(function(a, b){
+                            partList.sort(function (a, b) {
                                 const upperCaseA = a.bwCode.toUpperCase();
                                 const upperCaseB = b.bwCode.toUpperCase();
 
-                                if(upperCaseA > upperCaseB) return 1;
-                                if(upperCaseA < upperCaseB) return -1;
-                                if(upperCaseA === upperCaseB) return 0;
+                                if (upperCaseA > upperCaseB) return 1;
+                                if (upperCaseA < upperCaseB) return -1;
+                                if (upperCaseA === upperCaseB) return 0;
                             })
 
                             let tbody = document.getElementById("submitTbody");
@@ -372,19 +348,19 @@
                         }
                     }
 
-                    async function  onclickInput(element) {
+                    async function onclickInput(element) {
                         let tr = element.parentNode.parentNode.parentNode;
                         let tdList = tr.children;
-                        let bwCode = tdList[10].innerText;
+                        let bwCode = tdList[0].innerText;
 
                         const url = "/api/task/part-stock/inventory/" + bwCode;
                         let response = await fetch(url);
                         if (response.status == 200) {
                             let data = await response.json();
                             let message = "";
-                            for (let i = 0; i<data.length; i++){
+                            for (let i = 0; i < data.length; i++) {
                                 let temp = data[i]
-                                message += `로트 : ${temp.lot}, 적입량 : ${temp.loadAmount}, 수량 : ${temp.stock}, 박스량 : ${temp.stock/temp.loadAmount}\n`
+                                message += `로트 : ${temp.lot}, 적입량 : ${temp.loadAmount}, 수량 : ${temp.stock}, 박스량 : ${temp.stock / temp.loadAmount}\n`
                             }
                             let amount = prompt(message, "")
                             element.value = amount;
@@ -402,12 +378,6 @@
 
         </div>
         <!-- End of Main Content -->
-
-        <!-- Footer -->
-        <footer th:replace="fragments/footer.html :: fragment-footer">
-        </footer>
-        <!-- End of Footer -->
-
     </div>
     <!-- End of Content Wrapper -->
 </div>

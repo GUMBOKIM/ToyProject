@@ -92,7 +92,7 @@ public class PageController {
     @RequestMapping("/manage/part/part/{companyCode}")
     public String managePartPartCompanyCode(@PathVariable String companyCode, Model model) {
         commonService.addCompanyList(model);
-        model.addAttribute("partList", partManageService.getPartListByCompanyCode(companyCode));
+        model.addAttribute("partList", partManageService.getPartListAllByCompanyCode(companyCode));
         return "manage-part-part";
     }
 }

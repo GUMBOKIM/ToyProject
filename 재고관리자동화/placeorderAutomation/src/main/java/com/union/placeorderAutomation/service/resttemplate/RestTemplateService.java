@@ -39,7 +39,8 @@ public class RestTemplateService {
         body.add("P_descr", deliveryList.size() + " 품목");
         body.add("p_income_date", submitDto.getDate());//20210201 양식
 
-        deliveryList.forEach(delivery -> {
+
+        for (CreateDeliveryDto delivery : deliveryList){
             body.add("p_partno", delivery.getBwCode());
             body.add("p_partnm", delivery.getPartName());
             if (plantCode.equals("5300")) {
@@ -54,7 +55,7 @@ public class RestTemplateService {
             body.add("p_qty", Integer.toString(delivery.getQuantity()));
             body.add("p_qty_per_box", Integer.toString(delivery.getLoadAmount()));
             body.add("p_qty_box", Integer.toString(delivery.getQuantity() / delivery.getLoadAmount()));
-        });
+        }
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, httpHeaders);
 

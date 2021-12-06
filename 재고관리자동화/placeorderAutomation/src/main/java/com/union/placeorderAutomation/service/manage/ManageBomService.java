@@ -30,7 +30,9 @@ public class ManageBomService {
     public List<String> getBomList() {
         List<Bom> bomEntityList = bomRepo.findAll(Sort.by(Sort.Direction.ASC, "bwCode"));
         List<String> result = new ArrayList<>();
-        bomEntityList.forEach(bom -> result.add(bom.getBwCode()));
+        for (Bom bom : bomEntityList){
+            result.add(bom.getBwCode());
+        }
         return result;
     }
 
@@ -54,7 +56,9 @@ public class ManageBomService {
         Bom bom = bomRepo.findByBwCode(bomBwCode);
         List<BomPart> bomPartList = bom.getBomParts();
         List<BomPartDto> partList = new ArrayList<>();
-        bomPartList.forEach(bomPart -> partList.add(new BomPartDto(bomPart)));
+        for(BomPart bomPart : bomPartList){
+            partList.add(new BomPartDto(bomPart));
+        }
         return partList;
     }
 

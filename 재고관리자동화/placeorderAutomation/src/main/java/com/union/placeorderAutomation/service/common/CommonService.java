@@ -29,7 +29,7 @@ public class CommonService {
     private List<PlantDto> plantList;
 
     @Transactional(readOnly = true)
-    public List<Integer> findCompanyOrderHistoryList(OrderHistoryDto orderHistoryDto){
+    public List<Integer> findCompanyOrderHistoryList(OrderHistoryDto orderHistoryDto) {
         Company company = Company.builder().companyCode(orderHistoryDto.getCompanyCode()).build();
         Plant plant = Plant.builder().plantCode(orderHistoryDto.getPlantCode()).build();
         List<Integer> findOrderHistory = orderHistoryRepo.findOrderHistory(company, plant, orderHistoryDto.getDate());
@@ -38,13 +38,13 @@ public class CommonService {
         for (int i = 1; i <= 20; i++) {
             result.add(i);
         }
-        for(Integer orderSeq : findOrderHistory){
+        for (Integer orderSeq : findOrderHistory) {
             result.remove(result.indexOf(orderSeq));
         }
         return result;
     }
 
-    public void addCompanyOrderHistory(OrderHistoryDto orderHistoryDto){
+    public void addCompanyOrderHistory(OrderHistoryDto orderHistoryDto) {
         Company company = Company.builder().companyCode(orderHistoryDto.getCompanyCode()).build();
         Plant plant = Plant.builder().plantCode(orderHistoryDto.getPlantCode()).build();
         OrderHistory orderHistory = OrderHistory.builder()
@@ -66,8 +66,8 @@ public class CommonService {
         model.addAttribute("companyList", companyList);
     }
 
-    public void addPlantList(Model model){
-        if(plantList == null){
+    public void addPlantList(Model model) {
+        if (plantList == null) {
             plantList = getPlantList();
         }
         model.addAttribute("plantList", plantList);
@@ -78,7 +78,9 @@ public class CommonService {
     public List<CompanyListDto> getCompanyList() {
         List<Company> companyList = companyRepo.findAll();
         List<CompanyListDto> result = new ArrayList<>();
-        companyList.forEach(company -> result.add(new CompanyListDto(company.getCompanyCode(), company.getCompanyName())));
+        for (Company company : companyList) {
+            result.add(new CompanyListDto(company.getCompanyCode(), company.getCompanyName()));
+        }
         return result;
     }
 
@@ -86,7 +88,9 @@ public class CommonService {
     public List<PlantDto> getPlantList() {
         List<Plant> plantList = plantRepository.findAll();
         List<PlantDto> result = new ArrayList<>();
-        plantList.forEach(plant -> result.add(new PlantDto(plant)));
+        for (Plant plant : plantList) {
+            result.add(new PlantDto(plant));
+        };
         return result;
     }
 }

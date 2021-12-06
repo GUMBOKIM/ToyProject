@@ -11,6 +11,10 @@ function removeChildNode(cell) {
     }
 }
 
+function addClassName(element, className) {
+    element.classList.add(className);
+}
+
 function findElementValue(id) {
     return document.getElementById(id).value;
 }

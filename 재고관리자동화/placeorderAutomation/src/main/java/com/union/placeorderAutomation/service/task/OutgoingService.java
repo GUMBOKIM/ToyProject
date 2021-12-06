@@ -4,6 +4,7 @@ import com.union.placeorderAutomation.dto.common.OrderHistoryDto;
 import com.union.placeorderAutomation.dto.resttemplate.CreateDeliveryDto;
 import com.union.placeorderAutomation.dto.resttemplate.PartInventoryDto;
 import com.union.placeorderAutomation.dto.resttemplate.ProductPlanDto;
+import com.union.placeorderAutomation.dto.task.outgoing.OutgoingPartDto;
 import com.union.placeorderAutomation.dto.task.outgoing.OutgoingSubmitDto;
 import com.union.placeorderAutomation.entity.*;
 import com.union.placeorderAutomation.repository.BomRepository;
@@ -37,7 +38,7 @@ public class OutgoingService {
     @Transactional(readOnly = true)
     public int findPartStock(String bwCode) {
         Long partStock = partInventoryRepo.sumPartStock(bwCode);
-        if(partStock == null){
+        if (partStock == null) {
             return 0;
         } else {
             return partStock.intValue();
@@ -69,12 +70,12 @@ public class OutgoingService {
         // 회사 제품이 들어간 BOM 필터링
         List<Bom> findBomList = bomRepo.findByCompanyCode(Company.builder().companyCode(companyCode).build());
         HashMap<String, Bom> bomMap = new HashMap<>();
-        for(Bom bom : findBomList){
+        for (Bom bom : findBomList) {
             bomMap.put(bom.getBwCode(), bom);
         }
-        for(ProductPlanDto plan : planList){
+        for (ProductPlanDto plan : planList) {
             String bomBwCode = plan.getBomBwCode();
-            if(bomMap.containsKey(bomBwCode)){
+            if (bomMap.containsKey(bomBwCode)) {
                 List<BomPart> bomParts = bomMap.get(bomBwCode).getBomParts();
                 List<PartInventoryDto> partInventory = new ArrayList<>();
                 for (BomPart bomPart : bomParts) {
@@ -138,7 +139,7 @@ public class OutgoingService {
 
     private List<CreateDeliveryDto> createDeliveryCard(OutgoingSubmitDto submitDto) {
         List<CreateDeliveryDto> result = new ArrayList<>();
-        submitDto.getPartList().forEach(part -> {
+        for (OutgoingPartDto part : submitDto.getPartList()) {
             int amount = part.getAmount();
             List<CreateDeliveryDto> temp = new ArrayList<>();
             // 총 수량 >= 납품 양
@@ -188,7 +189,7 @@ public class OutgoingService {
                     }
                 }
             }
-        });
+        }
         return result;
     }
 }

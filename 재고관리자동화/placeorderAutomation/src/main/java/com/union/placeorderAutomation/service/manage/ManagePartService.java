@@ -24,7 +24,9 @@ public class ManagePartService {
     public List<PartResDto> getPartList() {
         List<Part> partList = partRepo.findAll(Sort.by(Sort.Direction.ASC, "bwCode"));
         List<PartResDto> result = new ArrayList<>();
-        partList.forEach(part -> result.add(new PartResDto(part)));
+        for(Part part : partList){
+            result.add(new PartResDto(part));
+        }
         return result;
     }
 
@@ -78,10 +80,14 @@ public class ManagePartService {
     }
 
     @Transactional(readOnly = true)
-    public List<PartResDto> getPartListByCompanyCode(String companyCode) {
-        List<Part> partList = partRepo.findPartByCompany(companyCode);
+    public List<PartResDto> getPartListAllByCompanyCode(String companyCode) {
+        List<Part> partList = new ArrayList<>() ;
+        partList.addAll(partRepo.findPartByCompany(companyCode));
+        partList.addAll(partRepo.findSelectPartByCompany(companyCode));
         List<PartResDto> result = new ArrayList<>();
-        partList.forEach(part -> result.add(new PartResDto(part)));
+        for (Part part : partList) {
+            result.add(new PartResDto(part));
+        }
         return result;
     }
 }

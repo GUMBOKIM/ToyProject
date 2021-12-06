@@ -28,7 +28,9 @@ public class TaskPartStockService {
     public List<com.union.placeorderAutomation.dto.task.part.stock.PartStockDto> getPartStockListAll() {
         List<com.union.placeorderAutomation.dto.task.part.stock.PartStockDto> partStockList = new ArrayList<>();
         List<Object[]> partList = partInventoryRepo.findPartStockInventoryList();
-        partList.forEach(part -> partStockList.add(new com.union.placeorderAutomation.dto.task.part.stock.PartStockDto(part)));
+        for (Object[] part : partList) {
+            partStockList.add(new com.union.placeorderAutomation.dto.task.part.stock.PartStockDto(part));
+        }
         return partStockList;
     }
 
@@ -37,7 +39,9 @@ public class TaskPartStockService {
     public List<com.union.placeorderAutomation.dto.task.part.stock.PartStockDto> getPartStockList(String companyCode) {
         List<com.union.placeorderAutomation.dto.task.part.stock.PartStockDto> partStockList = new ArrayList<>();
         List<Object[]> partList = partInventoryRepo.findPartStockInventoryListByCompanyCode(companyCode);
-        partList.forEach(part -> partStockList.add(new com.union.placeorderAutomation.dto.task.part.stock.PartStockDto(part)));
+        for (Object[] part : partList) {
+            partStockList.add(new com.union.placeorderAutomation.dto.task.part.stock.PartStockDto(part));
+        }
         return partStockList;
     }
 
@@ -46,13 +50,15 @@ public class TaskPartStockService {
     public List<PartStockDetailDto> getPartStockDetailList(String partBwCode) {
         List<PartStockDetailDto> partStockDetailList = new ArrayList<>();
         List<PartInventory> partInventories = partInventoryRepo.findInventoryListByPart(partBwCode);
-        partInventories.forEach(partInventory -> partStockDetailList.add(new PartStockDetailDto(partInventory)));
+        for(PartInventory partInventory : partInventories){
+            partStockDetailList.add(new PartStockDetailDto(partInventory));
+        }
         return partStockDetailList;
     }
 
     public void modifyInventory(Long inventoryId, PartStockModifyDto modifyDto) {
         Optional<PartInventory> inventoryOpt = partInventoryRepo.findById(inventoryId);
-        if(inventoryOpt.isPresent()){
+        if (inventoryOpt.isPresent()) {
             PartInventory partInventory = inventoryOpt.get();
             partInventory.setLot(modifyDto.getLot());
             partInventory.setLoadAmount(modifyDto.getLoadAmount());
@@ -65,7 +71,7 @@ public class TaskPartStockService {
         List<PartInventory> partInventoryList = partInventoryRepo.findPartInventoryByCompany(company);
 
         List<PartStockExcelDto> result = new ArrayList<>();
-        for(PartInventory partInventory : partInventoryList){
+        for (PartInventory partInventory : partInventoryList) {
             result.add(new PartStockExcelDto(partInventory));
         }
         return result;

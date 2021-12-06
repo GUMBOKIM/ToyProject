@@ -90,7 +90,6 @@
                             <th scope="col-1">잔여시간</th>
                             <th scope="col-1"></th>
                             <th class="col-2">보그워너 품번</th>
-                            <th class="col-1">전산 적입량</th>
                             <th class="col-1">전산 재고</th>
                             <th class="col-1">적입량</th>
                             <th class="col-1">USAGE</th>
@@ -201,13 +200,21 @@
 
                     function createTable(data) {
                         let tbody = document.getElementById("bomTbody");
+                        let nowLine = "";
+                        let lineSeq = 0;
+                        let rowColor = ["table-light","table-info"];
                         for (let i = 0; i < data.length; i++) {
                             let bom = data[i];
                             let partInventory = bom.partInventory;
+                            if(nowLine != (bom.workCenter + "")){
+                                nowLine = bom.workCenter + "";
+                                lineSeq += 1;
+                            }
                             if (partInventory != null) {
                                 for (let j = 0; j < partInventory.length; j++) {
                                     let html;
                                     let tr = document.createElement("tr");
+                                    addClassName(tr, rowColor[lineSeq % 2])
                                     if (j == 0) {
                                         html =
                                             `<td>` + bom.workCenter + `</td>`
@@ -234,14 +241,6 @@
                                             + `<td class="table-active">` + `</td>`
                                     }
                                     let temp = partInventory[j];
-                                    // let calInputAmount = 0
-                                    // let calInputAmount = (bom.remainQTY * temp.usage);
-                                    // if (calInputAmount > (temp.lotMax - temp.stockQTY)) {
-                                    //     calInputAmount = (temp.lotMax - temp.stockQTY);
-                                    // }
-                                    // if (calInputAmount < 0) {
-                                    //     calInputAmount = 0;
-                                    // }
                                     let boxQTY;
                                     if (temp.rop != 0) {
                                         boxQTY = (temp.stockQTY / temp.rop).toFixed(1);
@@ -249,7 +248,6 @@
                                         boxQTY = '-'
                                     }
                                     html += `<td>` + temp.partBwCode + `</td>`
-                                        + `<td>` + temp.rop + `</td>`
                                         + `<td>` + temp.stockQTY + ` (${boxQTY})` + `</td>`
                                         + `<td>` + temp.loadAmount + `</td>`
                                         + `<td>` + temp.usage + `</td>`
@@ -261,6 +259,7 @@
                                 }
                             } else {
                                 let tr = document.createElement("tr");
+                                addClassName(tr, rowColor[lineSeq % 2])
                                 tr.innerHTML = `<td>` + bom.workCenter + `</td>`
                                     + `<td>` + bom.plant + `</td>`
                                     + `<td>` + bom.seq + `</td>`
@@ -288,7 +287,7 @@
                         let tr = element.parentNode.parentNode;
                         let tdList = tr.childNodes;
                         let bwCode = tdList[10].innerText;
-                        let amount = tdList[15].childNodes[0].childNodes[0].value * 1
+                        let amount = tdList[14].childNodes[0].childNodes[0].value * 1
 
                         if (amount > 0) {
                             const url = "/api/task/outgoing/checkPart/" + bwCode + "/" + amount;

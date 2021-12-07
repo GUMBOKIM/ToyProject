@@ -135,6 +135,11 @@ public class OutgoingService {
         return deliveryList;
     }
 
+    @Transactional(readOnly = true)
+    public List<CreateDeliveryDto> checkPartList(OutgoingSubmitDto request) {
+        return createDeliveryCard(request);
+    }
+
     private List<CreateDeliveryDto> createDeliveryCard(OutgoingSubmitDto submitDto) {
         List<CreateDeliveryDto> result = new ArrayList<>();
         for (OutgoingPartDto part : submitDto.getPartList()) {
@@ -297,4 +302,5 @@ public class OutgoingService {
         }
         return result;
     }
+
 }

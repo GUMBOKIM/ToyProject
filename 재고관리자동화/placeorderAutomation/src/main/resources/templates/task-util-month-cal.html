@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="fragments/header.html :: fragment-header"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.full.min.js"></script>
+</head>
+
+<body id="page-top">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul th:replace="fragments/sidebar.html :: fragment-sidebar">
+
+    </ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+            <!-- TopBar -->
+            <nav th:replace="fragments/topbar.html :: fragment-topbar">
+            </nav>
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">월 정산</h1>
+                </div>
+
+
+                <div id="excelRow" class="row justify-content-center mb-3">
+                    <div class="col-2">
+                        <div class="input-group">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="excelInput" onchange="readExcel()">
+                                <label class="custom-file-label" for="excelInput">파일 선택</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-1">
+                        <button type="button" id="calculateButton" class="btn btn-success" onclick="calculateExcel()">계산
+                        </button>
+                    </div>
+                </div>
+
+                <script>
+                    let excelInput = new Array();
+                    let excelCal = new Map();
+
+                    async function readExcel() {
+                        let excelFile = event.target.files[0];
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                            const data = reader.result;
+                            const workBook = XLSX.read(data, {type: 'binary'})
+                            let rows = XLSX.utils.sheet_to_json(workBook.Sheets[workBook.SheetNames[0]]);
+                            excelInput = new Array();
+                            for (let i = 0; i < rows.length; i++) {
+                                let row = rows[i];
+                                excelInput.push({
+                                    spName: row.공급자명,
+                                    bwCode: row.품번,
+                                    partName: row.품명,
+                                    quantity: row.납품량 * 1,
+                                    boxAmount: row.용기량 * 1
+                                })
+                            }
+                            createExcelTable();
+                        }
+                        reader.readAsBinaryString(excelFile);
+                    }
+
+                    function createExcelTable() {
+                        let tbody = document.getElementById("excelTableTbody");
+                        removeChildNode(tbody);
+                        for (let i = 0; i < excelInput.length; i++) {
+                            let temp = excelInput[i];
+                            let tr = document.createElement("tr");
+                            tr.innerHTML =
+                                `<td>` + (i + 1) + `</td>` +
+                                `<td>` + temp.spName + `</td>` +
+                                `<td>` + temp.bwCode + `</td>` +
+                                `<td>` + temp.partName + `</td>` +
+                                `<td>` + temp.quantity + `</td>` +
+                                `<td>` + temp.boxAmount + `</td>`;
+                            tbody.append(tr);
+                        }
+                    }
+
+                    function calculateExcel() {
+                        for (let i = 0; i < excelInput.length; i++) {
+                            let temp = excelInput[i];
+                            if (excelCal.has(temp.bwCode)) {
+                                let value = excelCal.get(temp.bwCode);
+                                value.quantity += temp.quantity;
+                                value.boxAmount += temp.boxAmount;
+                            } else {
+                                excelCal.set(temp.bwCode, temp);
+                            }
+                        }
+                        excelInput.length = 0;
+                        for (let [key, value] of excelCal) {
+                            excelInput.push(value);
+                        }
+                        excelCal = new Map();
+
+                        excelInput.sort(function (a, b) {
+                            const upperCaseA = a.bwCode.toUpperCase();
+                            const upperCaseB = b.bwCode.toUpperCase();
+
+                            if (upperCaseA > upperCaseB) return 1;
+                            if (upperCaseA < upperCaseB) return -1;
+                            if (upperCaseA === upperCaseB) return 0;
+                        })
+
+                        createExcelTable();
+
+                        let wb = XLSX.utils.table_to_book(document.getElementById('excelTable'), {
+                            sheet: excelInput[0].spName,
+                            raw: true
+                        });
+                        XLSX.writeFile(wb, (`월정산-${excelInput[0].spName}.xlsx`));
+                    }
+                </script>
+
+                <div class="row justify-content-center" id="excelTable">
+                    <div class="col-10">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th class="col-1"></th>
+                                <th class="col-2">공급자명</th>
+                                <th class="col-2">품번</th>
+                                <th class="col-3">품명</th>
+                                <th class="col-1">납품량</th>
+                                <th class="col-1">용기량</th>
+                            </tr>
+                            </thead>
+                            <tbody id="excelTableTbody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- /.container-fluid -->
+</div>
+<!-- End of Main Content -->
+
+</div>
+<!-- End of Content Wrapper -->
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+</body>
+
+</html>

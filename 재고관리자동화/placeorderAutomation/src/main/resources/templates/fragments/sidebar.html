@@ -37,7 +37,6 @@
                 <a class="collapse-item" th:href="@{/task/outgoing}">생산계획 납품</a>
                 <a class="collapse-item" th:href="@{/task/outgoing-select}">선택품 납품</a>
                 <a class="collapse-item" th:href="@{/task/order-history}">납품 현황</a>
-<!--                <a class="collapse-item" th:href="@{/task/outgoing-manual}">고객사 수동 납품</a>-->
             </div>
         </div>
     </li>
@@ -59,6 +58,23 @@
             </div>
         </div>
     </li>
+
+    <!-- 자재 관리 -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#task-util"
+           aria-expanded="true" aria-controls="task-util">
+            <i class="fas fa-fw fa-wrench"></i>
+            <span>부가 기능</span>
+        </a>
+        <div id="task-util" class="collapse" aria-labelledby="task-util"
+             data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">부가기능</h6>
+                <a class="collapse-item" th:href="@{/task/util/month-cal}">월 정산</a>
+            </div>
+        </div>
+    </li>
+
 
     <!-- 구분선 -->
     <hr class="sidebar-divider">

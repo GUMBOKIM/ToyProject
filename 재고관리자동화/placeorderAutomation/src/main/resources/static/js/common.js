@@ -30,6 +30,14 @@ function invisibleElement(id){
     document.getElementById(id).style.visibility = "hidden";
 }
 
+function displayShowElement(id){
+    document.getElementById(id).style.display = "block";
+}
+
+function displayNoneElement(id){
+    document.getElementById(id).style.display = "none";
+}
+
 async function checkOrderHistory(orderInfo) {
     const url = "/api/common/company-order/check";
     let response = await fetch(url, {

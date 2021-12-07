@@ -43,6 +43,12 @@ public class OutgoingTaskController {
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
+    @PostMapping("/check")
+    public ResponseEntity checkPartList(@RequestBody OutgoingSubmitDto request) {
+        List<CreateDeliveryDto> result = outgoingService.checkPartList(request);
+        return new ResponseEntity(result, HttpStatus.OK);
+    }
+
     @PostMapping("/submit")
     public ResponseEntity submitPartList(@RequestBody OutgoingSubmitDto request) {
         List<CreateDeliveryDto> result = outgoingService.submitPart(request);

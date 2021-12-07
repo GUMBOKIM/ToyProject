@@ -67,6 +67,7 @@ public class PageController {
         model.addAttribute("companyCode", null);
         return "task-part-stock";
     }
+
     @RequestMapping("/task/part/stock/{companyCode}")
     public String taskPartStockCompanyCode(@PathVariable String companyCode, Model model) {
         commonService.addCompanyList(model);
@@ -74,6 +75,12 @@ public class PageController {
         model.addAttribute("companyCode", companyCode);
         return "task-part-stock";
     }
+
+    @RequestMapping("/task/util/month-cal")
+    public String taskUtilMonthCal() {
+        return "task-util-month-cal";
+    }
+
 
     @RequestMapping("/manage/part/bom")
     public String managePartBom(Model model) {

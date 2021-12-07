@@ -12,8 +12,8 @@ public class OrderHistoryDto {
     private String time;
 
     public OrderHistoryDto(OrderHistory orderHistory) {
-        this.companyCode = orderHistory.getCompany().getCompanyCode();
-        this.plantCode = orderHistory.getPlant().getPlantCode();
+        this.companyCode = orderHistory.getCompany().getCompanyName();
+        this.plantCode = orderHistory.getPlant().getPlantName();
         this.date = orderHistory.getDate();
         this.orderSeq = orderHistory.getOrderSeq();
         this.time = orderHistory.getTime();

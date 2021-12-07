@@ -17,6 +17,12 @@ public class OrderHistoryController {
 
     private final OrderHistoryService orderHistoryService;
 
+    @GetMapping("/latest/{date}")
+    public ResponseEntity findOrderHistoryLatest(@PathVariable String date){
+        List<OrderHistoryDto> orderHistoryList = orderHistoryService.findLatestOrderHistoryList(date);
+        return new ResponseEntity(orderHistoryList, HttpStatus.OK);
+    }
+
     @GetMapping("/{companyCode}/{date}")
     public ResponseEntity findOrderHistoryList(@PathVariable String companyCode, @PathVariable String date){
             List<OrderHistoryDto> orderHistoryList = orderHistoryService.findOrderHistoryList(companyCode, date);

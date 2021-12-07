@@ -76,12 +76,25 @@
                     let date;
 
                     window.onload = function () {
+
                         let today = new Date();
                         let year = today.getFullYear();
                         let month = today.getMonth() + 1;
                         let day = today.getDate()
                         let dateStr = "" + year + (month < 10 ? "0" + month : month) + (day < 10 ? "0" + day : day);
                         document.getElementById("dateInput").value = dateStr;
+                        date = dateStr;
+
+                        loadLastestOrderHistory();
+                    }
+
+                    async function loadLastestOrderHistory(){
+                        const url = `/api/task/order-history/latest/${date}`
+                        let response = await fetch(url);
+                        if (response.status == 200) {
+                            let data = await response.json();
+                            createTable(data);
+                        }
                     }
 
                     async function clickConfirmButton() {
@@ -97,7 +110,7 @@
                                 createTable(data);
                             }
                         } else {
-                            alert("다시 확인해주세요")
+                            loadLastestOrderHistory();
                         }
                     }
 

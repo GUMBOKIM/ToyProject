@@ -3,30 +3,55 @@ package com.union.placeorderAutomation.service.task;
 import com.union.placeorderAutomation.dto.task.outgoing.OrderHistoryDto;
 import com.union.placeorderAutomation.dto.task.outgoing.OutgoingSubmitDto;
 import com.union.placeorderAutomation.entity.*;
-import com.union.placeorderAutomation.repository.OrderHistoryRepository;
-import com.union.placeorderAutomation.repository.OutcomeLogRepository;
-import com.union.placeorderAutomation.repository.PartInventoryRepository;
+import com.union.placeorderAutomation.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+@Transactional
 @RequiredArgsConstructor
 @Service
 public class OrderHistoryService {
 
     private final OrderHistoryRepository orderHistoryRepo;
+    private final CompanyRepository companyRepo;
+    private final PlantRepository plantRepo;
     private final OutcomeLogRepository outcomeLogRepo;
     private final PartInventoryRepository partInventoryRepo;
 
+    @Transactional(readOnly = true)
     public List<OrderHistoryDto> findOrderHistoryList(String companyCode, String date) {
         List<OrderHistoryDto> result = new ArrayList<>();
         List<OrderHistory> orderHistoryList = orderHistoryRepo.findOrderHistoryList(Company.builder().companyCode(companyCode).build(), date);
         for (OrderHistory orderHistory : orderHistoryList) {
             result.add(new OrderHistoryDto(orderHistory));
         }
+        return result;
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderHistoryDto> findLatestOrderHistoryList(String date) {
+        List<OrderHistoryDto> result = new ArrayList<>();
+        for (Company company: companyRepo.findAll()) {
+            for(Plant plant: plantRepo.findAll()){
+                OrderHistory history = null;
+                for(OrderHistory orderHistory : orderHistoryRepo.findOrderHistoryDetail(company, plant, date)){
+                    if(history == null){
+                        history = orderHistory;
+                    } else {
+                        if(orderHistory.getOrderSeq() > history.getOrderSeq()){
+                            history = orderHistory;
+                        }
+                    }
+                }
+                if(history != null) {
+                    result.add(new OrderHistoryDto(history));
+                }
+            }
+        }
+
         return result;
     }
 
@@ -66,4 +91,6 @@ public class OrderHistoryService {
         );
         orderHistoryRepo.delete(orderHistory);
     }
+
+
 }

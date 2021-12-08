@@ -246,12 +246,12 @@ public class OutgoingService {
         return result;
     }
 
-    private String summaryLot(List<String> lotList) {
-        HashMap<String, HashMap<String, List<String>>> lotMap = new HashMap<>();
+    public String summaryLot(List<String> lotList) {
+        LinkedHashMap<String, LinkedHashMap<String, List<String>>> lotMap = new LinkedHashMap<>();
         for (String lot : lotList) {
             String[] lotArr = lot.split("");
             if (lotMap.containsKey(lotArr[0])) {
-                HashMap<String, List<String>> secondMap = lotMap.get(lotArr[0]);
+                LinkedHashMap<String, List<String>> secondMap = lotMap.get(lotArr[0]);
                 if (secondMap.containsKey(lotArr[1])) {
                     List<String> thirdList = secondMap.get(lotArr[1]);
                     thirdList.add(lotArr[2]);
@@ -263,7 +263,7 @@ public class OutgoingService {
                 }
                 lotMap.put(lotArr[0], secondMap);
             } else {
-                HashMap<String, List<String>> secondMap = new HashMap<>();
+                LinkedHashMap<String, List<String>> secondMap = new LinkedHashMap<>();
                 List<String> thirdList = new ArrayList<>();
                 thirdList.add(lotArr[2]);
                 secondMap.put(lotArr[1], thirdList);
@@ -272,10 +272,10 @@ public class OutgoingService {
         }
 
         StringBuilder resultLot = new StringBuilder();
-        for (Map.Entry<String, HashMap<String, List<String>>> secondEntry : lotMap.entrySet()) {
+        for (Map.Entry<String, LinkedHashMap<String, List<String>>> secondEntry : lotMap.entrySet()) {
             String firstChar = secondEntry.getKey();
             resultLot.append(firstChar);
-            HashMap<String, List<String>> secondMap = secondEntry.getValue();
+            LinkedHashMap<String, List<String>> secondMap = secondEntry.getValue();
             for (Map.Entry<String, List<String>> thirdEntry : secondMap.entrySet()) {
                 String secondChar = thirdEntry.getKey();
                 resultLot.append(secondChar);

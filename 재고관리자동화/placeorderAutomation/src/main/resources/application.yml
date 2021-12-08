@@ -1,5 +1,3 @@
-
-
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -10,7 +8,6 @@ spring:
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
-    show-sql: true
     hibernate:
       ddl-auto: update
     properties:
@@ -23,14 +20,17 @@ spring:
     cache: false
   #  https://dev-overload.tistory.com/25
 
-  devtools:
-    livereload:
-      enabled: true
-
 logging:
   level:
-    org:
-      hibernate: info
+    root: info
+  file:
+    path: C:/logs
+  logback:
+    rollingpolicy:
+      file-name-pattern: log.%d{yyyy-MM-dd}_%i.log
+
+
+
 
 server:
   port: 8081

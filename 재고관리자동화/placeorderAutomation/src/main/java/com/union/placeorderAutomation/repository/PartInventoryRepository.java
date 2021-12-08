@@ -47,7 +47,9 @@ public interface PartInventoryRepository extends JpaRepository<PartInventory, Lo
             nativeQuery = true)
     Long sumPartStock(String bwCode);
 
-    @Query(value = "SELECT * FROM part_inventory WHERE part_id = ?1 AND stock > 0 ORDER BY IF(lot RLIKE '[A-Z][A-Z][A-Z]', 1, 2), lot", nativeQuery = true)
+    @Query(value = "SELECT * FROM part_inventory WHERE part_id = ?1 AND stock > 0 ORDER BY  IF(ASCII(SUBSTRING(lot, 1, 1)) < 65, ASCII(SUBSTRING(lot, 1, 1)) + 50, ASCII(SUBSTRING(lot, 1, 1))) * 10000\n" +
+            "              + IF(ASCII(SUBSTRING(lot, 2, 1)) < 65, ASCII(SUBSTRING(lot, 2, 1)) + 50, ASCII(SUBSTRING(lot, 2, 1))) * 100\n" +
+            "                  + IF(ASCII(SUBSTRING(lot, 3, 1)) < 65, ASCII(SUBSTRING(lot, 3, 1)) + 50, ASCII(SUBSTRING(lot, 3, 1))) * 1", nativeQuery = true)
     List<PartInventory> findInventoryListByPart(String bwCode);
 
     @Query(value = "SELECT * FROM part_inventory WHERE part_id = ?1 AND lot = ?2", nativeQuery = true)

@@ -144,11 +144,10 @@
                             let rows = XLSX.utils.sheet_to_json(workBook.Sheets[workBook.SheetNames[0]]);
                             for (let i = 0; i < rows.length; i++) {
                                 let temp = rows[i];
-
                                 if (temp[Object.keys(temp)[0]] == '') {
                                     break;
                                 }
-                                partCheck.push({
+                                let data = {
                                     companyName: "",
                                     spCode: "",
                                     poCode: "",
@@ -158,8 +157,15 @@
                                     lot: temp[Object.keys(temp)[1]],
                                     quantity: temp[Object.keys(temp)[2]] * 1,
                                     loadAmount: temp[Object.keys(temp)[3]] * 1
-                                });
-
+                                };
+                                for(let i = 0; i< partCheck.length; i++){
+                                    let find = partCheck[i];
+                                    if(find.bwCode == data.bwCode && find.lot == data.lot){
+                                        data.check = 'A';
+                                        break;
+                                    }
+                                }
+                                partCheck.push(data);
                             }
                         }
                         reader.readAsBinaryString(excelFile);
@@ -184,6 +190,8 @@
                                 checkPass = false;
                             } else if (temp.check == "Y") {
                                 tr.className = "table-primary";
+                            } else if (temp.check == "A"){
+                                tr.className = "table-warning";
                             }
                             tbody.append(tr);
                         }

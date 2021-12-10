@@ -161,7 +161,7 @@
                                 for(let i = 0; i< partCheck.length; i++){
                                     let find = partCheck[i];
                                     if(find.bwCode == data.bwCode && find.lot == data.lot){
-                                        data.check = 'A';
+                                        data.check = '중복';
                                         break;
                                     }
                                 }
@@ -190,7 +190,7 @@
                                 checkPass = false;
                             } else if (temp.check == "Y") {
                                 tr.className = "table-primary";
-                            } else if (temp.check == "A"){
+                            } else if (temp.check == "중복"){
                                 tr.className = "table-warning";
                             }
                             tbody.append(tr);
@@ -231,14 +231,12 @@
                         );
                     }
 
-
                     function sendPartStock() {
                         let sendData = {
                             date,
                             orderSeq,
                             partCheck
                         }
-
                         const url = "/api/task/part-manage/" + kind;
                         fetch(url, {
                             headers: {
@@ -255,7 +253,6 @@
                                 }
                             }
                         );
-
                     }
 
                     function createResultTable(data) {

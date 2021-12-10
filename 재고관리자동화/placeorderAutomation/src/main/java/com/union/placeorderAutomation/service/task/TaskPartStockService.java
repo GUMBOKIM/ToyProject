@@ -50,19 +50,42 @@ public class TaskPartStockService {
     public List<PartStockDetailDto> getPartStockDetailList(String partBwCode) {
         List<PartStockDetailDto> partStockDetailList = new ArrayList<>();
         List<PartInventory> partInventories = partInventoryRepo.findInventoryListByPart(partBwCode);
-        for(PartInventory partInventory : partInventories){
+        for (PartInventory partInventory : partInventories) {
             partStockDetailList.add(new PartStockDetailDto(partInventory));
         }
         return partStockDetailList;
     }
 
     public void modifyInventory(Long inventoryId, PartStockModifyDto modifyDto) {
-        Optional<PartInventory> inventoryOpt = partInventoryRepo.findById(inventoryId);
-        if (inventoryOpt.isPresent()) {
-            PartInventory partInventory = inventoryOpt.get();
-            partInventory.setLot(modifyDto.getLot());
-            partInventory.setLoadAmount(modifyDto.getLoadAmount());
-            partInventoryRepo.save(partInventory);
+        Optional<PartInventory> originInventoryOpt = partInventoryRepo.findById(inventoryId);
+        if (originInventoryOpt.isPresent()) {
+            PartInventory originInventory = originInventoryOpt.get();
+            String bwCode = originInventory.getPart().getBwCode();
+            String originLot = originInventory.getLot();
+            int originQuantity = originInventory.getStock();
+            int loadAmount = modifyDto.getLoadAmount();
+            if(originLot.equals(modifyDto.getLot())){
+                originInventory.setLoadAmount(modifyDto.getLoadAmount());
+            } else {
+                Optional<PartInventory> targetInventoryOpt = partInventoryRepo.findByPartAndLot(bwCode, modifyDto.getLot());
+                if (targetInventoryOpt.isPresent()) {
+                    PartInventory targetInventory = targetInventoryOpt.get();
+                    int targetQuantity = targetInventory.getStock();
+                    targetInventory.setStock(targetQuantity + originQuantity);
+                    targetInventory.setLoadAmount(loadAmount);
+                    partInventoryRepo.save(targetInventory);
+                } else if (targetInventoryOpt.isEmpty()) {
+                    PartInventory newInventory = PartInventory.builder()
+                            .part(originInventory.getPart())
+                            .lot(modifyDto.getLot())
+                            .loadAmount(loadAmount)
+                            .stock(originQuantity)
+                            .build();
+                    partInventoryRepo.save(newInventory);
+                }
+                originInventory.setStock(0);
+            }
+            partInventoryRepo.save(originInventory);
         }
     }
 

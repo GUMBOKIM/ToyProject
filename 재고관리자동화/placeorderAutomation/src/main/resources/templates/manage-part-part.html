@@ -191,8 +191,8 @@
         let sel = tdList[0].childNodes[0];
         let result = {
             companyCode: sel.options[sel.selectedIndex].value,
-            bwCode: tdList[1].childNodes[0].value,
-            inventoryBwCode: tdList[2].childNodes[0].value,
+            bwCode: tdList[1].childNodes[0].value.toUpperCase(),
+            inventoryBwCode: tdList[2].childNodes[0].value.toUpperCase(),
             partName: tdList[3].childNodes[0].value,
             spCode: tdList[4].childNodes[0].value,
             loadAmount: parseInt(tdList[5].childNodes[0].value),

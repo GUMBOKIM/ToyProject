@@ -55,7 +55,13 @@ public class OutgoingService {
             if (partInvenMap.containsKey(bwCode)) {
                 PartInventoryDto partInventoryDto = partInvenMap.get(bwCode);
                 partInventoryDto.setLoadAmount(part.getLoadAmount());
-                partInventoryDto.setStock(findPartStock(part.getBwCode()));
+                partInventoryDto.setStock(findPartStock(bwCode));
+                partInvenResult.put(bwCode, partInventoryDto);
+            } else {
+                PartInventoryDto partInventoryDto = new PartInventoryDto();
+                partInventoryDto.setPartBwCode(bwCode);
+                partInventoryDto.setLoadAmount(part.getLoadAmount());
+                partInventoryDto.setStock(findPartStock(bwCode));
                 partInvenResult.put(bwCode, partInventoryDto);
             }
         }
@@ -79,7 +85,6 @@ public class OutgoingService {
                 for (BomPart bomPart : bomParts) {
                     String partBwCode = bomPart.getPart().getBwCode();
                     int usage = bomPart.getAmount();
-
                     if (partInvenResult.containsKey(partBwCode)) {
                         PartInventoryDto partInventoryDto = partInvenResult.get(partBwCode);
                         partInventoryDto.setUsage(usage);
@@ -104,9 +109,16 @@ public class OutgoingService {
             if (partInvenMap.containsKey(bwCode)) {
                 PartInventoryDto partInventoryDto = partInvenMap.get(bwCode);
                 partInventoryDto.setSpCode(part.getSpCode());
-                partInventoryDto.setPartBwCode(part.getBwCode());
+                partInventoryDto.setPartBwCode(bwCode);
                 partInventoryDto.setLoadAmount(part.getLoadAmount());
-                partInventoryDto.setStock(findPartStock(part.getBwCode()));
+                partInventoryDto.setStock(findPartStock(bwCode));
+                partInvenResult.add(partInventoryDto);
+            } else {
+                PartInventoryDto partInventoryDto = new PartInventoryDto();
+                partInventoryDto.setSpCode(part.getSpCode());
+                partInventoryDto.setPartBwCode(bwCode);
+                partInventoryDto.setLoadAmount(part.getLoadAmount());
+                partInventoryDto.setStock(findPartStock(bwCode));
                 partInvenResult.add(partInventoryDto);
             }
         }

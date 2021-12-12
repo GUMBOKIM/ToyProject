@@ -25,6 +25,8 @@ public interface OutcomeLogRepository extends JpaRepository<OutcomeLog, Long> {
 
     List<OutcomeLog> findOutcomeLogByCompanyAndPlantAndDateAndOrderSeq(Company company, Plant plant, String date, int orderSeq);
 
+    List<OutcomeLog> findOutcomeLogByCompanyAndDate(Company company, String date);
+
 }
 
 

@@ -5,5 +5,6 @@ import lombok.Data;
 @Data
 public class PartStockModifyDto {
     private String lot;
+    private int stock;
     private int loadAmount;
 }

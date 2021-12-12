@@ -1,6 +1,9 @@
 package com.union.placeorderAutomation.service.task;
 
 import com.union.placeorderAutomation.dto.task.part.status.PartLogDto;
+import com.union.placeorderAutomation.dto.task.part.status.PartOutgoingLogDto;
+import com.union.placeorderAutomation.entity.Company;
+import com.union.placeorderAutomation.entity.OutcomeLog;
 import com.union.placeorderAutomation.entity.Part;
 import com.union.placeorderAutomation.entity.Plant;
 import com.union.placeorderAutomation.repository.*;
@@ -18,6 +21,7 @@ public class TaskPartStatusService {
 
     private final PartRepository partRepo;
     private final PlantRepository plantRepo;
+    private final CompanyRepository companyRepo;
 
     private final IncomeLogRepository incomeLogRepo;
     private final ModifyLogRepository modifyLogRepo;
@@ -47,6 +51,17 @@ public class TaskPartStatusService {
             result.add(partLogDto);
         }
 
+        return result;
+    }
+
+    @Transactional(readOnly = true)
+    public List<PartOutgoingLogDto> createOutgoingPartList(String companyCode, String date) {
+        List<PartOutgoingLogDto> result = new ArrayList<>();
+        Company company = companyRepo.getById(companyCode);
+        List<OutcomeLog> outcomeLogList = outcomeLogRepo.findOutcomeLogByCompanyAndDate(company, date);
+        for (OutcomeLog outcomeLog : outcomeLogList){
+            result.add(new PartOutgoingLogDto(outcomeLog));
+        }
         return result;
     }
 }

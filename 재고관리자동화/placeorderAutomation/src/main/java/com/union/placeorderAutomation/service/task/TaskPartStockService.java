@@ -60,6 +60,7 @@ public class TaskPartStockService {
         Optional<PartInventory> originInventoryOpt = partInventoryRepo.findById(inventoryId);
         if (originInventoryOpt.isPresent()) {
             PartInventory originInventory = originInventoryOpt.get();
+            originInventory.setStock(modifyDto.getStock());
             String bwCode = originInventory.getPart().getBwCode();
             String originLot = originInventory.getLot();
             int originQuantity = originInventory.getStock();

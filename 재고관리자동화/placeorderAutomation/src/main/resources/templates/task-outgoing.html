@@ -100,8 +100,9 @@
                             <thead>
                             <tr>
                                 <th class="col-2">보그워너 품번</th>
-                                <th class="col-1">전산 재고</th>
                                 <th class="col-1">적입량</th>
+                                <th class="col-1">전산재고</th>
+                                <th class="col-1">전산박스 수</th>
                                 <th class="col-1">USAGE</th>
                                 <th class="col-1">입고량</th>
                                 <th class="col-1">
@@ -120,335 +121,365 @@
                 </div>
 
                 <div class="row justify-content-center mb-3" style="visibility: hidden;" id="submitTableRow">
-                        <table class="table col-4">
-                            <thead>
-                            <tr>
-                                <th class="col-1">보그워너 품번</th>
-                                <th class="col-1">수량</th>
-                                <th class="col-2">
-                                    <button type="button" id="checkButton" class="btn btn-success btn-sm"
-                                            onclick="clickCheckButton()">확인
-                                    </button>
-                                    <button type="button" id="returnButton" class="btn btn-warning btn-sm"
-                                            onclick="clickReturnButton()">뒤로
-                                    </button>
-                                    <button type="button" id="submitButton" class="btn btn-danger btn-sm"
-                                            onclick="clickSubmitButton()">등록
-                                    </button>
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody id="submitTbody">
-                            </tbody>
-                        </table>
-                        <table class="table col-5">
-                            <thead>
-                            <tr>
-                                <th class="col-1">보그워너 품번</th>
-                                <th class="col-1">로트</th>
-                                <th class="col-1">적입량</th>
-                                <th class="col-1">수량</th>
-                                <th class="col-1">박스</th>
-                            </tr>
-                            </thead>
-                            <tbody id="checkTbody">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="row justify-content-center mb-3" style="visibility: hidden;" id="resultTableRow">
                     <table class="table col-4">
                         <thead>
                         <tr>
-                            <th class="col">보그워너 품번</th>
-                            <th class="col">로트</th>
-                            <th class="col">적입량</th>
-                            <th class="col">수량</th>
-                            <th class="col">박스수</th>
+                            <th class="col-1">보그워너 품번</th>
+                            <th class="col-1">수량</th>
+                            <th class="col-3">
+                                <button type="button" class="btn btn-primary btn-sm" onclick="clickAddButton()">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                                <button type="button" id="checkButton" class="btn btn-success btn-sm"
+                                        onclick="clickCheckButton()"><i class="fas fa-check"></i>
+                                </button>
+                                <button type="button" id="returnButton" class="btn btn-warning btn-sm"
+                                        onclick="clickReturnButton()">뒤로
+                                </button>
+                                <button type="button" id="submitButton" class="btn btn-danger btn-sm"
+                                        onclick="clickSubmitButton()">등록
+                                </button>
+                            </th>
                         </tr>
                         </thead>
-                        <tbody id="resultTbody">
+                        <tbody id="submitTbody">
+                        </tbody>
+                    </table>
+                    <table class="table col-5">
+                        <thead>
+                        <tr>
+                            <th class="col-1">보그워너 품번</th>
+                            <th class="col-1">로트</th>
+                            <th class="col-1">적입량</th>
+                            <th class="col-1">수량</th>
+                            <th class="col-1">박스</th>
+                        </tr>
+                        </thead>
+                        <tbody id="checkTbody">
                         </tbody>
                     </table>
                 </div>
-
-
-                <script>
-                    let orderInfo = {};
-                    let partList = new Array();
-                    let findData;
-
-                    window.onload = function () {
-                        let today = new Date();
-                        let year = today.getFullYear();
-                        let month = today.getMonth() + 1;
-                        let day = today.getDate()
-                        let dateStr = "" + year + (month < 10 ? "0" + month : month) + (day < 10 ? "0" + day : day);
-                        document.getElementById("dateInput").value = dateStr;
-                    }
-
-                    async function clickConfirmButton() {
-                        orderInfo.companyCode = findElementValue("companySelect");
-                        orderInfo.plantCode = findElementValue("plantSelect");
-                        orderInfo.date = findElementValue("dateInput");
-                        orderInfo.orderSeq = findElementValue("orderInput") * 1;
-                        orderInfo.time = findElementValue("timeInput");
-
-                        if (orderInfo.companyCode != "" && orderInfo.plantCode != "" && orderInfo.date.length == 8
-                            && orderInfo.orderSeq != "" && orderInfo.time.length == 5) {
-                            if (await checkOrderHistory(orderInfo)) {
-                                disableElement("companySelect");
-                                disableElement("plantSelect");
-                                disableElement("dateInput");
-                                disableElement("orderInput");
-                                disableElement("timeInput");
-                                disableElement("createButton");
-
-                                const url = "/api/task/outgoing/inquire/"
-                                    + orderInfo.companyCode
-                                    + "/" + orderInfo.plantCode;
-                                let response = await fetch(url);
-                                if (response.status == 200) {
-                                    findData = await response.json();
-                                    createBomTable(findData);
-
-                                }
-                            }
-                        } else {
-                            alert("입력을 확인해주세요")
-                        }
-                    }
-
-                    function createBomTable(data) {
-                        let tbody = document.getElementById("bomTbody");
-                        let nowLine = "";
-                        let lineSeq = 0;
-                        let rowColor = ["table-light", "table-info"];
-                        for (let i = 0; i < data.length; i++) {
-                            let bom = data[i];
-                            if (nowLine != (bom.workCenter + "")) {
-                                nowLine = bom.workCenter + "";
-                                lineSeq += 1;
-                            }
-                            let tr = document.createElement("tr");
-                            tr.id = i;
-                            addClassName(tr, rowColor[lineSeq % 2])
-
-                            let html = `<td>` + bom.workCenter + `</td>`
-                                + `<td>` + bom.plant + `</td>`
-                                + `<td>` + bom.seq + `</td>`
-                            if (bom.partInventory != null) {
-                                html += `<td class="bg-success" onclick="createBomPart(${i})">` + bom.bomBwCode + `</td>`
-                            } else {
-                                html += `<td>` + bom.bomBwCode + `</td>`
-                            }
-                            html += `<td>` + bom.deliveredQTY + `</td>`
-                                + `<td>` + bom.remainQTY + `</td>`
-                                + `<td>` + bom.totalQTY + `</td>`
-                                + `<td>` + bom.ttime + `</td>`
-                                + `<td>` + bom.rtime + `</td>`;
-                            tr.innerHTML = html;
-                            tbody.append(tr);
-                        }
-                    }
-
-                    function createBomPart(index) {
-                        let tempList = findData[index].partInventory;
-                        let tbody = document.getElementById("bomPartTbody");
-                        removeChildNode(tbody);
-                        for (let i = 0; i < tempList.length; i++) {
-                            let temp = tempList[i]
-                            console.log(temp);
-                            let tr = document.createElement("tr");
-                            let boxQTY;
-                            if (temp.rop != 0) {
-                                boxQTY = (temp.stockQTY / temp.rop).toFixed(1);
-                            } else {
-                                boxQTY = '-'
-                            }
-                            let html = `<td>` + temp.partBwCode + `</td>`
-                                + `<td>` + temp.rop + `</td>`
-                                + `<td>` + temp.stockQTY + `</td>`
-                                + `<td>` + temp.loadAmount + `(${boxQTY})` + `</td>`
-                            if (partList.findIndex(v => v.bwCode === temp.partBwCode) == -1) {
-                                html += `<td>` + `<div class="input-group"><input type="text" class="form-control" placeholder="수량" onclick="onclickInput(this)"></div>` + `</td>`
-                                    + `<td>` + `<button type="button" class="btn btn-success btn-sm" onclick="enrollPart(this)"><i class="fas fa-check"></i></button>` + `</td>`
-                                    + `<td class="table-warning">` + temp.stock + `</td>`
-                            } else {
-                                html += `<td>` + `<div class="input-group"><input type="text" class="form-control" disabled placeholder="수량"></div>` + `</td>`
-                                    + `<td>` + `</td>`
-                                    + `<td class="table-warning">` + temp.stock + `</td>`
-                            }
-                            tr.innerHTML = html;
-                            tbody.append(tr);
-                        }
-                    }
-
-                    async function clickCheckButton() {
-                        let tbody = document.getElementById("checkTbody");
-                        removeChildNode(tbody);
-                        const url = "/api/task/outgoing/check"
-                        let response = await fetch(url, {
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            method: "POST",
-                            body: JSON.stringify({
-                                partList : partList
-                            })
-                        });
-                        if (response.status == 200) {
-                            let data = await response.json();
-                            for (let i = 0; i < data.length; i++) {
-                                let temp = data[i];
-                                let tr = document.createElement("tr");
-                                tr.innerHTML = `<td>` + temp.bwCode + `</td>`
-                                    + `<td>` + temp.lot + `</td>`
-                                    + `<td>` + temp.loadAmount + `</td>`
-                                    + `<td>` + temp.quantity + `</td>`
-                                    + `<td>` + Math.ceil(temp.quantity / temp.loadAmount) + `</td>`;
-                                tbody.append(tr);
-                            }
-                        }
-                    }
-
-                    async function enrollPart(element) {
-                        let tr = element.parentNode.parentNode;
-                        let tdList = tr.children;
-                        let bwCode = tdList[0].innerText;
-                        let amount = tdList[4].childNodes[0].childNodes[0].value * 1
-                        let totalStock = tdList[6].innerText * 1;
-
-                        if (amount > 0) {
-                            if (amount <= totalStock) {
-                                partList.push({bwCode, amount});
-                                tdList[4].childNodes[0].childNodes[0].disabled = true;
-                                tdList[5].childNodes[0].disabled = true;
-                            } else {
-                                alert(`입력하신 수량이 현 재고량보다 많습니다. - 현재고 : ${totalStock}`);
-                            }
-                        } else {
-                            alert("수량을 다시 입력하세요");
-                        }
-
-                    }
-
-                    function clickEnrollButton() {
-                        if (partList.length != 0) {
-                            displayNoneElement("inquireTableRow");
-                            visibleElement("submitTableRow");
-
-                            partList.sort(function (a, b) {
-                                const upperCaseA = a.bwCode.toUpperCase();
-                                const upperCaseB = b.bwCode.toUpperCase();
-
-                                if (upperCaseA > upperCaseB) return 1;
-                                if (upperCaseA < upperCaseB) return -1;
-                                if (upperCaseA === upperCaseB) return 0;
-                            })
-
-                            let tbody = document.getElementById("submitTbody");
-                            removeChildNode(tbody);
-                            for (let i = 0; i < partList.length; i++) {
-                                let temp = partList[i];
-                                let tr = document.createElement("tr");
-                                tr.innerHTML = `<td>` + temp.bwCode + `</td>`
-                                    + `<td onclick="changeAmount(${i})">` + temp.amount + `</td>`
-                                    + `<td>` + '' + `</td>`;
-                                tbody.append(tr);
-                            }
-                        } else {
-                            alert("등록된 자재가 없습니다. 등록해주세요")
-                        }
-                    }
-                    async function changeAmount(index){
-                        let bwCode = partList[index].bwCode;
-                        const url = "/api/task/part-stock/inventory/" + bwCode;
-                        let response = await fetch(url);
-                        if (response.status == 200) {
-                            let data = await response.json();
-                            let message = "";
-                            for (let i = 0; i < data.length; i++) {
-                                let temp = data[i]
-                                message += `로트 : ${temp.lot}, 적입량 : ${temp.loadAmount}, 수량 : ${temp.stock}, 박스량 : ${temp.stock / temp.loadAmount}\n`
-                            }
-                            let amount = prompt(message, "")
-                            partList[index].amount = amount;
-                        }
-                        clickEnrollButton();
-                    }
-
-                    function clickReturnButton() {
-                        displayShowElement("inquireTableRow");
-                        invisibleElement("submitTableRow");
-                        let tbody = document.getElementById("checkTbody");
-                        removeChildNode(tbody);
-                    }
-
-                    async function clickSubmitButton() {
-                        orderInfo.partList = partList;
-                        const url = "/api/task/outgoing/submit"
-                        let response = await fetch(url, {
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            method: "POST",
-                            body: JSON.stringify(orderInfo)
-                        });
-
-                        if (response.status == 200) {
-                            let data = await response.json();
-                            let tableRow = document.getElementById("submitTableRow")
-                            removeAllNode(tableRow);
-                            visibleElement("reportButton");
-                            visibleElement("resultTableRow");
-                            let tbody = document.getElementById("resultTbody");
-                            for (let i = 0; i < data.length; i++) {
-                                let temp = data[i];
-                                let tr = document.createElement("tr");
-                                tr.innerHTML = `<td>` + temp.bwCode + `</td>`
-                                    + `<td>` + temp.lot + `</td>`
-                                    + `<td>` + temp.loadAmount + `</td>`
-                                    + `<td>` + temp.quantity + `</td>`
-                                    + `<td>` + Math.ceil(temp.quantity / temp.loadAmount) + `</td>`;
-                                tbody.append(tr);
-                            }
-                        }
-                    }
-
-                    async function onclickInput(element) {
-                        let tr = element.parentNode.parentNode.parentNode;
-                        let tdList = tr.children;
-                        let bwCode = tdList[0].innerText;
-
-                        const url = "/api/task/part-stock/inventory/" + bwCode;
-                        let response = await fetch(url);
-                        if (response.status == 200) {
-                            let data = await response.json();
-                            let message = "";
-                            for (let i = 0; i < data.length; i++) {
-                                let temp = data[i]
-                                message += `로트 : ${temp.lot}, 적입량 : ${temp.loadAmount}, 수량 : ${temp.stock}, 박스량 : ${temp.stock / temp.loadAmount}\n`
-                            }
-                            let amount = prompt(message, "")
-                            element.value = amount;
-                        }
-                    }
-
-                    function openReport() {
-                        window.open(`https://es-qms.borgwarner.com/qms/payment_card2.main?p_companycd=00&p_vendcd=${orderInfo.companyCode}&p_plant=${orderInfo.plantCode}&p_income_date=${orderInfo.date}&p_sno=${orderInfo.orderSeq}`)
-                    }
-                </script>
-
-
             </div>
-            <!-- /.container-fluid -->
 
+            <div class="row justify-content-center mb-3" style="visibility: hidden;" id="resultTableRow">
+                <table class="table col-4">
+                    <thead>
+                    <tr>
+                        <th class="col">보그워너 품번</th>
+                        <th class="col">로트</th>
+                        <th class="col">적입량</th>
+                        <th class="col">수량</th>
+                        <th class="col">박스수</th>
+                    </tr>
+                    </thead>
+                    <tbody id="resultTbody">
+                    </tbody>
+                </table>
+            </div>
+
+            <script>
+                let orderInfo = {};
+                let partList = new Array();
+                let findData;
+
+                window.onload = function () {
+                    let today = new Date();
+                    let year = today.getFullYear();
+                    let month = today.getMonth() + 1;
+                    let day = today.getDate()
+                    let dateStr = "" + year + (month < 10 ? "0" + month : month) + (day < 10 ? "0" + day : day);
+                    document.getElementById("dateInput").value = dateStr;
+                }
+
+                async function clickConfirmButton() {
+                    orderInfo.companyCode = findElementValue("companySelect");
+                    orderInfo.plantCode = findElementValue("plantSelect");
+                    orderInfo.date = findElementValue("dateInput");
+                    orderInfo.orderSeq = findElementValue("orderInput") * 1;
+                    orderInfo.time = findElementValue("timeInput");
+
+                    if (orderInfo.companyCode != "" && orderInfo.plantCode != "" && orderInfo.date.length == 8
+                        && orderInfo.orderSeq != "" && orderInfo.time.length == 5) {
+                        if (await checkOrderHistory(orderInfo)) {
+                            disableElement("companySelect");
+                            disableElement("plantSelect");
+                            disableElement("dateInput");
+                            disableElement("orderInput");
+                            disableElement("timeInput");
+                            disableElement("createButton");
+
+                            const url = "/api/task/outgoing/inquire/"
+                                + orderInfo.companyCode
+                                + "/" + orderInfo.plantCode;
+                            let response = await fetch(url);
+                            if (response.status == 200) {
+                                findData = await response.json();
+                                createBomTable(findData);
+                            }
+                        }
+                    } else {
+                        alert("입력을 확인해주세요")
+                    }
+                }
+
+                function createBomTable(data) {
+                    let tbody = document.getElementById("bomTbody");
+                    let nowLine = "";
+                    let lineSeq = 0;
+                    let rowColor = ["table-light", "table-info"];
+                    for (let i = 0; i < data.length; i++) {
+                        let bom = data[i];
+                        if (nowLine != (bom.workCenter + "")) {
+                            nowLine = bom.workCenter + "";
+                            lineSeq += 1;
+                        }
+                        let tr = document.createElement("tr");
+                        tr.id = i;
+                        addClassName(tr, rowColor[lineSeq % 2])
+
+                        let html = `<td>` + bom.workCenter + `</td>`
+                            + `<td>` + bom.plant + `</td>`
+                            + `<td>` + bom.seq + `</td>`
+                        if (bom.partInventory != null) {
+                            html += `<td class="bg-success" onclick="createBomPart(${i})">` + bom.bomBwCode + `</td>`
+                        } else {
+                            html += `<td>` + bom.bomBwCode + `</td>`
+                        }
+                        html += `<td>` + bom.deliveredQTY + `</td>`
+                            + `<td>` + bom.remainQTY + `</td>`
+                            + `<td>` + bom.totalQTY + `</td>`
+                            + `<td>` + bom.ttime + `</td>`
+                            + `<td>` + bom.rtime + `</td>`;
+                        tr.innerHTML = html;
+                        tbody.append(tr);
+                    }
+                }
+
+                function createBomPart(index) {
+                    let tempList = findData[index].partInventory;
+                    let tbody = document.getElementById("bomPartTbody");
+                    removeChildNode(tbody);
+                    for (let i = 0; i < tempList.length; i++) {
+                        let temp = tempList[i]
+                        console.log(temp);
+                        let tr = document.createElement("tr");
+                        let boxQTY;
+                        if (temp.rop != 0) {
+                            boxQTY = (temp.stockQTY / temp.rop).toFixed(1);
+                        } else {
+                            boxQTY = '-'
+                        }
+                        // <th className="col-2">보그워너 품번</th>
+                        // <th className="col-1">적입량</th>
+                        // <th className="col-1">전산재고</th>
+                        // <th className="col-1">전산박스 수</th>
+                        // <th className="col-1">USAGE</th>
+                        // <th className="col-1">입고량</th>
+
+                        let html = `<td>` + temp.partBwCode + `</td>`
+                            + `<td>` + temp.rop + `</td>`
+                            + `<td>` + temp.stockQTY + `</td>`
+                            + `<td>` + temp.loadAmount + `(${boxQTY})` + `</td>`
+                            + `<td>` + temp.usage + `</td>`
+                        if (partList.findIndex(v => v.bwCode === temp.partBwCode) == -1) {
+                            html += `<td>` + `<div class="input-group"><input type="text" class="form-control" placeholder="수량" onclick="onclickInput(this)"></div>` + `</td>`
+                                + `<td>` + `<button type="button" class="btn btn-success btn-sm" onclick="enrollPart(this)"><i class="fas fa-check"></i></button>` + `</td>`
+                                + `<td class="table-warning">` + temp.stock + `</td>`
+                        } else {
+                            html += `<td>` + `<div class="input-group"><input type="text" class="form-control" disabled placeholder="수량"></div>` + `</td>`
+                                + `<td>` + `</td>`
+                                + `<td class="table-warning">` + temp.stock + `</td>`
+                        }
+                        tr.innerHTML = html;
+                        tbody.append(tr);
+                    }
+                }
+
+                async function clickCheckButton() {
+                    let tbody = document.getElementById("checkTbody");
+                    removeChildNode(tbody);
+                    const url = "/api/task/outgoing/check"
+                    let response = await fetch(url, {
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        method: "POST",
+                        body: JSON.stringify({
+                            partList: partList
+                        })
+                    });
+                    if (response.status == 200) {
+                        let data = await response.json();
+                        for (let i = 0; i < data.length; i++) {
+                            let temp = data[i];
+                            let tr = document.createElement("tr");
+                            tr.innerHTML = `<td>` + temp.bwCode + `</td>`
+                                + `<td>` + temp.lot + `</td>`
+                                + `<td>` + temp.loadAmount + `</td>`
+                                + `<td>` + temp.quantity + `</td>`
+                                + `<td>` + Math.ceil(temp.quantity / temp.loadAmount) + `</td>`;
+                            tbody.append(tr);
+                        }
+                    }
+                }
+
+                async function enrollPart(element) {
+                    let tr = element.parentNode.parentNode;
+                    let tdList = tr.children;
+                    let bwCode = tdList[0].innerText;
+                    let amount = tdList[5].childNodes[0].childNodes[0].value * 1
+                    let totalStock = tdList[7].innerText * 1;
+
+                    if (amount > 0) {
+                        if (amount <= totalStock) {
+                            partList.push({bwCode, amount});
+                            tdList[5].childNodes[0].childNodes[0].disabled = true;
+                            tdList[6].childNodes[0].disabled = true;
+                        } else {
+                            alert(`입력하신 수량이 현 재고량보다 많습니다. - 현재고 : ${totalStock}`);
+                        }
+                    } else {
+                        alert("수량을 다시 입력하세요");
+                    }
+
+                }
+
+                function clickEnrollButton() {
+                    if (partList.length != 0) {
+                        displayNoneElement("inquireTableRow");
+                        visibleElement("submitTableRow");
+
+                        partList.sort(function (a, b) {
+                            const upperCaseA = a.bwCode.toUpperCase();
+                            const upperCaseB = b.bwCode.toUpperCase();
+
+                            if (upperCaseA > upperCaseB) return 1;
+                            if (upperCaseA < upperCaseB) return -1;
+                            if (upperCaseA === upperCaseB) return 0;
+                        })
+
+                        let tbody = document.getElementById("submitTbody");
+                        removeChildNode(tbody);
+                        for (let i = 0; i < partList.length; i++) {
+                            let temp = partList[i];
+                            let tr = document.createElement("tr");
+                            tr.innerHTML = `<td>` + temp.bwCode + `</td>`
+                                + `<td onclick="changeAmount(${i})">` + temp.amount + `</td>`
+                                + `<td>` + '' + `</td>`;
+                            tbody.append(tr);
+                        }
+                    } else {
+                        alert("등록된 자재가 없습니다. 등록해주세요")
+                    }
+                }
+
+                async function clickAddButton() {
+                    let bwCode = prompt("보그워너 품번 입력");
+                    bwCode = bwCode.toUpperCase();
+                    const url = "/api/task/part-stock/inventory/" + bwCode;
+                    let response = await fetch(url);
+                    if (response.status == 200) {
+                        let data = await response.json();
+                        let message = "";
+                        if (data.length == 0) {
+                            alert("등록되지 않은 자재입니다.")
+                        } else {
+                            for (let i = 0; i < data.length; i++) {
+                                let temp = data[i]
+                                message += `로트 : ${temp.lot}, 적입량 : ${temp.loadAmount}, 수량 : ${temp.stock}, 박스량 : ${temp.stock / temp.loadAmount}\n`
+                            }
+                            let amount = prompt(message, "")
+                            partList.push({bwCode, amount})
+                            clickEnrollButton();
+                        }
+                    }
+                }
+
+                async function changeAmount(index) {
+                    let bwCode = partList[index].bwCode;
+                    const url = "/api/task/part-stock/inventory/" + bwCode;
+                    let response = await fetch(url);
+                    if (response.status == 200) {
+                        let data = await response.json();
+                        let message = "";
+                        for (let i = 0; i < data.length; i++) {
+                            let temp = data[i]
+                            message += `로트 : ${temp.lot}, 적입량 : ${temp.loadAmount}, 수량 : ${temp.stock}, 박스량 : ${temp.stock / temp.loadAmount}\n`
+                        }
+                        let amount = prompt(message, "")
+                        partList[index].amount = amount;
+                    }
+                    clickEnrollButton();
+                }
+
+                function clickReturnButton() {
+                    displayShowElement("inquireTableRow");
+                    invisibleElement("submitTableRow");
+                    let tbody = document.getElementById("checkTbody");
+                    removeChildNode(tbody);
+                }
+
+                async function clickSubmitButton() {
+                    orderInfo.partList = partList;
+                    const url = "/api/task/outgoing/submit"
+                    let response = await fetch(url, {
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        method: "POST",
+                        body: JSON.stringify(orderInfo)
+                    });
+
+                    if (response.status == 200) {
+                        let data = await response.json();
+                        let tableRow = document.getElementById("submitTableRow")
+                        removeAllNode(tableRow);
+                        visibleElement("reportButton");
+                        visibleElement("resultTableRow");
+                        let tbody = document.getElementById("resultTbody");
+                        for (let i = 0; i < data.length; i++) {
+                            let temp = data[i];
+                            let tr = document.createElement("tr");
+                            tr.innerHTML = `<td>` + temp.bwCode + `</td>`
+                                + `<td>` + temp.lot + `</td>`
+                                + `<td>` + temp.loadAmount + `</td>`
+                                + `<td>` + temp.quantity + `</td>`
+                                + `<td>` + Math.ceil(temp.quantity / temp.loadAmount) + `</td>`;
+                            tbody.append(tr);
+                        }
+                    }
+                }
+
+                async function onclickInput(element) {
+                    let tr = element.parentNode.parentNode.parentNode;
+                    let tdList = tr.children;
+                    let bwCode = tdList[0].innerText;
+
+                    const url = "/api/task/part-stock/inventory/" + bwCode;
+                    let response = await fetch(url);
+                    if (response.status == 200) {
+                        let data = await response.json();
+                        let message = "";
+                        for (let i = 0; i < data.length; i++) {
+                            let temp = data[i]
+                            message += `로트 : ${temp.lot}, 적입량 : ${temp.loadAmount}, 수량 : ${temp.stock}, 박스량 : ${temp.stock / temp.loadAmount}\n`
+                        }
+                        let amount = prompt(message, "")
+                        element.value = amount;
+                    }
+                }
+
+                function openReport() {
+                    window.open(`https://es-qms.borgwarner.com/qms/payment_card2.main?p_companycd=00&p_vendcd=${orderInfo.companyCode}&p_plant=${orderInfo.plantCode}&p_income_date=${orderInfo.date}&p_sno=${orderInfo.orderSeq}`)
+                }
+            </script>
         </div>
-        <!-- End of Main Content -->
+        <!-- /.container-fluid -->
+
     </div>
-    <!-- End of Content Wrapper -->
+    <!-- End of Main Content -->
+</div>
+<!-- End of Content Wrapper -->
 </div>
 <!-- End of Page Wrapper -->
 

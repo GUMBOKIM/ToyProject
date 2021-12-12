@@ -178,7 +178,7 @@
         let loadAmount = tdList[2].innerText * 1;
         removeChildNode(tr);
         tr.innerHTML = `<td>` + `<input type="text" class="form-control" value="${lot}">` + `</td>`
-            + `<td>` + quantity + `</td>`
+            + `<td>` + `<input type="text" class="form-control" value="${quantity}">` + `</td>`
             + `<td>` + `<input type="text" class="form-control" value="${loadAmount}">` + `</td>`
             + `<td>` + `<button type="button" class="btn btn-success btn-sm" onclick="modifyInventory(this)"><i class="fas fa-check"></i></button>` + `</td>`;
     }
@@ -188,7 +188,7 @@
         let id = tr.id;
         let tdList = tr.children;
         let lot = tdList[0].children[0].value;
-        let quantity = tdList[1].innerText * 1;
+        let stock = tdList[1].children[0].value * 1;
         let loadAmount = tdList[2].children[0].value * 1;
 
         let url = "/api/task/part-stock/inventory/" + id;
@@ -200,6 +200,7 @@
             method: "PUT",
             body: JSON.stringify({
                 lot,
+                stock,
                 loadAmount
             })
         });

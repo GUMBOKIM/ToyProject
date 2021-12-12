@@ -55,6 +55,9 @@
                         <button type="button" class="btn btn-success btn-sm" onclick="clickExcelButton()"><i
                                 class="far fa-file-excel"></i>
                         </button>
+                        <button type="button" class="btn btn-success btn-sm" onclick="clickOutgoingLogButton()">
+                            출고 내역
+                        </button>
                     </div>
                 </div>
 
@@ -62,6 +65,7 @@
 
                     let companyCode;
                     let date;
+                    let outcomeLog
 
                     window.onload = function () {
                         let today = new Date();
@@ -97,7 +101,7 @@
                             let temp = data[i];
 
                             let td1 = document.createElement("td");
-                            td1.innerText = temp.spCode;
+                            td1.innerText = temp.partBwCode;
                             let td2 = document.createElement("td");
                             td2.innerText = temp.spCode;
 
@@ -153,6 +157,48 @@
                         XLSX.writeFile(wb, (`${companyCode}-${date}.xlsx`));
                     }
 
+                    function clickOutgoingLogButton() {
+                        companyCode = document.getElementById("companySelect").value;
+                        date = document.getElementById("dateInput").value;
+                        if (companyCode != "" & date != "") {
+                            const url = `/api/task/part-log/outgoing/` + companyCode + `/` + date;
+                            fetch(url).then(response => {
+                                if (response.status == 200) {
+                                    response.json().then(data => {
+                                        outcomeLog = data;
+                                        createOutcomeLogTable();
+                                    });
+                                }
+                            });
+                        } else {
+                            alert("공장과 날짜를 입력해주세요");
+                        }
+                    }
+
+                    function createOutcomeLogTable() {
+                        const tbody = document.getElementById('outcomeLogTbody');
+                        removeChildNode(tbody)
+                        for (let i = 0; i < outcomeLog.length; i++) {
+                            let tr = document.createElement("tr");
+                            tr.innerHTML = `<td>` + outcomeLog[i].date + `</td>`
+                                + `<td>` + outcomeLog[i].companyName + `</td>`
+                                + `<td>` + outcomeLog[i].plantName + `</td>`
+                                + `<td>` + outcomeLog[i].orderSeq + `</td>`
+                                + `<td>` + outcomeLog[i].bwCode + `</td>`
+                                + `<td>` + outcomeLog[i].spCode + `</td>`
+                                + `<td>` + outcomeLog[i].lot + `</td>`
+                                + `<td>` + outcomeLog[i].quantity + `</td>`;
+                            tbody.append(tr);
+                        }
+
+                        let wb = XLSX.utils.table_to_book(document.getElementById('outcomeLogTable'), {
+                            sheet: date,
+                            raw: true
+                        });
+                        XLSX.writeFile(wb, (`${companyCode}-${date}-출고.xlsx`));
+
+                    }
+
                 </script>
 
                 <div class="row" style="overflow: auto">
@@ -167,8 +213,8 @@
                             <th colspan="1" class="table-danger" style="white-space: nowrap">불량</th>
                         </tr>
                         <tr>
-                            <th style="white-space: nowrap">공급업체 품번</th>
                             <th style="white-space: nowrap">보그워너 품번</th>
+                            <th style="white-space: nowrap">공급업체 품번</th>
                             <!-- 입고 -->
                             <th class="table-info" style="white-space: nowrap">용차</th>
                             <th class="table-info">1</th>
@@ -232,22 +278,42 @@
                     </table>
                 </div>
 
+                <div>
+                    <div class="row" style="visibility: hidden">
+                        <table class="table table-bordered text-center" id="outcomeLogTable">
+                            <thead>
+                            <tr>
+                                <th>날짜</th>
+                                <th>회사이름</th>
+                                <th>공장</th>
+                                <th>회차</th>
+                                <th>보그워너 품번</th>
+                                <th>납품업체 품번</th>
+                                <th>로트</th>
+                                <th>수량</th>
+                            </tr>
+                            </thead>
+                            <tbody id="outcomeLogTbody">
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                </div>
+                <!-- /.container-fluid -->
 
             </div>
-            <!-- /.container-fluid -->
+            <!-- End of Main Content -->
 
         </div>
-        <!-- End of Main Content -->
-
+        <!-- End of Content Wrapper -->
     </div>
-    <!-- End of Content Wrapper -->
-</div>
-<!-- End of Page Wrapper -->
+    <!-- End of Page Wrapper -->
 
-<!-- Scroll to Top Button-->
-<a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-</a>
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
 
 </body>
 

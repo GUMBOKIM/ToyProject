@@ -46,6 +46,8 @@ public class PageController {
 
     @RequestMapping("/task/outgoing-manual")
     public String taskOutgoingManual(Model model) {
+        commonService.addCompanyList(model);
+        commonService.addPlantList(model);
         return "task-outgoing-manual";
     }
 

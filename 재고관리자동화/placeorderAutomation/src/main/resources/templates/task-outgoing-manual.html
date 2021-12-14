@@ -31,56 +31,53 @@
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">고객사 납품 - 수동</h1>
+                    <h1 class="h3 mb-0 text-gray-800">수동 납품</h1>
                 </div>
 
                 <div class="row justify-content-center mb-4">
                     <div class="col-1">
-                        <select class="custom-select" id="company" onchange="setCompanyCode(this.value)">
-                            <option selected>회사</option>
-                            <option value="107324">SKF</option>
-                            <option value="107155">대성</option>
-                            <option value="106056">미래메탈</option>
-                            <option value="320344">보원</option>
-                            <option value="341329">부강</option>
-                            <option value="106076">삼보</option>
-                            <option value="106064">유신</option>
+                        <select class="custom-select" id="companySelect">
+                            <option selected value="">회사</option>
+                            <option th:each="company : ${companyList}"
+                                    th:value="${company.companyCode}"
+                                    th:text="${company.companyName}"></option>
                         </select>
                     </div>
                     <div class="col-1">
-                        <select class="custom-select" id="plant" onchange="setPlantCode(this.value)">
-                            <option selected>공장</option>
-                            <option value="5300">1공장</option>
-                            <option value="5330">2공장</option>
+                        <select class="custom-select" id="plantSelect">
+                            <option selected value="">공장</option>
+                            <option th:each="plant : ${plantList}"
+                                    th:value="${plant.plantCode}"
+                                    th:text="${plant.plantName}"></option>
                         </select>
                     </div>
                     <div class="col-1">
                         <div class="input-group">
-                            <input type="text" class="form-control" id="time" onchange="setTime(this.value)"
-                                   placeholder="HH:MM">
+                            <input type="text" class="form-control" id="dateInput" placeholder="YYYYMMDD">
                         </div>
                     </div>
                     <div class="col-1">
                         <div class="input-group">
-                            <input type="text" class="form-control" id="date" onchange="setDate(this.value)"
-                                   placeholder="YYYYMMDD">
+                            <input type="text" class="form-control" id="orderInput" placeholder="차수">
                         </div>
                     </div>
-                    <div class="col-2">
+                    <div class="col-1">
                         <div class="input-group">
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="excelInput" onchange="readExcel()">
-                                <label class="custom-file-label" for="excelInput">파일선택</label>
-                            </div>
+                            <input type="text" class="form-control" id="timeInput" placeholder="HH:MM">
                         </div>
                     </div>
-                    <div class="col-2">
-                        <button type="button" id="createButton" class="btn btn-primary" onclick="createTable()">확인
+                    <div class="col">
+                        <button type="button" id="createButton" class="btn btn-primary" onclick="clickConfirmButton()">
+                            확인
                         </button>
-                        <button type="button" id="sendButton" style="visibility:hidden;" class="btn btn-success"
-                                onclick="sendData()">전송
+                        <div class="custom-file col-2" id="excelButton" style="visibility: hidden;">
+                            <input type="file" class="custom-file-input" id="excelInput" onchange="readExcel()">
+                            <label class="custom-file-label" for="excelInput">파일선택</label>
+                        </div>
+                        <button type="button" id="sendButton" class="btn btn-primary" onclick="clickSendButton()">
+                            확인
                         </button>
-                        <button type="button" id="reportButton" style="visibility:hidden;" class="btn btn-success"
+                        <button type="button" id="reportButton" style="visibility: hidden;" class="btn btn-success"
                                 onclick="openReport()">납품카드
                         </button>
                     </div>
@@ -105,51 +102,45 @@
                 </div>
 
                 <script>
-                    let companyCode;
-                    let plantCode;
-                    let time;
-                    let date;
-                    let checkCompanyCode;
-                    let checkPlantCode;
-                    let checkDate;
+                    let orderInfo = {};
+                    let findData;
+                    let partList = new Array();
+
+                    let excelOrderInfo = {};
                     let excelMemory = new Array();
-                    let reportUrl;
+
 
                     window.onload = function () {
                         let today = new Date();
                         let year = today.getFullYear();
                         let month = today.getMonth() + 1;
-                        let day = today.getDate();
-                        date = "" + year;
-                        date = (month < 10) ? date + "0" + month : date + month;
-                        date = (day < 10) ? date + "0" + day : date + day;
-                        let target = document.getElementById('date');
-                        target.placeholder = date;
-                        target.value = date;
+                        let day = today.getDate()
+                        let dateStr = "" + year + (month < 10 ? "0" + month : month) + (day < 10 ? "0" + day : day);
+                        document.getElementById("dateInput").value = dateStr;
                     }
 
-                    function setDate(value) {
-                        date = value;
-                        let target = document.getElementById('date');
-                        target.disabled = true;
-                    }
+                    async function clickConfirmButton() {
+                        orderInfo.companyCode = findElementValue("companySelect");
+                        orderInfo.plantCode = findElementValue("plantSelect");
+                        orderInfo.date = findElementValue("dateInput");
+                        orderInfo.orderSeq = findElementValue("orderInput") * 1;
+                        orderInfo.time = findElementValue("timeInput");
 
-                    function setCompanyCode(value) {
-                        companyCode = value;
-                        let target = document.getElementById('company');
-                        target.disabled = true;
-                    }
+                        if (orderInfo.companyCode != "" && orderInfo.plantCode != "" && orderInfo.date.length == 8
+                            && orderInfo.orderSeq != "" && orderInfo.time.length == 5) {
+                            if (await checkOrderHistory(orderInfo)) {
+                                disableElement("companySelect");
+                                disableElement("plantSelect");
+                                disableElement("dateInput");
+                                disableElement("orderInput");
+                                disableElement("timeInput");
+                                disableElement("createButton");
 
-                    function setPlantCode(value) {
-                        plantCode = value;
-                        let target = document.getElementById('plant');
-                        target.disabled = true;
-                    }
-
-                    function setTime(value) {
-                        time = value;
-                        let target = document.getElementById('time');
-                        target.disabled = true;
+                                visibleElement(`excelButton`);
+                            }
+                        } else {
+                            alert("입력을 확인해주세요")
+                        }
                     }
 
                     async function readExcel() {
@@ -161,10 +152,12 @@
                             let rows = XLSX.utils.sheet_to_json(workBook.Sheets[workBook.SheetNames[0]]);
                             for (let i = 0; i < rows.length; i++) {
                                 let temp = rows[i];
-                                if(i == 0){
-                                    checkCompanyCode = temp[Object.keys(temp)[0]] + "";
-                                    checkPlantCode = temp[Object.keys(temp)[1]] + "";
-                                    checkDate = temp[Object.keys(temp)[2]].replaceAll("-","") + "";
+                                console.log(temp);
+                                if (i == 0) {
+                                    excelOrderInfo.companyCode = temp[Object.keys(temp)[0]] + "";
+                                    excelOrderInfo.plantCode = temp[Object.keys(temp)[1]] + "";
+                                    excelOrderInfo.date = temp[Object.keys(temp)[2]].replaceAll("-", "") + "";
+                                    excelOrderInfo.orderSeq = temp[Object.keys(temp)[2]] * 1;
                                 }
                                 if (i >= 2) {
                                     if (temp[Object.keys(temp)[0]] == '') {
@@ -183,20 +176,28 @@
                             }
                         }
                         reader.readAsBinaryString(excelFile);
-
                         const target = document.getElementById('excelInput');
                         target.disabled = true;
+                        createTable();
 
                     }
 
                     function createTable() {
-                        if (companyCode != checkCompanyCode || plantCode != checkPlantCode || date != checkDate || time.length != 5) {
+                        console.log(orderInfo.companyCode)
+                        console.log(orderInfo.plantCode)
+                        console.log(orderInfo.time)
+                        console.log(`----------`)
+                        console.log(excelOrderInfo.companyCode)
+                        console.log(excelOrderInfo.plantCode)
+                        console.log(excelOrderInfo.date)
+
+                        if (orderInfo.companyCode !== excelOrderInfo.companyCode ||
+                            orderInfo.plantCode !== excelOrderInfo.plantCode ||
+                            orderInfo.date !== excelOrderInfo.date) {
                             alert("입력 오류 입니다. 엑셀과 입력한 값을 다시 확인해보세요");
                             location.reload();
                         } else {
                             confirm(`회사코드 : ${companyCode}\n` + `공장코드 : ${plantCode}\n` + `납품시간 : ${time}\n` + `납품날짜 : ${date}\n`);
-                            let target = document.getElementById('createButton');
-                            target.disabled = true;
                             target = document.getElementById('sendButton');
                             target.style.visibility = "visible";
                         }
@@ -216,36 +217,6 @@
                         }
                     }
 
-                    function sendData() {
-                        const url = "/api/task/outgoing-manual";
-                        fetch(url, {
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            method: "POST",
-                            body: JSON.stringify({
-                                companyCode: companyCode,
-                                plantCode: plantCode,
-                                date: date,
-                                time: time,
-                                deliveryList: excelMemory
-                            })
-                        }).then(
-                            response => {
-                                if (response.status == 200) {
-                                    let target = document.getElementById('sendButton');
-                                    target.disabled = true;
-                                    target = document.getElementById('reportButton');
-                                    target.style.visibility = "visible";
-                                    reportRequest();
-                                } else {
-                                    alert("전송 오류! 다시 해보세요")
-                                    location.reload();
-                                }
-                            }
-                        );
-                    }
-
                     function reportRequest() {
                         const url = "/api/task/outgoing-manual/" + companyCode + "/" + date + "/" + plantCode;
                         fetch(url).then((response) => response.json())
@@ -255,7 +226,7 @@
                     }
 
                     function openReport() {
-                        window.open(https://es-qms.borgwarner.com/qms/payment_card2.main?p_companycd=00&p_vendcd=${data[0]}&p_plant=${data[1]}&p_income_date=${data[2]}&p_sno=${data[3]});
+                        window.open(`https://es-qms.borgwarner.com/qms/payment_card2.main?p_companycd=00&p_vendcd=${orderInfo.companyCode}&p_plant=${orderInfo.plantCode}&p_income_date=${orderInfo.date}&p_sno=${orderInfo.orderSeq}`)
                     }
                 </script>
 

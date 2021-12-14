@@ -56,8 +56,8 @@ public class OrderHistoryService {
     }
 
     public void cancelOrder(OutgoingSubmitDto outgoingSubmitDto) {
-        Company company = Company.builder().companyCode(outgoingSubmitDto.getCompanyCode()).build();
-        Plant plant = Plant.builder().plantCode(outgoingSubmitDto.getPlantCode()).build();
+        Company company = companyRepo.findCompanyByCompanyName(outgoingSubmitDto.getCompanyCode());
+        Plant plant = plantRepo.findPlantByPlantName(outgoingSubmitDto.getPlantCode());
 
         List<OutcomeLog> outcomeLogList = outcomeLogRepo.findOutcomeLogByCompanyAndPlantAndDateAndOrderSeq(
                 company,
@@ -84,8 +84,8 @@ public class OrderHistoryService {
         }
 
         OrderHistory orderHistory = orderHistoryRepo.findOrderHistoryForDelete(
-                Company.builder().companyCode(outgoingSubmitDto.getCompanyCode()).build(),
-                Plant.builder().plantCode(outgoingSubmitDto.getPlantCode()).build(),
+                company,
+                plant,
                 outgoingSubmitDto.getDate(),
                 outgoingSubmitDto.getOrderSeq()
         );

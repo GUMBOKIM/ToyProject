@@ -29,8 +29,5 @@ logging:
     rollingpolicy:
       file-name-pattern: log.%d{yyyy-MM-dd}_%i.log
 
-
-
-
 server:
   port: 8081

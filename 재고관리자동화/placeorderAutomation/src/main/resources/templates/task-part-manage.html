@@ -67,6 +67,7 @@
                     let date;
                     let orderSeq;
                     let checkPass = true;
+                    let firstLot;
 
                     window.onload = function () {
                         let today = new Date();
@@ -75,6 +76,7 @@
                         let day = today.getDate()
                         let dateStr = "" + year + (month < 10 ? "0" + month : month) + (day < 10 ? "0" + day : day);
                         document.getElementById("dateInput").value = dateStr;
+                        lotCheck(year);
                     }
 
                     function clickConfirmButton() {
@@ -158,9 +160,9 @@
                                     quantity: temp[Object.keys(temp)[2]] * 1,
                                     loadAmount: temp[Object.keys(temp)[3]] * 1
                                 };
-                                for(let i = 0; i< partCheck.length; i++){
+                                for (let i = 0; i < partCheck.length; i++) {
                                     let find = partCheck[i];
-                                    if(find.bwCode == data.bwCode && find.lot == data.lot){
+                                    if (find.bwCode == data.bwCode && find.lot == data.lot) {
                                         data.check = '중복';
                                         break;
                                     }
@@ -177,20 +179,27 @@
                         for (let i = 0; i < partCheck.length; i++) {
                             let tr = document.createElement("tr");
                             let temp = partCheck[i];
-                            tr.innerHTML = `<td>` + temp.companyName + `</td>`
+                            let html = `<td>` + temp.companyName + `</td>`
                                 + `<td>` + temp.bwCode + `</td>`
                                 + `<td>` + temp.spCode + `</td>`
                                 + `<td>` + temp.name + `</td>`
-                                + `<td>` + temp.lot + `</td>`
-                                + `<td>` + temp.quantity + `</td>`
+
+                            if (temp.lot.charAt(0) == firstLot) {
+                                html += `<td>` + temp.lot + `</td>`;
+                            } else {
+                                html += `<td class="text-warning">` + temp.lot + `</td>`;
+                            }
+
+                            html += `<td>` + temp.quantity + `</td>`
                                 + `<td>` + temp.loadAmount + `</td>`
                                 + `<td>` + temp.check + `</td>`;
+                            tr.innerHTML = html;
                             if (temp.check == "N") {
                                 tr.className = "table-danger";
                                 checkPass = false;
                             } else if (temp.check == "Y") {
                                 tr.className = "table-primary";
-                            } else if (temp.check == "중복"){
+                            } else if (temp.check == "중복") {
                                 tr.className = "table-warning";
                             }
                             tbody.append(tr);
@@ -201,6 +210,14 @@
                         target.disabled = true;
                         target = document.getElementById('checkButton');
                         target.style.visibility = "visible";
+                    }
+
+                    function lotCheck(year) {
+                        let lotArr = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O",
+                            "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+                            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+
+                        firstLot = lotArr[(year % 100) - 5];
                     }
 
                     function checkPart() {

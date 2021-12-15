@@ -149,6 +149,29 @@ public class OutgoingService {
         return deliveryList;
     }
 
+
+    public List<CreateDeliveryDto> submitManualPart(OutgoingManualDto manualDto) {
+        List<CreateDeliveryDto> deliveryList = createManualDeliveryCard(manualDto);
+        OutgoingSubmitDto submitDto = new OutgoingSubmitDto(manualDto);
+        restTemplateService.createDeliveryCard(submitDto, convertForCreateDeliverCard(deliveryList));
+        log.info("납입카드 성공");
+        restTemplateService.registryDelivery(submitDto, deliveryList);
+        log.info("재고 등록 성공");
+        partLogService.createOutcomeLogs(submitDto, deliveryList);
+        log.info("로그 생성 성공");
+        commonService.addCompanyOrderHistory(
+                OrderHistoryDto.builder()
+                        .orderSeq(submitDto.getOrderSeq())
+                        .date(submitDto.getDate())
+                        .time(submitDto.getTime())
+                        .plantCode(submitDto.getPlantCode())
+                        .companyCode(submitDto.getCompanyCode())
+                        .build()
+        );
+        log.info("주문 기록 생성 성공");
+        return deliveryList;
+    }
+
     @Transactional(readOnly = true)
     public List<CreateDeliveryDto> checkPartList(OutgoingSubmitDto request) {
         return createDeliveryCard(request);
@@ -211,12 +234,25 @@ public class OutgoingService {
     }
 
 
+    private List<CreateDeliveryDto> createManualDeliveryCard(OutgoingManualDto submitDto) {
+        List<CreateDeliveryDto> result = new ArrayList<>();
+        for (OutgoingManualPartDto partDto : submitDto.getExcelPartList()) {
+            Part part = partRepo.findByBwCode(partDto.getBwCode()).get();
+            CreateDeliveryDto temp = new CreateDeliveryDto(part);
+            temp.setLot(partDto.getLot());
+            temp.setQuantity(partDto.getQuantity());
+            temp.setLoadAmount(partDto.getLoadAmount());
+
+            result.add(temp);
+        }
+        return result;
+    }
+
+
     // 추가
     private List<CreateDeliveryDto> convertForCreateDeliverCard(List<CreateDeliveryDto> input) {
         List<CreateDeliveryDto> result = new ArrayList<>();
-
         LinkedHashMap<String, List<CreateDeliveryDto>> dtoMap = new LinkedHashMap<>();
-
         for (CreateDeliveryDto dto : input) {
             String bwCode = dto.getBwCode();
             List<CreateDeliveryDto> deliveryDtos = new ArrayList<>();
@@ -323,6 +359,7 @@ public class OutgoingService {
             Part part = partRepo.getById(partDto.getBwCode());
             String poCode = null;
             String location = null;
+            boolean check = true;
             if (plantCode.equals("5300")) {
                 poCode = part.getPoCode1();
                 location = part.getLocation1();
@@ -334,29 +371,40 @@ public class OutgoingService {
             // 부품 확인
             if (part == null) {
                 partDto.setDesc("품번이 존재하지 않습니다.");
+                check = false;
             } else {
                 if (!part.getPartName().equals(partDto.getPartName())) {
                     partDto.setDesc(partDto.getDesc() + "이름 ");
+                    check = false;
                 }
                 if (!poCode.equals(partDto.getPoCode())) {
                     partDto.setDesc(partDto.getDesc() + "발주번호 ");
+                    check = false;
                 }
                 if (!location.equals(partDto.getLocation())) {
                     partDto.setDesc(partDto.getDesc() + "위치 ");
+                    check = false;
                 }
                 // 재고 확인
                 Optional<PartInventory> partInvenLotOpt = partInventoryRepo.findByPartAndLot(partDto.getBwCode(), partDto.getLot());
-                if(partInvenLotOpt.isPresent()){
+                if (partInvenLotOpt.isPresent()) {
                     PartInventory partInventory = partInvenLotOpt.get();
-                    if(partInventory.getLoadAmount() != partDto.getLoadAmount()){
+                    if (partInventory.getLoadAmount() != partDto.getLoadAmount()) {
                         partDto.setDesc(partDto.getDesc() + "적입량 ");
+                        check = false;
                     }
-                    if(partInventory.getStock() < partDto.getQuantity()){
+                    if (partInventory.getStock() < partDto.getQuantity()) {
                         partDto.setDesc(partDto.getDesc() + "재고 ");
+                        check = false;
                     }
                 } else {
                     partDto.setDesc(partDto.getDesc() + "로트");
+                    check = false;
                 }
+            }
+
+            if (check) {
+                partDto.setDesc("Y");
             }
         }
         return request.getExcelPartList();

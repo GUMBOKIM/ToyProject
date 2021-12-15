@@ -16,4 +16,12 @@ public class OutgoingSubmitDto {
     private String time;
     private int orderSeq;
     List<OutgoingPartDto> partList;
+
+    public OutgoingSubmitDto(OutgoingManualDto manualDto) {
+        this.companyCode = manualDto.getCompanyCode();
+        this.date = manualDto.getDate();
+        this.plantCode = manualDto.getPlantCode();
+        this.time = manualDto.getTime();
+        this.orderSeq = manualDto.getOrderSeq();
+    }
 }

@@ -80,6 +80,10 @@
                                 onclick="clickCheckButton()">
                             체크
                         </button>
+                        <button type="button" id="sendButton" class="btn btn-primary" style="visibility: hidden;"
+                                onclick="clickSendButton()">
+                            전송
+                        </button>
                         <button type="button" id="reportButton" style="visibility: hidden;" class="btn btn-success"
                                 onclick="openReport()">납품카드
                         </button>
@@ -141,7 +145,6 @@
                                 disableElement("timeInput");
                                 disableElement("createButton");
                                 disableElement("excelInput");
-
                                 createExcelTable();
                             }
                         } else {
@@ -158,7 +161,6 @@
                             let rows = XLSX.utils.sheet_to_json(workBook.Sheets[workBook.SheetNames[0]]);
                             for (let i = 0; i < rows.length; i++) {
                                 let temp = rows[i];
-                                console.log(temp);
                                 if (i == 0) {
                                     excelOrderInfo.companyCode = temp[Object.keys(temp)[0]] + "";
                                     excelOrderInfo.plantCode = temp[Object.keys(temp)[1]] + "";
@@ -201,7 +203,6 @@
 
                             visibleElement('checkButton');
                         }
-
                     }
 
                     function createExcelTbody(data) {
@@ -213,9 +214,9 @@
                                 + `<td>` + data[i].partName + `</td>`
                                 + `<td>` + data[i].poCode + `</td>`
                                 + `<td>` + data[i].lot + `</td>`
-                                + `<td>` + data[i].boxQuantity + `</td>`
-                                + `<td>` + data[i].quantity + `</td>`
                                 + `<td>` + data[i].loadAmount + `</td>`
+                                + `<td>` + data[i].quantity + `</td>`
+                                + `<td>` + data[i].boxQuantity + `</td>`
                                 + `<td>` + data[i].location + `</td>`
                                 + `<td>` + data[i].desc + `</td>`
                             tr.innerHTML = html;
@@ -252,6 +253,25 @@
                         if (response.status == 200) {
                             findData = await response.json();
                             createExcelTbody(findData);
+                            visibleElement("sendButton");
+                            disableElement("checkButton");
+                        }
+                    }
+
+                    async function clickSendButton() {
+                        const url = "/api/task/outgoing/manual/submit";
+                        let body = orderInfo;
+                        body.excelPartList = excelMemory;
+                        let response = await fetch(url, {
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            method: "POST",
+                            body: JSON.stringify(body)
+                        });
+                        if (response.status == 200) {
+                            visibleElement("reportButton");
+                            disableElement("sendButton");
                         }
                     }
 

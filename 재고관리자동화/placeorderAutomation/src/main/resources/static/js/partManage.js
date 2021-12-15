@@ -1,27 +1,27 @@
-    let companyCode;
-    let inputColumn = false;
+let companyCode;
+let inputColumn = false;
 
-    function setCompanyCode(value){
+function setCompanyCode(value) {
     companyCode = value;
 }
 
-    function findPartByCompanyCode() {
+function findPartByCompanyCode() {
     document.location.href = "/manage/part/part/" + companyCode;
 }
 
-    function clickAddButton() {
+function clickAddButton() {
     let tbody = document.getElementById("tbody");
     let tr = document.createElement("tr");
     tr.id = 'add';
     let td1 = document.createElement("td");
     let inner = ''
     for (let i = 0; i < companyList.length; i++) {
-    inner += `<option value="` + companyList[i].companyCode + `">` + companyList[i].companyName + `</option>`
-}
+        inner += `<option value="` + companyList[i].companyCode + `">` + companyList[i].companyName + `</option>`
+    }
     td1.innerHTML = `<select class="custom-select">
                                         <option selected>회사</option>`
-    + inner
-    + `</select>`;
+        + inner
+        + `</select>`;
     let td2 = document.createElement("td");
     td2.innerHTML = `<input type="text" class="form-control">`;
     let td3 = document.createElement("td");
@@ -45,38 +45,37 @@
     tbody.insertBefore(tr, tbody.firstChild);
 }
 
-    function addPart() {
+function addPart() {
     let tdList = document.getElementById("add").childNodes;
     let sel = tdList[0].childNodes[0];
     let result = {
-    companyCode: sel.options[sel.selectedIndex].value,
-    bwCode: tdList[1].childNodes[0].value,
-    partName: tdList[2].childNodes[0].value,
-    spCode: tdList[3].childNodes[0].value,
-    poCode: tdList[4].childNodes[0].value,
-    loadAmount: parseInt(tdList[5].childNodes[0].value),
-    location: tdList[6].childNodes[0].value,
-    standardYn: tdList[7].childNodes[0].value,
-}
-    console.log(result);
+        companyCode: sel.options[sel.selectedIndex].value,
+        bwCode: tdList[1].childNodes[0].value,
+        partName: tdList[2].childNodes[0].value,
+        spCode: tdList[3].childNodes[0].value,
+        poCode: tdList[4].childNodes[0].value,
+        loadAmount: parseInt(tdList[5].childNodes[0].value),
+        location: tdList[6].childNodes[0].value,
+        standardYn: tdList[7].childNodes[0].value,
+    }
 
     const url = "/api/manage/part";
     fetch(url, {
-    headers: {
-    "Content-Type": "application/json",
-},
-    method: "POST",
-    body: JSON.stringify(result)
-}).then(
-    response => {
-    if (response.status == 200) {
-    document.location.href = "/manage/part/part"
-}
-}
+        headers: {
+            "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify(result)
+    }).then(
+        response => {
+            if (response.status == 200) {
+                document.location.href = "/manage/part/part"
+            }
+        }
     );
 }
 
-    function clickModifyButton(input) {
+function clickModifyButton(input) {
     let tr = input.parentNode.parentNode;
     let bwCode = tr.childNodes[3].innerText;
     removeChildNode(tr);
@@ -85,12 +84,12 @@
     let td1 = document.createElement("td");
     let inner = ''
     for (let i = 0; i < companyList.length; i++) {
-    inner += `<option value="` + companyList[i].companyCode + `">` + companyList[i].companyName + `</option>`
-}
+        inner += `<option value="` + companyList[i].companyCode + `">` + companyList[i].companyName + `</option>`
+    }
     td1.innerHTML = `<select class="custom-select">
                                         <option selected>회사</option>`
-    + inner
-    + `</select>`;
+        + inner
+        + `</select>`;
     let td2 = document.createElement("td");
     td2.innerText = bwCode;
     let td3 = document.createElement("td");
@@ -114,48 +113,47 @@
 
 }
 
-    function modifyPart() {
+function modifyPart() {
     let tdList = document.getElementById("modify").childNodes;
-    console.log(tdList);
     let sel = tdList[0].childNodes[0];
     let result = {
-    companyCode: sel.options[sel.selectedIndex].value,
-    bwCode : tdList[1].innerText,
-    partName: tdList[2].childNodes[0].value,
-    spCode: tdList[3].childNodes[0].value,
-    poCode: tdList[4].childNodes[0].value,
-    loadAmount: parseInt(tdList[5].childNodes[0].value),
-    location: tdList[6].childNodes[0].value,
-    standardYn: tdList[7].childNodes[0].value,
-}
+        companyCode: sel.options[sel.selectedIndex].value,
+        bwCode: tdList[1].innerText,
+        partName: tdList[2].childNodes[0].value,
+        spCode: tdList[3].childNodes[0].value,
+        poCode: tdList[4].childNodes[0].value,
+        loadAmount: parseInt(tdList[5].childNodes[0].value),
+        location: tdList[6].childNodes[0].value,
+        standardYn: tdList[7].childNodes[0].value,
+    }
     const url = "/api/manage/part";
     fetch(url, {
-    headers: {
-    "Content-Type": "application/json",
-},
-    method: "PUT",
-    body: JSON.stringify(result)
-}).then(
-    response => {
-    if (response.status == 200) {
-    document.location.href = "/manage/part/part"
-}
-}
+        headers: {
+            "Content-Type": "application/json",
+        },
+        method: "PUT",
+        body: JSON.stringify(result)
+    }).then(
+        response => {
+            if (response.status == 200) {
+                document.location.href = "/manage/part/part"
+            }
+        }
     );
 }
 
-    function clickDeleteButton(input) {
+function clickDeleteButton(input) {
     let bwCode = input.parentNode.parentNode.childNodes[3].innerText;
     const url = "/api/manage/part/" + bwCode;
     fetch(url, {
-    method: "DELETE",
-}).then(
-    response => {
-    if (response.status == 200) {
-    document.location.href = "/manage/part/part"
-} else {
-    alert('BOM을 먼저 지우고 삭제하세요');
-}
-}
+        method: "DELETE",
+    }).then(
+        response => {
+            if (response.status == 200) {
+                document.location.href = "/manage/part/part"
+            } else {
+                alert('BOM을 먼저 지우고 삭제하세요');
+            }
+        }
     );
 }

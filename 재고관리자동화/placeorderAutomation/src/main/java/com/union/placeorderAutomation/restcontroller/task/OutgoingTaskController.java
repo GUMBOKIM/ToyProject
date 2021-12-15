@@ -62,4 +62,10 @@ public class OutgoingTaskController {
         List<OutgoingManualPartDto> result = outgoingService.checkManual(request);
         return new ResponseEntity(result, HttpStatus.OK);
     }
+
+    @PostMapping("/manual/submit")
+    public ResponseEntity submitManualPartList(@RequestBody OutgoingManualDto request) {
+        List<CreateDeliveryDto> result = outgoingService.submitManualPart(request);
+        return new ResponseEntity(result, HttpStatus.OK);
+    }
 }

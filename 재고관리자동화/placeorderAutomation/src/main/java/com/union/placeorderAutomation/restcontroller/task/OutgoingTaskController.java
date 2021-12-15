@@ -3,6 +3,8 @@ package com.union.placeorderAutomation.restcontroller.task;
 import com.union.placeorderAutomation.dto.resttemplate.CreateDeliveryDto;
 import com.union.placeorderAutomation.dto.resttemplate.PartInventoryDto;
 import com.union.placeorderAutomation.dto.resttemplate.ProductPlanDto;
+import com.union.placeorderAutomation.dto.task.outgoing.OutgoingManualDto;
+import com.union.placeorderAutomation.dto.task.outgoing.OutgoingManualPartDto;
 import com.union.placeorderAutomation.dto.task.outgoing.OutgoingSubmitDto;
 import com.union.placeorderAutomation.service.task.OutgoingService;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +40,7 @@ public class OutgoingTaskController {
 
     @GetMapping("/inquire-select/{companyCode}/{plantCode}")
     public ResponseEntity inquireSelectInventory(@PathVariable String companyCode,
-                                                      @PathVariable String plantCode) {
+                                                 @PathVariable String plantCode) {
         List<PartInventoryDto> result = outgoingService.findSelectPartInventory(companyCode, plantCode);
         return new ResponseEntity(result, HttpStatus.OK);
     }
@@ -52,6 +54,12 @@ public class OutgoingTaskController {
     @PostMapping("/submit")
     public ResponseEntity submitPartList(@RequestBody OutgoingSubmitDto request) {
         List<CreateDeliveryDto> result = outgoingService.submitPart(request);
+        return new ResponseEntity(result, HttpStatus.OK);
+    }
+
+    @PostMapping("/manual/check")
+    public ResponseEntity checkManualExcelList(@RequestBody OutgoingManualDto request) {
+        List<OutgoingManualPartDto> result = outgoingService.checkManual(request);
         return new ResponseEntity(result, HttpStatus.OK);
     }
 }

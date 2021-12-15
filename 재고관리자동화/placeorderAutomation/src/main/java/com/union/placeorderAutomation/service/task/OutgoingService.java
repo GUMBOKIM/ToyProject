@@ -4,6 +4,8 @@ import com.union.placeorderAutomation.dto.common.OrderHistoryDto;
 import com.union.placeorderAutomation.dto.resttemplate.CreateDeliveryDto;
 import com.union.placeorderAutomation.dto.resttemplate.PartInventoryDto;
 import com.union.placeorderAutomation.dto.resttemplate.ProductPlanDto;
+import com.union.placeorderAutomation.dto.task.outgoing.OutgoingManualDto;
+import com.union.placeorderAutomation.dto.task.outgoing.OutgoingManualPartDto;
 import com.union.placeorderAutomation.dto.task.outgoing.OutgoingPartDto;
 import com.union.placeorderAutomation.dto.task.outgoing.OutgoingSubmitDto;
 import com.union.placeorderAutomation.entity.*;
@@ -174,7 +176,7 @@ public class OutgoingService {
                                         .poCode2(p.getPoCode2())
                                         .quantity(inventory.getStock())
                                         .lot(inventory.getLot())
-                                        .loadAmount(p.getLoadAmount())
+                                        .loadAmount(inventory.getLoadAmount())
                                         .location1(p.getLocation1())
                                         .location2(p.getLocation2())
                                         .build()
@@ -192,7 +194,7 @@ public class OutgoingService {
                                         .poCode2(p.getPoCode2())
                                         .lot(inventory.getLot())
                                         .quantity(amount)
-                                        .loadAmount(p.getLoadAmount())
+                                        .loadAmount(inventory.getLoadAmount())
                                         .location1(p.getLocation1())
                                         .location2(p.getLocation2())
                                         .build()
@@ -315,4 +317,48 @@ public class OutgoingService {
         return result;
     }
 
+    public List<OutgoingManualPartDto> checkManual(OutgoingManualDto request) {
+        String plantCode = request.getPlantCode();
+        for (OutgoingManualPartDto partDto : request.getExcelPartList()) {
+            Part part = partRepo.getById(partDto.getBwCode());
+            String poCode = null;
+            String location = null;
+            if (plantCode.equals("5300")) {
+                poCode = part.getPoCode1();
+                location = part.getLocation1();
+            } else if (plantCode.equals("5330")) {
+                poCode = part.getPoCode2();
+                location = part.getLocation2();
+            }
+
+            // 부품 확인
+            if (part == null) {
+                partDto.setDesc("품번이 존재하지 않습니다.");
+            } else {
+                if (!part.getPartName().equals(partDto.getPartName())) {
+                    partDto.setDesc(partDto.getDesc() + "이름 ");
+                }
+                if (!poCode.equals(partDto.getPoCode())) {
+                    partDto.setDesc(partDto.getDesc() + "발주번호 ");
+                }
+                if (!location.equals(partDto.getLocation())) {
+                    partDto.setDesc(partDto.getDesc() + "위치 ");
+                }
+                // 재고 확인
+                Optional<PartInventory> partInvenLotOpt = partInventoryRepo.findByPartAndLot(partDto.getBwCode(), partDto.getLot());
+                if(partInvenLotOpt.isPresent()){
+                    PartInventory partInventory = partInvenLotOpt.get();
+                    if(partInventory.getLoadAmount() != partDto.getLoadAmount()){
+                        partDto.setDesc(partDto.getDesc() + "적입량 ");
+                    }
+                    if(partInventory.getStock() < partDto.getQuantity()){
+                        partDto.setDesc(partDto.getDesc() + "재고 ");
+                    }
+                } else {
+                    partDto.setDesc(partDto.getDesc() + "로트");
+                }
+            }
+        }
+        return request.getExcelPartList();
+    }
 }

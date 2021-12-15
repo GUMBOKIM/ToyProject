@@ -1,14 +1,15 @@
 package com.union.placeorderAutomation.dto.task.outgoing;
 
-import com.union.placeorderAutomation.dto.resttemplate.CreateDeliveryDto;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class OutgoingManualDto {
     private String companyCode;
-    private String plantCode;
     private String date;
+    private String plantCode;
     private String time;
-    private String seqNo;
-    private CreateDeliveryDto[] deliveryList;
+    private int orderSeq;
+    private List<OutgoingManualPartDto> excelPartList;
 }

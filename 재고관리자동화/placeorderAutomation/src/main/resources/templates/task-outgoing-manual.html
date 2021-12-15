@@ -66,16 +66,19 @@
                             <input type="text" class="form-control" id="timeInput" placeholder="HH:MM">
                         </div>
                     </div>
-                    <div class="col">
-                        <button type="button" id="createButton" class="btn btn-primary" onclick="clickConfirmButton()">
-                            확인
-                        </button>
-                        <div class="custom-file col-2" id="excelButton" style="visibility: hidden;">
+                    <div class="col-2">
+                        <div class="custom-file" id="excelButton">
                             <input type="file" class="custom-file-input" id="excelInput" onchange="readExcel()">
                             <label class="custom-file-label" for="excelInput">파일선택</label>
                         </div>
-                        <button type="button" id="sendButton" class="btn btn-primary" onclick="clickSendButton()">
+                    </div>
+                    <div class="col-3">
+                        <button type="button" id="createButton" class="btn btn-primary" onclick="clickConfirmButton()">
                             확인
+                        </button>
+                        <button type="button" id="checkButton" class="btn btn-danger" style="visibility: hidden;"
+                                onclick="clickCheckButton()">
+                            체크
                         </button>
                         <button type="button" id="reportButton" style="visibility: hidden;" class="btn btn-success"
                                 onclick="openReport()">납품카드
@@ -92,8 +95,10 @@
                             <th scope="col">발주번호</th>
                             <th scope="col">로트</th>
                             <th scope="col">적입량</th>
+                            <th scope="col">납품량</th>
                             <th scope="col">박스수량</th>
                             <th scope="col">위치</th>
+                            <th scope="col"></th>
                         </tr>
                         </thead>
                         <tbody id="excelTable">
@@ -135,8 +140,9 @@
                                 disableElement("orderInput");
                                 disableElement("timeInput");
                                 disableElement("createButton");
+                                disableElement("excelInput");
 
-                                visibleElement(`excelButton`);
+                                createExcelTable();
                             }
                         } else {
                             alert("입력을 확인해주세요")
@@ -168,51 +174,58 @@
                                         partName: temp[Object.keys(temp)[1]],
                                         poCode: temp[Object.keys(temp)[2]] + "",
                                         lot: temp[Object.keys(temp)[3]],
+                                        quantity: temp[Object.keys(temp)[4]] * 1,
                                         boxQuantity: temp[Object.keys(temp)[4]] / temp[Object.keys(temp)[5]],
-                                        loadAmount: temp[Object.keys(temp)[5]],
-                                        location: temp[Object.keys(temp)[6]]
+                                        loadAmount: temp[Object.keys(temp)[5]] * 1,
+                                        location: temp[Object.keys(temp)[6]],
+                                        desc: ''
                                     });
                                 }
                             }
                         }
-                        reader.readAsBinaryString(excelFile);
-                        const target = document.getElementById('excelInput');
-                        target.disabled = true;
-                        createTable();
-
+                        await reader.readAsBinaryString(excelFile);
                     }
 
-                    function createTable() {
-                        console.log(orderInfo.companyCode)
-                        console.log(orderInfo.plantCode)
-                        console.log(orderInfo.time)
-                        console.log(`----------`)
-                        console.log(excelOrderInfo.companyCode)
-                        console.log(excelOrderInfo.plantCode)
-                        console.log(excelOrderInfo.date)
-
+                    function createExcelTable() {
                         if (orderInfo.companyCode !== excelOrderInfo.companyCode ||
                             orderInfo.plantCode !== excelOrderInfo.plantCode ||
                             orderInfo.date !== excelOrderInfo.date) {
                             alert("입력 오류 입니다. 엑셀과 입력한 값을 다시 확인해보세요");
                             location.reload();
                         } else {
-                            confirm(`회사코드 : ${companyCode}\n` + `공장코드 : ${plantCode}\n` + `납품시간 : ${time}\n` + `납품날짜 : ${date}\n`);
-                            target = document.getElementById('sendButton');
-                            target.style.visibility = "visible";
+                            confirm(`회사코드 : ${orderInfo.companyCode}\n`
+                                + `공장코드 : ${orderInfo.plantCode}\n`
+                                + `납품시간 : ${orderInfo.time}\n`
+                                + `납품날짜 : ${orderInfo.date}\n`);
+                            createExcelTbody(excelMemory);
+
+                            visibleElement('checkButton');
                         }
 
+                    }
+
+                    function createExcelTbody(data) {
                         const tbody = document.getElementById('excelTable');
-                        for (let i = 0; i < excelMemory.length; i++) {
+                        removeChildNode(tbody);
+                        for (let i = 0; i < data.length; i++) {
                             let tr = document.createElement("tr");
-                            tr.innerHTML = `<td>` + excelMemory[i].bwCode + `</td>`
-                                + `<td>` + excelMemory[i].partName + `</td>`
-                                + `<td>` + excelMemory[i].poCode + `</td>`
-                                + `<td>` + excelMemory[i].partName + `</td>`
-                                + `<td>` + excelMemory[i].lot + `</td>`
-                                + `<td>` + excelMemory[i].boxQuantity + `</td>`
-                                + `<td>` + excelMemory[i].loadAmount + `</td>`
-                                + `<td>` + excelMemory[i].location + `</td>`;
+                            let html = `<td>` + data[i].bwCode + `</td>`
+                                + `<td>` + data[i].partName + `</td>`
+                                + `<td>` + data[i].poCode + `</td>`
+                                + `<td>` + data[i].lot + `</td>`
+                                + `<td>` + data[i].boxQuantity + `</td>`
+                                + `<td>` + data[i].quantity + `</td>`
+                                + `<td>` + data[i].loadAmount + `</td>`
+                                + `<td>` + data[i].location + `</td>`
+                                + `<td>` + data[i].desc + `</td>`
+                            tr.innerHTML = html;
+                            if (data[i].desc != '') {
+                                if (data[i].desc == 'Y') {
+                                    tr.className = "table-success";
+                                } else {
+                                    tr.className = "table-danger";
+                                }
+                            }
                             tbody.append(tr);
                         }
                     }
@@ -223,6 +236,23 @@
                             .then((data) => {
                                 reportUrl = `https://es-qms.borgwarner.com/qms/payment_card2.main?p_companycd=00&p_vendcd=${data[0]}&p_plant=${data[1]}&p_income_date=${data[2]}&p_sno=${data[3]}`
                             });
+                    }
+
+                    async function clickCheckButton() {
+                        const url = "/api/task/outgoing/manual/check";
+                        let body = orderInfo;
+                        body.excelPartList = excelMemory;
+                        let response = await fetch(url, {
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            method: "POST",
+                            body: JSON.stringify(body)
+                        });
+                        if (response.status == 200) {
+                            findData = await response.json();
+                            createExcelTbody(findData);
+                        }
                     }
 
                     function openReport() {

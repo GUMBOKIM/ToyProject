@@ -142,48 +142,50 @@
     }
 
     function clickAddButton() {
-        let tbody = document.getElementById("tbody");
-        let tr = document.createElement("tr");
-        tr.id = 'add';
-        let td1 = document.createElement("td");
-        let inner = ''
-        for (let i = 0; i < companyList.length; i++) {
-            inner += `<option value="` + companyList[i].companyCode + `">` + companyList[i].companyName + `</option>`
-        }
-        td1.innerHTML = `<select class="custom-select">
+        if (checkPassword()) {
+            let tbody = document.getElementById("tbody");
+            let tr = document.createElement("tr");
+            tr.id = 'add';
+            let td1 = document.createElement("td");
+            let inner = ''
+            for (let i = 0; i < companyList.length; i++) {
+                inner += `<option value="` + companyList[i].companyCode + `">` + companyList[i].companyName + `</option>`
+            }
+            td1.innerHTML = `<select class="custom-select">
                                         <option selected>회사</option>`
-            + inner
-            + `</select>`;
-        let td2 = document.createElement("td");
-        td2.innerHTML = `<input type="text" class="form-control">`;
-        let td3 = document.createElement("td");
-        td3.innerHTML = `<input type="text" class="form-control">`;
-        let td4 = document.createElement("td");
-        td4.innerHTML = `<input type="text" class="form-control">`;
-        let td5 = document.createElement("td");
-        td5.innerHTML = `<input type="text" class="form-control">`;
-        let td6 = document.createElement("td");
-        td6.innerHTML = `<input type="text" class="form-control">`;
-        let td7 = document.createElement("td");
-        td7.innerHTML = `<input type="text" class="form-control">`;
-        let td8 = document.createElement("td");
-        td8.innerHTML = `<input type="text" class="form-control">`;
-        let td9 = document.createElement("td");
-        td9.innerHTML = `<input type="text" class="form-control">`;
-        let td10 = document.createElement("td");
-        td10.innerHTML = `<input type="text" class="form-control">`;
-        let td11 = document.createElement("td");
-        td11.innerHTML = `<input type="text" class="form-control">`;
-        let td12 = document.createElement("td");
-        td12.innerHTML = `<input type="text" class="form-control">`;
+                + inner
+                + `</select>`;
+            let td2 = document.createElement("td");
+            td2.innerHTML = `<input type="text" class="form-control">`;
+            let td3 = document.createElement("td");
+            td3.innerHTML = `<input type="text" class="form-control">`;
+            let td4 = document.createElement("td");
+            td4.innerHTML = `<input type="text" class="form-control">`;
+            let td5 = document.createElement("td");
+            td5.innerHTML = `<input type="text" class="form-control">`;
+            let td6 = document.createElement("td");
+            td6.innerHTML = `<input type="text" class="form-control">`;
+            let td7 = document.createElement("td");
+            td7.innerHTML = `<input type="text" class="form-control">`;
+            let td8 = document.createElement("td");
+            td8.innerHTML = `<input type="text" class="form-control">`;
+            let td9 = document.createElement("td");
+            td9.innerHTML = `<input type="text" class="form-control">`;
+            let td10 = document.createElement("td");
+            td10.innerHTML = `<input type="text" class="form-control">`;
+            let td11 = document.createElement("td");
+            td11.innerHTML = `<input type="text" class="form-control">`;
+            let td12 = document.createElement("td");
+            td12.innerHTML = `<input type="text" class="form-control">`;
 
-        tr.append(td1, td2, td3, td4, td5, td6, td7, td8, td9, td10, td11, td12);
+            tr.append(td1, td2, td3, td4, td5, td6, td7, td8, td9, td10, td11, td12);
 
-        let td13 = document.createElement("td");
-        let td14 = document.createElement("td");
-        td14.innerHTML = `<button type="button" class="btn btn-success btn-sm" onclick="addPart()"><i class="fas fa-check"></i></button>`
-        tr.append(td13, td14);
-        tbody.insertBefore(tr, tbody.firstChild);
+            let td13 = document.createElement("td");
+            let td14 = document.createElement("td");
+            td14.innerHTML = `<button type="button" class="btn btn-success btn-sm" onclick="addPart()"><i class="fas fa-check"></i></button>`
+            tr.append(td13, td14);
+            tbody.insertBefore(tr, tbody.firstChild);
+        }
     }
 
     function addPart() {
@@ -221,47 +223,49 @@
     }
 
     function clickModifyButton(input) {
-        let tr = input.parentNode.parentNode;
-        let tdList = tr.children;
-        let bwCode = tdList[1].innerText;
+        if (checkPassword()) {
+            let tr = input.parentNode.parentNode;
+            let tdList = tr.children;
+            let bwCode = tdList[1].innerText;
 
-        let td1 = document.createElement("td");
-        let inner = ''
-        for (let i = 0; i < companyList.length; i++) {
-            inner += `<option value="` + companyList[i].companyCode + `">` + companyList[i].companyName + `</option>`
-        }
-        td1.innerHTML = `<select class="custom-select">
+            let td1 = document.createElement("td");
+            let inner = ''
+            for (let i = 0; i < companyList.length; i++) {
+                inner += `<option value="` + companyList[i].companyCode + `">` + companyList[i].companyName + `</option>`
+            }
+            td1.innerHTML = `<select class="custom-select">
                                         <option selected>회사</option>`
-            + inner
-            + `</select>`;
-        let td2 = document.createElement("td");
-        td2.innerText = bwCode;
-        let td3 = document.createElement("td");
-        td3.innerHTML = `<input type="text" class="form-control" value="${tdList[2].innerText}"/>`;
-        let td4 = document.createElement("td");
-        td4.innerHTML = `<input type="text" class="form-control" value="${tdList[3].innerText}"/>`;
-        let td5 = document.createElement("td");
-        td5.innerHTML = `<input type="text" class="form-control" value="${tdList[4].innerText}"/>`;
-        let td6 = document.createElement("td");
-        td6.innerHTML = `<input type="text" class="form-control" value="${tdList[5].innerText}"/>`;
-        let td7 = document.createElement("td");
-        td7.innerHTML = `<input type="text" class="form-control" value="${tdList[6].innerText}"/>`;
-        let td8 = document.createElement("td");
-        td8.innerHTML = `<input type="text" class="form-control" value="${tdList[7].innerText}"/>`;
-        let td9 = document.createElement("td");
-        td9.innerHTML = `<input type="text" class="form-control" value="${tdList[8].innerText}"/>`;
-        let td10 = document.createElement("td");
-        td10.innerHTML = `<input type="text" class="form-control" value="${tdList[9].innerText}"/>`;
-        let td11 = document.createElement("td");
-        td11.innerHTML = `<input type="text" class="form-control" value="${tdList[10].innerText}"/>`;
-        let td12 = document.createElement("td");
-        td12.innerHTML = `<input type="text" class="form-control" value="${tdList[11].innerText}"/>`;
-        let td13 = document.createElement("td");
-        let td14 = document.createElement("td");
-        td14.innerHTML = `<button type="button" class="btn btn-success btn-sm" onclick="modifyPart()"><i class="fas fa-check"></i></button>`
-        removeChildNode(tr);
-        tr.id = 'modify';
-        tr.append(td1, td2, td3, td4, td5, td6, td7, td8, td9, td10, td11, td12, td13, td14);
+                + inner
+                + `</select>`;
+            let td2 = document.createElement("td");
+            td2.innerText = bwCode;
+            let td3 = document.createElement("td");
+            td3.innerHTML = `<input type="text" class="form-control" value="${tdList[2].innerText}"/>`;
+            let td4 = document.createElement("td");
+            td4.innerHTML = `<input type="text" class="form-control" value="${tdList[3].innerText}"/>`;
+            let td5 = document.createElement("td");
+            td5.innerHTML = `<input type="text" class="form-control" value="${tdList[4].innerText}"/>`;
+            let td6 = document.createElement("td");
+            td6.innerHTML = `<input type="text" class="form-control" value="${tdList[5].innerText}"/>`;
+            let td7 = document.createElement("td");
+            td7.innerHTML = `<input type="text" class="form-control" value="${tdList[6].innerText}"/>`;
+            let td8 = document.createElement("td");
+            td8.innerHTML = `<input type="text" class="form-control" value="${tdList[7].innerText}"/>`;
+            let td9 = document.createElement("td");
+            td9.innerHTML = `<input type="text" class="form-control" value="${tdList[8].innerText}"/>`;
+            let td10 = document.createElement("td");
+            td10.innerHTML = `<input type="text" class="form-control" value="${tdList[9].innerText}"/>`;
+            let td11 = document.createElement("td");
+            td11.innerHTML = `<input type="text" class="form-control" value="${tdList[10].innerText}"/>`;
+            let td12 = document.createElement("td");
+            td12.innerHTML = `<input type="text" class="form-control" value="${tdList[11].innerText}"/>`;
+            let td13 = document.createElement("td");
+            let td14 = document.createElement("td");
+            td14.innerHTML = `<button type="button" class="btn btn-success btn-sm" onclick="modifyPart()"><i class="fas fa-check"></i></button>`
+            removeChildNode(tr);
+            tr.id = 'modify';
+            tr.append(td1, td2, td3, td4, td5, td6, td7, td8, td9, td10, td11, td12, td13, td14);
+        }
     }
 
     function modifyPart() {
@@ -298,19 +302,21 @@
     }
 
     function clickDeleteButton(input) {
-        let bwCode = input.parentNode.parentNode.children[1].innerText;
-        const url = "/api/manage/part/" + bwCode;
-        fetch(url, {
-            method: "DELETE",
-        }).then(
-            response => {
-                if (response.status == 200) {
-                    document.location.href = "/manage/part/part"
-                } else {
-                    alert('BOM을 먼저 지우고 삭제하세요');
+        if (checkPassword()) {
+            let bwCode = input.parentNode.parentNode.children[1].innerText;
+            const url = "/api/manage/part/" + bwCode;
+            fetch(url, {
+                method: "DELETE",
+            }).then(
+                response => {
+                    if (response.status == 200) {
+                        document.location.href = "/manage/part/part"
+                    } else {
+                        alert('BOM을 먼저 지우고 삭제하세요');
+                    }
                 }
-            }
-        );
+            );
+        }
     }
 </script>
 

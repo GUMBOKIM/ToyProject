@@ -40,7 +40,7 @@ public class RestTemplateService {
         body.add("p_income_date", submitDto.getDate());//20210201 양식
 
 
-        for (CreateDeliveryDto delivery : deliveryList){
+        for (CreateDeliveryDto delivery : deliveryList) {
             body.add("p_partno", delivery.getBwCode());
             body.add("p_partnm", delivery.getPartName());
             if (plantCode.equals("5300")) {
@@ -54,7 +54,7 @@ public class RestTemplateService {
             body.add("p_lotno", delivery.getLot());
             body.add("p_qty", Integer.toString(delivery.getQuantity()));
             body.add("p_qty_per_box", Integer.toString(delivery.getLoadAmount()));
-            body.add("p_qty_box", Integer.toString(delivery.getQuantity() / delivery.getLoadAmount()));
+            body.add("p_qty_box", Integer.toString((int) Math.ceil(Double.valueOf(delivery.getQuantity()) / Double.valueOf(delivery.getLoadAmount()))));
         }
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, httpHeaders);
@@ -105,7 +105,9 @@ public class RestTemplateService {
         body.add("p_time", submitDto.getTime());
 
         for (CreateDeliveryDto delivery : deliveryList) {
-            if ((plantCode.equals("5300") && (delivery.getPoCode1() != null || delivery.getPoCode1() != "")) || (plantCode.equals("5330") && (delivery.getPoCode2() != null || delivery.getPoCode2() != ""))) {
+            if ((!delivery.getInventoryBwCode().equals("") || delivery.getInventoryBwCode() != null) ||
+                    (plantCode.equals("5300") && (delivery.getPoCode1() != null || delivery.getPoCode1() != "")) ||
+                    (plantCode.equals("5330") && (delivery.getPoCode2() != null || delivery.getPoCode2() != ""))) {
                 body.add("p_partno", delivery.getInventoryBwCode());
                 body.add("p_menge", Integer.toString(delivery.getQuantity()));
                 body.add("p_lgpbe", delivery.getLot());

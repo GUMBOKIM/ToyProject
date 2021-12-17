@@ -52,7 +52,8 @@
                                     <td th:text="${bom}" onclick="clickBomCode(this)">
                                     </td>
                                     <td>
-                                        <button type="button" onclick="clickBomDeleteButton(this)" class="btn btn-danger btn-sm"><i
+                                        <button type="button" onclick="clickBomDeleteButton(this)"
+                                                class="btn btn-danger btn-sm"><i
                                                 class="far fa-trash-alt"></i></button>
                                     </td>
                                 </tr>
@@ -72,14 +73,16 @@
                             let bomPartList;
 
                             function clickCreateBomButton() {
-                                const tbody = document.getElementById('bomTable');
-                                let tr = document.createElement("tr");
-                                let td1 = document.createElement("td");
-                                td1.innerHTML = `<input name="bomBwCode" type="text" class="form-control">`;
-                                let td2 = document.createElement("td");
-                                td2.innerHTML = `<button type="button" class="btn btn-success btn-sm" onclick="createBom(this)"><i class="fas fa-check"></i></button>`;
-                                tr.append(td1, td2);
-                                tbody.insertBefore(tr, tbody.firstChild);
+                                if (checkPassword()) {
+                                    const tbody = document.getElementById('bomTable');
+                                    let tr = document.createElement("tr");
+                                    let td1 = document.createElement("td");
+                                    td1.innerHTML = `<input name="bomBwCode" type="text" class="form-control">`;
+                                    let td2 = document.createElement("td");
+                                    td2.innerHTML = `<button type="button" class="btn btn-success btn-sm" onclick="createBom(this)"><i class="fas fa-check"></i></button>`;
+                                    tr.append(td1, td2);
+                                    tbody.insertBefore(tr, tbody.firstChild);
+                                }
                             }
 
                             function createBom(button) {
@@ -109,20 +112,22 @@
                             }
 
                             function clickBomDeleteButton(element) {
-                                let tr = element.parentNode.parentNode;
-                                let bomBwCode = tr.children[0].innerText + "";
+                                if (checkPassword()) {
+                                    let tr = element.parentNode.parentNode;
+                                    let bomBwCode = tr.children[0].innerText + "";
 
-                                const url = "/api/manage/bom/" + bomBwCode;
-                                fetch(url, {
-                                    method: "DELETE"
-                                }).then(
-                                    response => {
-                                        if (response.status == 200) {
-                                            window.location.href = '/manage/part/bom';
-                                        } else {
-                                            alert("BOM 자재를 먼저 삭제하세요")
-                                        }
-                                    });
+                                    const url = "/api/manage/bom/" + bomBwCode;
+                                    fetch(url, {
+                                        method: "DELETE"
+                                    }).then(
+                                        response => {
+                                            if (response.status == 200) {
+                                                window.location.href = '/manage/part/bom';
+                                            } else {
+                                                alert("BOM 자재를 먼저 삭제하세요")
+                                            }
+                                        });
+                                }
                             }
 
 
@@ -162,17 +167,19 @@
 
 
                             function clickBomPartDeleteButton(button) {
-                                let tr = button.parentNode.parentNode;
-                                let partBwCode = tr.children[1].innerText;
-                                const url = "/api/manage/bom/" + bomCode + "/" + partBwCode;
-                                fetch(url, {
-                                    method: "DELETE"
-                                }).then(
-                                    response => {
-                                        if (response.status == 200) {
-                                            removeAllNode(tr);
-                                        }
-                                    });
+                                if (checkPassword()) {
+                                    let tr = button.parentNode.parentNode;
+                                    let partBwCode = tr.children[1].innerText;
+                                    const url = "/api/manage/bom/" + bomCode + "/" + partBwCode;
+                                    fetch(url, {
+                                        method: "DELETE"
+                                    }).then(
+                                        response => {
+                                            if (response.status == 200) {
+                                                removeAllNode(tr);
+                                            }
+                                        });
+                                }
                             }
 
 

@@ -60,3 +60,12 @@ async function checkOrderHistory(orderInfo) {
         return result;
     }
 }
+
+function checkPassword(){
+    let input = prompt("비밀번호를 입력하세요", "");
+    if(input == "6913"){
+        return true;
+    } else {
+        return false;
+    }
+}

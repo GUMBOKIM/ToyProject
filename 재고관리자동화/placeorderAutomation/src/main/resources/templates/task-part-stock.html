@@ -53,40 +53,40 @@
                 </div>
 
                 <div class="row justify-content-center">
-                        <div class="col" style="overflow-y: scroll; height: 70vh;">
-                            <table class="table table-striped">
-                                <thead>
-                                <tr>
-                                    <th class="col-1">회사</th>
-                                    <th class="col-2">보그워너 품번</th>
-                                    <th class="col-2">공급업체 품번</th>
-                                    <th class="col-1">수량</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="partStock : ${partStockList}" onclick="clickPartRow(this)">
-                                    <td th:text="${partStock.companyName}"></td>
-                                    <td th:text="${partStock.bwCode}"></td>
-                                    <td th:text="${partStock.spCode}"></td>
-                                    <td th:text="${partStock.stock}"></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="col-5">
-                            <table class="table table-striped">
-                                <thead>
-                                <tr>
-                                    <th class="col-1">로트</th>
-                                    <th class="col-1">수량</th>
-                                    <th class="col-1">적입량</th>
-                                    <th class="col-1"></th>
-                                </tr>
-                                </thead>
-                                <tbody id="inventory-table">
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="col" style="overflow-y: scroll; height: 70vh;">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th class="col-1">회사</th>
+                                <th class="col-2">보그워너 품번</th>
+                                <th class="col-2">공급업체 품번</th>
+                                <th class="col-1">수량</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="partStock : ${partStockList}" onclick="clickPartRow(this)">
+                                <td th:text="${partStock.companyName}"></td>
+                                <td th:text="${partStock.bwCode}"></td>
+                                <td th:text="${partStock.spCode}"></td>
+                                <td th:text="${partStock.stock}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-5">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th class="col-1">로트</th>
+                                <th class="col-1">수량</th>
+                                <th class="col-1">적입량</th>
+                                <th class="col-1"></th>
+                            </tr>
+                            </thead>
+                            <tbody id="inventory-table">
+                            </tbody>
+                        </table>
+                    </div>
 
                 </div>
             </div>
@@ -171,16 +171,18 @@
     }
 
     function clickModifyButton(element) {
-        let tr = element.parentNode.parentNode;
-        let tdList = tr.children;
-        let lot = tdList[0].innerText;
-        let quantity = tdList[1].innerText * 1;
-        let loadAmount = tdList[2].innerText * 1;
-        removeChildNode(tr);
-        tr.innerHTML = `<td>` + `<input type="text" class="form-control" value="${lot}">` + `</td>`
-            + `<td>` + `<input type="text" class="form-control" value="${quantity}">` + `</td>`
-            + `<td>` + `<input type="text" class="form-control" value="${loadAmount}">` + `</td>`
-            + `<td>` + `<button type="button" class="btn btn-success btn-sm" onclick="modifyInventory(this)"><i class="fas fa-check"></i></button>` + `</td>`;
+        if (checkPassword()) {
+            let tr = element.parentNode.parentNode;
+            let tdList = tr.children;
+            let lot = tdList[0].innerText;
+            let quantity = tdList[1].innerText * 1;
+            let loadAmount = tdList[2].innerText * 1;
+            removeChildNode(tr);
+            tr.innerHTML = `<td>` + `<input type="text" class="form-control" value="${lot}">` + `</td>`
+                + `<td>` + `<input type="text" class="form-control" value="${quantity}">` + `</td>`
+                + `<td>` + `<input type="text" class="form-control" value="${loadAmount}">` + `</td>`
+                + `<td>` + `<button type="button" class="btn btn-success btn-sm" onclick="modifyInventory(this)"><i class="fas fa-check"></i></button>` + `</td>`;
+        }
     }
 
     async function modifyInventory(element) {

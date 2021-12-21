@@ -9,13 +9,11 @@ public class CreateLogDto {
     private String plantCode;
     private String date;
     private int orderSeq;
-    private String lot;
     private int amount;
 
     public CreateLogDto(String date, String orderSeq, StockSendResDto sendResDto) {
         this.partBwCode = sendResDto.getBwCode();
-        this.lot = sendResDto.getLot();
-        this.amount = sendResDto.getQuantity();
+        this.amount = Math.abs(sendResDto.getAfterStock() - sendResDto.getBeforeStock());
         this.date = date;
         this.orderSeq = Integer.parseInt(orderSeq);
     }

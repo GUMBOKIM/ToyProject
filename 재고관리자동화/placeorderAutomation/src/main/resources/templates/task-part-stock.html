@@ -35,8 +35,8 @@
 
                 <div class="row justify-content-center mb-4">
                     <div class="col-2">
-                        <select class="custom-select" onchange="setCompanyCode(this.value)">
-                            <option selected value="">전체</option>
+                        <select class="custom-select" id="select" onchange="setCompanyCode(this.value)">
+                            <option selected value="all">전체</option>
                             <option th:each="company : ${companyList}"
                                     th:value="${company.companyCode}"
                                     th:text="${company.companyName}"></option>
@@ -53,7 +53,7 @@
                 </div>
 
                 <div class="row justify-content-center">
-                    <div class="col" style="overflow-y: scroll; height: 70vh;">
+                    <div class="col" style="overflow-y: scroll; height: 70vh;" id="excelTable">
                         <table class="table table-striped">
                             <thead>
                             <tr>
@@ -64,7 +64,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="partStock : ${partStockList}" onclick="clickPartRow(this)">
+                            <tr th:each="partStock : ${partStockList}">
                                 <td th:text="${partStock.companyName}"></td>
                                 <td th:text="${partStock.bwCode}"></td>
                                 <td th:text="${partStock.spCode}"></td>
@@ -73,41 +73,9 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="col-5">
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th class="col-1">로트</th>
-                                <th class="col-1">수량</th>
-                                <th class="col-1">적입량</th>
-                                <th class="col-1"></th>
-                            </tr>
-                            </thead>
-                            <tbody id="inventory-table">
-                            </tbody>
-                        </table>
-                    </div>
-
                 </div>
             </div>
 
-            <div class="row justify-content-center" style="visibility: hidden">
-                <div class="col">
-                    <table class="table table-striped" id="excelTable">
-                        <thead>
-                        <tr>
-                            <th class="col">보그워너 품번</th>
-                            <th class="col">로트</th>
-                            <th class="col">적입량</th>
-                            <th class="col">수량</th>
-                            <th class="col">박스량</th>
-                        </tr>
-                        </thead>
-                        <tbody id="excelTbody">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
         <!-- /.container-fluid -->
     </div>
@@ -127,6 +95,7 @@
     /*]]*/
 </script>
 <script>
+
     function setCompanyCode(value) {
         companyCode = value;
     }
@@ -142,110 +111,14 @@
     let partBwCode;
     let inventory;
 
-    function clickPartRow(tr) {
-        partBwCode = tr.childNodes[3].innerText;
-        const url = `/api/task/part-stock/inventory/` + partBwCode;
-        fetch(url).then(response => {
-            if (response.status == 200) {
-                response.json().then(data => {
-                    inventory = data;
-                    createInventoryTable();
-                });
-            }
-        });
-    }
-
-    function createInventoryTable() {
-        let tbody = document.getElementById("inventory-table");
-        removeChildNode(tbody);
-        for (let i = 0; i < inventory.length; i++) {
-            let temp = inventory[i];
-            let tr = document.createElement("tr");
-            tr.id = temp.partInventoryId;
-            tr.innerHTML = `<td>` + temp.lot + `</td>`
-                + `<td>` + temp.stock + `</td>`
-                + `<td>` + temp.loadAmount + `</td>`
-                + `<td>` + `<button type="button" class="btn btn-info btn-sm" onclick="clickModifyButton(this)"><i class="far fa-edit"></i></button>` + `</td>`
-            tbody.append(tr);
-        }
-    }
-
-    function clickModifyButton(element) {
-        if (checkPassword()) {
-            let tr = element.parentNode.parentNode;
-            let tdList = tr.children;
-            let lot = tdList[0].innerText;
-            let quantity = tdList[1].innerText * 1;
-            let loadAmount = tdList[2].innerText * 1;
-            removeChildNode(tr);
-            tr.innerHTML = `<td>` + `<input type="text" class="form-control" value="${lot}">` + `</td>`
-                + `<td>` + `<input type="text" class="form-control" value="${quantity}">` + `</td>`
-                + `<td>` + `<input type="text" class="form-control" value="${loadAmount}">` + `</td>`
-                + `<td>` + `<button type="button" class="btn btn-success btn-sm" onclick="modifyInventory(this)"><i class="fas fa-check"></i></button>` + `</td>`;
-        }
-    }
-
-    async function modifyInventory(element) {
-        let tr = element.parentNode.parentNode;
-        let id = tr.id;
-        let tdList = tr.children;
-        let lot = tdList[0].children[0].value;
-        let stock = tdList[1].children[0].value * 1;
-        let loadAmount = tdList[2].children[0].value * 1;
-
-        let url = "/api/task/part-stock/inventory/" + id;
-
-        let response = await fetch(url, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-            method: "PUT",
-            body: JSON.stringify({
-                lot,
-                stock,
-                loadAmount
-            })
-        });
-        if (response.status == 200) {
-            removeChildNode(tr);
-            tr.innerHTML = `<td>` + lot + `</td>`
-                + `<td>` + quantity + `</td>`
-                + `<td>` + loadAmount + `</td>`
-                + `<td>` + `<button type="button" class="btn btn-info btn-sm" onclick="modifyInventory(this)"><i
-                class="fas fa-edit"></i></button>` + `</td>`;
-        }
-    }
-
     async function clickExcelButton() {
-        let url = "/api/task/part-stock/inventory/total/" + companyCode;
-        let response = await fetch(url);
-        if (response.status == 200) {
-            let data = await response.json();
-            createExcelTable(data);
-        }
-
         let wb = XLSX.utils.table_to_book(document.getElementById('excelTable'), {
             sheet: companyCode,
             raw: true
         });
-        XLSX.writeFile(wb, (`${companyCode}-재고 목록.xlsx`));
+        XLSX.writeFile(wb, (`재고 목록.xlsx`));
     }
 
-    function createExcelTable(data) {
-        let tbody = document.getElementById("excelTbody");
-        removeChildNode(tbody);
-        for (let i = 0; i < data.length; i++) {
-            let temp = data[i];
-            let tr = document.createElement("tr");
-            tr.innerHTML =
-                `<td>` + temp.bwCode + `</td>` +
-                `<td>` + temp.lot + `</td>` +
-                `<td>` + temp.loadAmount + `</td>` +
-                `<td>` + temp.stock + `</td>` +
-                `<td>` + temp.boxQuantity + `</td>`;
-            tbody.append(tr);
-        }
-    }
 </script>
 <!-- Scroll to Top Button-->
 <a class="scroll-to-top rounded" href="#page-top">

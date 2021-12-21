@@ -21,22 +21,22 @@ public class PageController {
 
     @RequestMapping("/")
     public String mainPage() {
-        return "redirect:/task/outgoing";
+        return "redirect:/task/outgoing-manual";
     }
-
-    @RequestMapping("/task/outgoing")
-    public String taskOutgoing(Model model) {
-        commonService.addCompanyList(model);
-        commonService.addPlantList(model);
-        return "task-outgoing";
-    }
-
-    @RequestMapping("/task/outgoing-select")
-    public String taskOutgoingSelect(Model model) {
-        commonService.addCompanyList(model);
-        commonService.addPlantList(model);
-        return "task-outgoing-select";
-    }
+//
+//    @RequestMapping("/task/outgoing")
+//    public String taskOutgoing(Model model) {
+//        commonService.addCompanyList(model);
+//        commonService.addPlantList(model);
+//        return "task-outgoing";
+//    }
+//
+//    @RequestMapping("/task/outgoing-select")
+//    public String taskOutgoingSelect(Model model) {
+//        commonService.addCompanyList(model);
+//        commonService.addPlantList(model);
+//        return "task-outgoing-select";
+//    }
 
     @RequestMapping("/task/order-history")
     public String orderList(Model model) {
@@ -83,13 +83,13 @@ public class PageController {
         return "task-util-month-cal";
     }
 
-
-    @RequestMapping("/manage/part/bom")
-    public String managePartBom(Model model) {
-        commonService.addCompanyList(model);
-        model.addAttribute("bomList", bomManageService.getBomList());
-        return "manage-part-bom";
-    }
+//
+//    @RequestMapping("/manage/part/bom")
+//    public String managePartBom(Model model) {
+//        commonService.addCompanyList(model);
+//        model.addAttribute("bomList", bomManageService.getBomList());
+//        return "manage-part-bom";
+//    }
 
     @RequestMapping("/manage/part/part")
     public String managePartPart(Model model) {

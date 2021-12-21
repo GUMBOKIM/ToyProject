@@ -1,6 +1,7 @@
 package com.union.placeorderAutomation.service.task;
 
 import com.union.placeorderAutomation.dto.task.outgoing.OrderHistoryDto;
+import com.union.placeorderAutomation.dto.task.outgoing.OutcomeLogDto;
 import com.union.placeorderAutomation.dto.task.outgoing.OutgoingSubmitDto;
 import com.union.placeorderAutomation.entity.*;
 import com.union.placeorderAutomation.repository.*;
@@ -15,11 +16,11 @@ import java.util.*;
 @Service
 public class OrderHistoryService {
 
+    private final PartRepository partRepo;
     private final OrderHistoryRepository orderHistoryRepo;
     private final CompanyRepository companyRepo;
     private final PlantRepository plantRepo;
     private final OutcomeLogRepository outcomeLogRepo;
-    private final PartInventoryRepository partInventoryRepo;
 
     @Transactional(readOnly = true)
     public List<OrderHistoryDto> findOrderHistoryList(String companyCode, String date) {
@@ -67,19 +68,9 @@ public class OrderHistoryService {
         );
 
         for (OutcomeLog outcomeLog : outcomeLogList) {
-            Optional<PartInventory> partInventoryOpt = partInventoryRepo.findByPartAndLot(outcomeLog.getPart().getBwCode(), outcomeLog.getLot());
-            if (partInventoryOpt.isPresent()) {
-                PartInventory partInventory = partInventoryOpt.get();
-                partInventory.setStock(partInventory.getStock() + outcomeLog.getAmount());
-                partInventoryRepo.save(partInventory);
-            } else {
-                PartInventory newPartInventory = PartInventory.builder()
-                        .part(outcomeLog.getPart())
-                        .lot(outcomeLog.getLot())
-                        .stock(outcomeLog.getAmount())
-                        .build();
-                partInventoryRepo.save(newPartInventory);
-            }
+            Part part = outcomeLog.getPart();
+            part.setStock(part.getStock() + outcomeLog.getAmount());
+            partRepo.save(part);
             outcomeLogRepo.delete(outcomeLog);
         }
 
@@ -93,4 +84,27 @@ public class OrderHistoryService {
     }
 
 
+    public List<OutcomeLogDto> findOrderHistoryDetail(OutgoingSubmitDto submitDto) {
+        Company company = companyRepo.findCompanyByCompanyName(submitDto.getCompanyCode());
+        Plant plant = plantRepo.findPlantByPlantName(submitDto.getPlantCode());
+
+        List<OutcomeLogDto> result = new ArrayList<>();
+        List<OutcomeLog> outcomeLogList = outcomeLogRepo.findOutcomeLogByCompanyAndPlantAndDateAndOrderSeq(company, plant, submitDto.getDate(), submitDto.getOrderSeq());
+        for (OutcomeLog outcomeLog: outcomeLogList) {
+            result.add(new OutcomeLogDto(outcomeLog));
+        }
+        return result;
+    }
+
+    public OutcomeLogDto modifyOutcomeLog(Long outcomeLogId, int quantity) {
+        OutcomeLog outcomeLog = outcomeLogRepo.getById(outcomeLogId);
+        int changeQuantity = outcomeLog.getAmount() - quantity;
+        outcomeLog.setAmount(quantity);
+
+        Part part = outcomeLog.getPart();
+        part.setStock(part.getStock() + changeQuantity);
+        partRepo.save(part);
+
+        return new OutcomeLogDto(outcomeLog);
+    }
 }

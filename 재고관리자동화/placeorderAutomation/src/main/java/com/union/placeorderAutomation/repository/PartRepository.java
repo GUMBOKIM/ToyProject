@@ -1,5 +1,6 @@
 package com.union.placeorderAutomation.repository;
 
+import com.union.placeorderAutomation.entity.Company;
 import com.union.placeorderAutomation.entity.Part;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -32,5 +33,9 @@ public interface PartRepository extends JpaRepository<Part,String> {
             "AND p.useYn = 'Y' " +
             "ORDER BY p.bwCode")
     List<Part> findSelectPartByCompany(String company);
+
+    // 재고 영역
+    List<Part> findAll();
+    List<Part> findPartsByCompany(Company company);
 
 }

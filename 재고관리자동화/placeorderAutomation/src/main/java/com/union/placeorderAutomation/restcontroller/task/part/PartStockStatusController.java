@@ -25,21 +25,4 @@ public class PartStockStatusController {
         return new ResponseEntity(partList, HttpStatus.OK);
     }
 
-    @GetMapping("/inventory/{partBwCode}")
-    public ResponseEntity getPartStockList(@PathVariable String partBwCode) {
-        List<PartStockDetailDto> partDetailList = partStockService.getPartStockDetailList(partBwCode);
-        return new ResponseEntity(partDetailList, HttpStatus.OK);
-    }
-
-    @PutMapping("/inventory/{inventoryId}")
-    public ResponseEntity modifyPartStock(@PathVariable Long inventoryId, @RequestBody PartStockModifyDto modifyDto) {
-        partStockService.modifyInventory(inventoryId, modifyDto);
-        return new ResponseEntity(HttpStatus.OK);
-    }
-
-    @GetMapping("/inventory/total/{companyCode}")
-    public ResponseEntity getInventoryTotal(@PathVariable String companyCode) {
-        List<PartStockExcelDto> excelDto = partStockService.getInventoryTotal(companyCode);
-        return new ResponseEntity(excelDto, HttpStatus.OK);
-    }
 }

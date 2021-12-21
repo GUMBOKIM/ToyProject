@@ -60,11 +60,12 @@ public class Part {
     @ColumnDefault("'N'")
     private String useYn;
 
+    @Column
+    @ColumnDefault("0")
+    private int stock;
+
     @OneToMany(fetch = FetchType.LAZY)
     private List<BomPart> bomParts;
 
-    @OneToMany(mappedBy = "part", fetch = FetchType.LAZY)
-    @Where(clause = "stock > 0 and use_yn = 'Y'")
-    private List<PartInventory> partInventories;
 
 }

@@ -20,42 +20,42 @@ import java.util.List;
 public class OutgoingTaskController {
 
     private final OutgoingService outgoingService;
-
-    @GetMapping("/checkPart/{bwCode}/{quantity}")
-    public ResponseEntity checkPartQuantity(@PathVariable String bwCode, @PathVariable int quantity) {
-        int partStock = outgoingService.findPartStock(bwCode);
-        if (quantity <= partStock) {
-            return new ResponseEntity(HttpStatus.OK);
-        } else {
-            return new ResponseEntity(partStock, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping("/inquire/{companyCode}/{plantCode}")
-    public ResponseEntity inquirePlanNInventory(@PathVariable String companyCode,
-                                                @PathVariable String plantCode) {
-        List<ProductPlanDto> result = outgoingService.findPlanAndInventory(companyCode, plantCode);
-        return new ResponseEntity(result, HttpStatus.OK);
-    }
-
-    @GetMapping("/inquire-select/{companyCode}/{plantCode}")
-    public ResponseEntity inquireSelectInventory(@PathVariable String companyCode,
-                                                 @PathVariable String plantCode) {
-        List<PartInventoryDto> result = outgoingService.findSelectPartInventory(companyCode, plantCode);
-        return new ResponseEntity(result, HttpStatus.OK);
-    }
-
-    @PostMapping("/check")
-    public ResponseEntity checkPartList(@RequestBody OutgoingSubmitDto request) {
-        List<CreateDeliveryDto> result = outgoingService.checkPartList(request);
-        return new ResponseEntity(result, HttpStatus.OK);
-    }
-
-    @PostMapping("/submit")
-    public ResponseEntity submitPartList(@RequestBody OutgoingSubmitDto request) {
-        List<CreateDeliveryDto> result = outgoingService.submitPart(request);
-        return new ResponseEntity(result, HttpStatus.OK);
-    }
+//
+//    @GetMapping("/checkPart/{bwCode}/{quantity}")
+//    public ResponseEntity checkPartQuantity(@PathVariable String bwCode, @PathVariable int quantity) {
+//        int partStock = outgoingService.findPartStock(bwCode);
+//        if (quantity <= partStock) {
+//            return new ResponseEntity(HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity(partStock, HttpStatus.BAD_REQUEST);
+//        }
+//    }
+//
+//    @GetMapping("/inquire/{companyCode}/{plantCode}")
+//    public ResponseEntity inquirePlanNInventory(@PathVariable String companyCode,
+//                                                @PathVariable String plantCode) {
+//        List<ProductPlanDto> result = outgoingService.findPlanAndInventory(companyCode, plantCode);
+//        return new ResponseEntity(result, HttpStatus.OK);
+//    }
+//
+//    @GetMapping("/inquire-select/{companyCode}/{plantCode}")
+//    public ResponseEntity inquireSelectInventory(@PathVariable String companyCode,
+//                                                 @PathVariable String plantCode) {
+//        List<PartInventoryDto> result = outgoingService.findSelectPartInventory(companyCode, plantCode);
+//        return new ResponseEntity(result, HttpStatus.OK);
+//    }
+//
+//    @PostMapping("/check")
+//    public ResponseEntity checkPartList(@RequestBody OutgoingSubmitDto request) {
+//        List<CreateDeliveryDto> result = outgoingService.checkPartList(request);
+//        return new ResponseEntity(result, HttpStatus.OK);
+//    }
+//
+//    @PostMapping("/submit")
+//    public ResponseEntity submitPartList(@RequestBody OutgoingSubmitDto request) {
+//        List<CreateDeliveryDto> result = outgoingService.submitPart(request);
+//        return new ResponseEntity(result, HttpStatus.OK);
+//    }
 
     @PostMapping("/manual/check")
     public ResponseEntity checkManualExcelList(@RequestBody OutgoingManualDto request) {

@@ -55,7 +55,7 @@
                 </div>
 
                 <div class="row justify-content-center mb-3" id="orderHistoryTable">
-                    <table class="table col-6">
+                    <table class="table col-6 mr-2">
                         <thead>
                         <tr>
                             <th scope="col-1">회사 코드</th>
@@ -63,10 +63,20 @@
                             <th scope="col-1">날짜</th>
                             <th scope="col-1">순번</th>
                             <th scope="col-2">시간</th>
-                            <th class="col-1"></th>
+                            <th class="col-2"></th>
                         </tr>
                         </thead>
                         <tbody id="orderHistoryTbody">
+                        </tbody>
+                    </table>
+                    <table class="table col-3">
+                        <thead>
+                        <tr>
+                            <th scope="col-2">보그워너 품번</th>
+                            <th scope="col-1">수량</th>
+                        </tr>
+                        </thead>
+                        <tbody id="orderDetailTbody">
                         </tbody>
                     </table>
                 </div>
@@ -110,7 +120,7 @@
                                 createTable(data);
                             }
                         } else {
-                            loadLastestOrderHistory();
+                            await loadLastestOrderHistory();
                         }
                     }
 
@@ -118,14 +128,17 @@
                         const tbody = document.getElementById('orderHistoryTbody');
                         removeChildNode(tbody);
                         for (let i = 0; i < data.length; i++) {
-                            let tr = document.createElement("tr");
                             let temp = data[i];
+                            let tr = document.createElement("tr");
                             tr.innerHTML = `<td>` + temp.companyCode + `</td>`
                                 + `<td>` + temp.plantCode + `</td>`
                                 + `<td>` + temp.date + `</td>`
                                 + `<td>` + temp.orderSeq + `</td>`
                                 + `<td>` + temp.time + `</td>`
-                                + `<td>` + `<button type="button" id="cancelOrderButton" class="btn btn-danger btn-sm" onclick="cancelOrder(this)">취소</button>` + `</td>`;
+                                + `<td>`
+                                + `<button type="button" class="btn btn-info btn-sm" onclick="modifyOrderButtonClick(this)"><i class="far fa-edit"></i></button> `
+                                + `<button type="button" class="btn btn-danger btn-sm" onclick="cancelOrder(this)"><i class="far fa-trash-alt"></i></button>`
+                                + `</td>`;
                             tbody.append(tr);
                         }
                     }
@@ -152,6 +165,68 @@
                             removeAllNode(tr);
                         }
                     }
+
+                    async function modifyOrderButtonClick(element){
+                        let tr = element.parentNode.parentNode;
+                        let tdList = tr.childNodes;
+
+                        const url = `/api/task/order-history/order-detail`;
+                        let response = await fetch(url, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                companyCode: tdList[0].innerText,
+                                date: tdList[2].innerText,
+                                plantCode: tdList[1].innerText,
+                                time: tdList[4].innerText,
+                                orderSeq: tdList[3].innerText
+                            })
+                        });
+                        if (response.status == 200) {
+                            let data = await response.json();
+                            createOrderDetailTable(data);
+                        }
+                    }
+
+                    function createOrderDetailTable(data){
+                        const tbody = document.getElementById('orderDetailTbody');
+                        removeChildNode(tbody);
+                        for (let i = 0; i < data.length; i++) {
+                            let temp = data[i];
+                            let tr = document.createElement("tr");
+                            tr.id = temp.outcomeLogId;
+                            tr.innerHTML = `<td>` + temp.bwCode + `</td>`
+                                + `<td onclick="modifyOrderDetail(this)">` + temp.quantity + `</td>`
+                            tbody.append(tr);
+                        }
+                    }
+
+                    async function modifyOrderDetail(element){
+                        let tr = element.parentNode;
+                        let tdList = tr.childNodes;
+
+                        let id = tr.id;
+                        let changeAmount = prompt("변경할 수량을 입력하세요", "") * 1;
+                        if(typeof(changeAmount) === "number" && changeAmount < 0){
+                            alert("잘못 입력하셨습니다")
+                        } else {
+                            const url = `/api/task/order-history/order-detail/${id}` ;
+                            let response = await fetch(url, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: changeAmount
+                            });
+                            if (response.status == 200) {
+                                let data = await response.json();
+                                tdList[1].innerText = data.quantity;
+                            }
+                        }
+                    }
+
 
                 </script>
 

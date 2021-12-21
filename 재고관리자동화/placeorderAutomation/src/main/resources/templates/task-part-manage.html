@@ -76,7 +76,6 @@
                         let day = today.getDate()
                         let dateStr = "" + year + (month < 10 ? "0" + month : month) + (day < 10 ? "0" + day : day);
                         document.getElementById("dateInput").value = dateStr;
-                        lotCheck(year);
                     }
 
                     function clickConfirmButton() {
@@ -156,9 +155,7 @@
                                     name: "",
                                     check: "",
                                     bwCode: temp[Object.keys(temp)[0]],
-                                    lot: temp[Object.keys(temp)[1]],
-                                    quantity: temp[Object.keys(temp)[2]] * 1,
-                                    loadAmount: temp[Object.keys(temp)[3]] * 1
+                                    quantity: temp[Object.keys(temp)[1]] * 1,
                                 };
                                 for (let i = 0; i < partCheck.length; i++) {
                                     let find = partCheck[i];
@@ -182,16 +179,7 @@
                             let html = `<td>` + temp.companyName + `</td>`
                                 + `<td>` + temp.bwCode + `</td>`
                                 + `<td>` + temp.spCode + `</td>`
-                                + `<td>` + temp.name + `</td>`
-
-                            if (temp.lot.charAt(0) == firstLot) {
-                                html += `<td>` + temp.lot + `</td>`;
-                            } else {
-                                html += `<td class="text-warning">` + temp.lot + `</td>`;
-                            }
-
-                            html += `<td>` + temp.quantity + `</td>`
-                                + `<td>` + temp.loadAmount + `</td>`
+                                + `<td>` + temp.quantity + `</td>`
                                 + `<td>` + temp.check + `</td>`;
                             tr.innerHTML = html;
                             if (temp.check == "N") {
@@ -210,14 +198,6 @@
                         target.disabled = true;
                         target = document.getElementById('checkButton');
                         target.style.visibility = "visible";
-                    }
-
-                    function lotCheck(year) {
-                        let lotArr = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O",
-                            "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
-                            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-
-                        firstLot = lotArr[(year % 100) - 5];
                     }
 
                     function checkPart() {
@@ -283,7 +263,6 @@
                             let tr = document.createElement("tr");
                             let temp = data[i];
                             tr.innerHTML = `<td>` + temp.bwCode + `</td>`
-                                + `<td>` + temp.lot + `</td>`
                                 + `<td>` + temp.quantity + `</td>`
                                 + `<td>` + temp.beforeStock + `</td>`
                                 + `<td>` + temp.afterStock + `</td>`
@@ -304,16 +283,13 @@
 
                 <div class="row justify-content-center" id="excelTableAll">
                     <div class="col-9">
-                        <table class="table table-striped">
+                        <table class="table">
                             <thead>
                             <tr>
                                 <th class="col-2">회사</th>
                                 <th class="col-2">보그워너 품번</th>
                                 <th class="col-2">부품업체 품번</th>
-                                <th class="col-2">이름</th>
-                                <th class="col-1">로트</th>
                                 <th class="col-1">수량</th>
-                                <th class="col-1">적입량</th>
                                 <th class="col-1"></th>
                             </tr>
                             </thead>
@@ -330,7 +306,6 @@
                         <thead>
                         <tr>
                             <th class="col-2">보그워너 품번</th>
-                            <th class="col-1">로트</th>
                             <th class="col-1">수량</th>
                             <th class="col-1">입고 전</th>
                             <th class="col-1">입고 후</th>

@@ -26,9 +26,6 @@ public class DefectiveLog extends BaseTimeEntity {
     private String date;
 
     @Column
-    private String lot;
-
-    @Column
     private int amount;
 
 }

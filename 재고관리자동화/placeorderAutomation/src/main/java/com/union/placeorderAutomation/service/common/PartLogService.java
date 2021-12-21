@@ -10,12 +10,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Transactional
 @RequiredArgsConstructor
 @Service
 public class PartLogService {
 
+    private final PartRepository partRepo;
     private final DefectiveLogRepository defectiveLogRepo;
     private final IncomeLogRepository incomeLogRepo;
     private final ModifyLogRepository modifyLogRepo;
@@ -25,7 +27,6 @@ public class PartLogService {
         DefectiveLog defectiveLog = DefectiveLog.builder()
                 .part(Part.builder().bwCode(logDto.getPartBwCode()).build())
                 .date(logDto.getDate())
-                .lot(logDto.getLot())
                 .amount(logDto.getAmount())
                 .build();
         defectiveLogRepo.save(defectiveLog);
@@ -36,7 +37,6 @@ public class PartLogService {
                 .part(Part.builder().bwCode(logDto.getPartBwCode()).build())
                 .date(logDto.getDate())
                 .orderSeq(logDto.getOrderSeq())
-                .lot(logDto.getLot())
                 .amount(logDto.getAmount())
                 .build();
         incomeLogRepo.save(incomeLog);
@@ -47,7 +47,6 @@ public class PartLogService {
                 .part(Part.builder().bwCode(logDto.getPartBwCode()).build())
                 .date(logDto.getDate())
                 .orderSeq(logDto.getOrderSeq())
-                .lot(logDto.getLot())
                 .amount(logDto.getAmount())
                 .build();
         modifyLogRepo.save(modifyLog);
@@ -57,7 +56,12 @@ public class PartLogService {
     public void createOutcomeLogs(OutgoingSubmitDto submitDto, List<CreateDeliveryDto> deliveryList) {
         Plant plant = Plant.builder().plantCode(submitDto.getPlantCode()).build();
         Company company = Company.builder().companyCode(submitDto.getCompanyCode()).build();
-        for(CreateDeliveryDto deliveryDto : deliveryList){
+        for (CreateDeliveryDto deliveryDto : deliveryList) {
+
+            Part part = partRepo.findByBwCode(deliveryDto.getBwCode()).get();
+            part.setStock(part.getStock() - deliveryDto.getQuantity());
+            partRepo.save(part);
+
             OutcomeLog outcomeLog = OutcomeLog.builder()
                     .part(Part.builder().bwCode(deliveryDto.getBwCode()).build())
                     .company(company)

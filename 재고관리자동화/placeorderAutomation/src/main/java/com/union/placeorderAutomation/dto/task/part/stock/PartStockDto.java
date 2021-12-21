@@ -1,5 +1,6 @@
 package com.union.placeorderAutomation.dto.task.part.stock;
 
+import com.union.placeorderAutomation.entity.Part;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -11,10 +12,10 @@ public class PartStockDto {
     private String spCode;
     private int stock;
 
-    public PartStockDto(Object[] part) {
-        this.companyName = (String) part[0];
-        this.bwCode = (String) part[1];
-        this.spCode = (String) part[2];
-        this.stock =  ((BigDecimal) part[3]).intValue();
+    public PartStockDto(Part part) {
+        this.companyName = part.getCompany().getCompanyName();
+        this.bwCode = part.getBwCode();
+        this.spCode = part.getSpCode();
+        this.stock = part.getStock();
     }
 }

@@ -1,6 +1,7 @@
 package com.union.placeorderAutomation.restcontroller.task;
 
 import com.union.placeorderAutomation.dto.task.outgoing.OrderHistoryDto;
+import com.union.placeorderAutomation.dto.task.outgoing.OutcomeLogDto;
 import com.union.placeorderAutomation.dto.task.outgoing.OutgoingSubmitDto;
 import com.union.placeorderAutomation.service.task.OrderHistoryService;
 import lombok.RequiredArgsConstructor;
@@ -34,4 +35,17 @@ public class OrderHistoryController {
         orderHistoryService.cancelOrder(outgoingSubmitDto);
         return new ResponseEntity(HttpStatus.OK);
     }
+
+    @PostMapping("/order-detail")
+    public ResponseEntity orderHistoryDetail(@RequestBody OutgoingSubmitDto outgoingSubmitDto){
+        List<OutcomeLogDto> result = orderHistoryService.findOrderHistoryDetail(outgoingSubmitDto);
+        return new ResponseEntity(result, HttpStatus.OK);
+    }
+
+    @PostMapping("/order-detail/{outcomeLogId}")
+    public ResponseEntity modifyHistoryDetail(@PathVariable Long outcomeLogId, @RequestBody int quantity){
+        OutcomeLogDto result = orderHistoryService.modifyOutcomeLog(outcomeLogId, quantity);
+        return new ResponseEntity(result, HttpStatus.OK);
+    }
+
 }

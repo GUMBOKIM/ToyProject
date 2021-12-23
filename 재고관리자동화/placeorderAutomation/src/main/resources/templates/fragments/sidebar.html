@@ -23,19 +23,35 @@
         업무
     </div>
 
+
+    <!-- 고객사 납품 -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#look-up"
+           aria-expanded="true" aria-controls="look-up">
+            <i style="width: 20px" class="fas fa-search"></i>
+            <span>조회</span>
+        </a>
+        <div id="look-up" class="collapse" aria-labelledby="look-up"
+             data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">조회</h6>
+                <a class="collapse-item" th:href="@{/task/outgoing}">생산 계획</a>
+                <a class="collapse-item" th:href="@{/task/outgoing-select}">선택품 재고</a>
+            </div>
+        </div>
+    </li>
+
     <!-- 고객사 납품 -->
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#task-outgoing"
            aria-expanded="true" aria-controls="task-outgoing">
-            <i class="fas fa-fw fa-wrench"></i>
+            <i style="width: 20px" class="fas fa-paper-plane"></i>
             <span>납품</span>
         </a>
         <div id="task-outgoing" class="collapse" aria-labelledby="task-outgoing"
              data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">납품</h6>
-                <a class="collapse-item" th:href="@{/task/outgoing}">생산계획</a>
-                <a class="collapse-item" th:href="@{/task/outgoing-select}">선택품 재고</a>
                 <a class="collapse-item" th:href="@{/task/outgoing-manual}">수동 납품</a>
                 <a class="collapse-item" th:href="@{/task/order-history}">납품 현황</a>
             </div>
@@ -46,7 +62,7 @@
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#task-part"
            aria-expanded="true" aria-controls="task-part">
-            <i class="fas fa-fw fa-wrench"></i>
+            <i style="width: 20px" class="fas fa-box"></i>
             <span>자재</span>
         </a>
         <div id="task-part" class="collapse" aria-labelledby="task-part"
@@ -64,7 +80,7 @@
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#task-util"
            aria-expanded="true" aria-controls="task-util">
-            <i class="fas fa-fw fa-wrench"></i>
+            <i style="width: 20px" class="fas fa-calculator"></i>
             <span>부가 기능</span>
         </a>
         <div id="task-util" class="collapse" aria-labelledby="task-util"
@@ -89,8 +105,8 @@
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#manage-part"
            aria-expanded="true" aria-controls="manage-part">
-            <i class="fas fa-fw fa-folder"></i>
-            <span>품목</span>
+            <i style="width: 20px" class="fas fa-cogs"></i>
+            <span>품목 관리</span>
         </a>
         <div id="manage-part" class="collapse" aria-labelledby="manage-part" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">

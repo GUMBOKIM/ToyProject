@@ -31,19 +31,19 @@ public class OutgoingTaskController {
 //        }
 //    }
 //
-//    @GetMapping("/inquire/{companyCode}/{plantCode}")
-//    public ResponseEntity inquirePlanNInventory(@PathVariable String companyCode,
-//                                                @PathVariable String plantCode) {
-//        List<ProductPlanDto> result = outgoingService.findPlanAndInventory(companyCode, plantCode);
-//        return new ResponseEntity(result, HttpStatus.OK);
-//    }
-//
-//    @GetMapping("/inquire-select/{companyCode}/{plantCode}")
-//    public ResponseEntity inquireSelectInventory(@PathVariable String companyCode,
-//                                                 @PathVariable String plantCode) {
-//        List<PartInventoryDto> result = outgoingService.findSelectPartInventory(companyCode, plantCode);
-//        return new ResponseEntity(result, HttpStatus.OK);
-//    }
+    @GetMapping("/inquire/{companyCode}/{plantCode}")
+    public ResponseEntity inquirePlanNInventory(@PathVariable String companyCode,
+                                                @PathVariable String plantCode) {
+        List<ProductPlanDto> result = outgoingService.findPlanAndInventory(companyCode, plantCode);
+        return new ResponseEntity(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/inquire-select/{companyCode}/{plantCode}")
+    public ResponseEntity inquireSelectInventory(@PathVariable String companyCode,
+                                                 @PathVariable String plantCode) {
+        List<PartInventoryDto> result = outgoingService.findSelectPartInventory(companyCode, plantCode);
+        return new ResponseEntity(result, HttpStatus.OK);
+    }
 //
 //    @PostMapping("/check")
 //    public ResponseEntity checkPartList(@RequestBody OutgoingSubmitDto request) {

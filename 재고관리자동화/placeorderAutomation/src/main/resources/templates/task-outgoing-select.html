@@ -50,86 +50,27 @@
                                     th:text="${plant.plantName}"></option>
                         </select>
                     </div>
-                    <div class="col-1">
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="dateInput" placeholder="YYYYMMDD">
-                        </div>
-                    </div>
-                    <div class="col-1">
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="orderInput" placeholder="차수">
-                        </div>
-                    </div>
-                    <div class="col-1">
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="timeInput" placeholder="HH:MM">
-                        </div>
-                    </div>
                     <div class="col-2">
                         <button type="button" id="createButton" class="btn btn-primary" onclick="clickConfirmButton()">
                             확인
                         </button>
-                        <button type="button" id="reportButton" style="visibility: hidden;" class="btn btn-success"
-                                onclick="openReport()">납품카드
-                        </button>
                     </div>
                 </div>
 
-                <div class="row" id="findInventoryTable">
-                    <table class="table table-striped text-center">
+                <div class="row justify-content-center" id="findInventoryTable">
+                    <table class="table table-striped text-center col-7">
                         <thead>
                         <tr>
                             <th class="col-2">보그워너 품번</th>
                             <th class="col-1">전산 적입량</th>
                             <th class="col-1">전산 재고</th>
                             <th class="col-1">적입량</th>
-                            <th class="col-1">입고량</th>
-                            <th class="col-1">
-                                <button type="button" id="sendButton" class="btn btn-danger btn-sm"
-                                        style="visibility:hidden;" onclick="clickEnrollButton()">등록
-                                </button>
-                            </th>
-                            <th class="col-1">사내 재고</th>
                         </tr>
                         </thead>
                         <tbody id="findInventoryTbody">
                         </tbody>
                     </table>
 
-                </div>
-
-                <div class="row justify-content-center mb-3" style="visibility: hidden;" id="submitTableRow">
-                    <table class="table col-4">
-                        <thead>
-                        <tr>
-                            <th class="col-2">보그워너 품번</th>
-                            <th class="col-1">수량</th>
-                            <th class="col-1">
-                                <button type="button" id="submitButton" class="btn btn-danger btn-sm"
-                                        onclick="clickSubmitButton()">등록
-                                </button>
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody id="submitTbody">
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="row justify-content-center mb-3" style="visibility: hidden;" id="resultTableRow">
-                    <table class="table col-6">
-                        <thead>
-                        <tr>
-                            <th class="col-2">보그워너 품번</th>
-                            <th class="col-1">로트</th>
-                            <th class="col-1">적입량</th>
-                            <th class="col-1">수량</th>
-                            <th class="col-1">박스수</th>
-                        </tr>
-                        </thead>
-                        <tbody id="resultTbody">
-                        </tbody>
-                    </table>
                 </div>
 
                 <script>
@@ -148,34 +89,17 @@
                     async function clickConfirmButton() {
                         orderInfo.companyCode = findElementValue("companySelect");
                         orderInfo.plantCode = findElementValue("plantSelect");
-                        orderInfo.date = findElementValue("dateInput");
-                        orderInfo.orderSeq = findElementValue("orderInput") * 1;
-                        orderInfo.time = findElementValue("timeInput");
 
 
-                        if (orderInfo.companyCode != "" && orderInfo.plantCode != "" && orderInfo.date.length == 8
-                            && orderInfo.orderSeq != "" && orderInfo.time.length == 5) {
-                            if (await checkOrderHistory(orderInfo)) {
-                                disableElement("companySelect");
-                                disableElement("plantSelect");
-                                disableElement("dateInput");
-                                disableElement("orderInput");
-                                disableElement("timeInput");
-                                disableElement("createButton");
-                                visibleElement("sendButton");
-
-                                const url = "/api/task/outgoing/inquire-select/"
-                                    + orderInfo.companyCode
-                                    + "/" + orderInfo.plantCode;
-                                let response = await fetch(url);
-                                if (response.status == 200) {
-                                    let data = await response.json();
-                                    createInventoryTable(data);
-                                }
-                            }
-                        } else {
-                            alert("입력을 확인해주세요")
+                        const url = "/api/task/outgoing/inquire-select/"
+                            + orderInfo.companyCode
+                            + "/" + orderInfo.plantCode;
+                        let response = await fetch(url);
+                        if (response.status == 200) {
+                            let data = await response.json();
+                            createInventoryTable(data);
                         }
+
                     }
 
                     function createInventoryTable(data) {
@@ -190,8 +114,8 @@
                             //     calInputAmount = 0;
                             // }
                             let boxQTY;
-                            if(temp.rop != 0){
-                                boxQTY = (temp.stockQTY/temp.rop).toFixed(1);
+                            if (temp.rop != 0) {
+                                boxQTY = (temp.stockQTY / temp.rop).toFixed(1);
                             } else {
                                 boxQTY = '-'
                             }
@@ -199,127 +123,10 @@
                                 + `<td>` + temp.rop + `</td>`
                                 + `<td>` + temp.stockQTY + `</td>`
                                 + `<td>` + temp.loadAmount + `(${boxQTY})` + `</td>`
-                                + `<td>` + `<div class="input-group"><input type="text" class="form-control" placeholder="수량" onclick="onclickInput(this)"></div>` + `</td>`
-                                + `<td>` + `<button type="button" class="btn btn-success btn-sm" onclick="enrollPart(this)"><i class="fas fa-check"></i></button>` + `</td>`
-                                + `<td class="table-warning">` + temp.stock + `</td>`
                             tbody.append(tr);
                         }
                     }
 
-                    async function enrollPart(element) {
-                        let tr = element.parentNode.parentNode;
-                        let tdList = tr.childNodes;
-                        let bwCode = tdList[0].innerText;
-                        let amount = tdList[4].childNodes[0].childNodes[0].value * 1
-
-                        if (amount > 0) {
-                            const url = "/api/task/outgoing/checkPart/" + bwCode + "/" + amount;
-                            let response = await fetch(url);
-                            if (response.status == 200) {
-                                if(partList.findIndex(v => v.bwCode === bwCode) == -1){
-                                    partList.push({bwCode, amount});
-                                } else {
-                                    alert("이미 등록한 자재입니다. 수량은 반영되지 않습니다.")
-                                }
-                                tdList[4].childNodes[0].childNodes[0].disabled = true;
-                                tdList[5].childNodes[0].disabled = true;
-                            } else {
-                                let data = await response.json();
-                                alert(`입력하신 수량이 현 재고량보다 많습니다. - 현재고 : ${data}`);
-                            }
-                        } else {
-                            alert("수량을 다시 입력하세요");
-                        }
-                    }
-
-
-                    function clickEnrollButton() {
-                        if (partList.length != 0) {
-                            let tableRow = document.getElementById("findInventoryTable")
-                            removeAllNode(tableRow);
-                            visibleElement("submitTableRow");
-
-                            partList.sort(function(a, b){
-                                const upperCaseA = a.bwCode.toUpperCase();
-                                const upperCaseB = b.bwCode.toUpperCase();
-
-                                if(upperCaseA > upperCaseB) return 1;
-                                if(upperCaseA < upperCaseB) return -1;
-                                if(upperCaseA === upperCaseB) return 0;
-                            })
-
-                            let tbody = document.getElementById("submitTbody");
-
-                            for (let i = 0; i < partList.length; i++) {
-                                let temp = partList[i];
-                                let tr = document.createElement("tr");
-
-                                tr.innerHTML = `<td>` + temp.bwCode + `</td>`
-                                    + `<td>` + temp.amount + `</td>`
-                                    + `<td>` + '' + `</td>`;
-                                tbody.append(tr);
-                            }
-                        } else {
-                            alert("등록된 자재가 없습니다. 등록해주세요")
-                        }
-
-                    }
-
-                    async function clickSubmitButton() {
-                        orderInfo.partList = partList;
-                        const url = "/api/task/outgoing/submit"
-                        let response = await fetch(url, {
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            method: "POST",
-                            body: JSON.stringify(orderInfo)
-                        });
-
-                        if (response.status == 200) {
-                            let data = await response.json();
-                            let tableRow = document.getElementById("submitTableRow")
-                            removeAllNode(tableRow);
-                            visibleElement("reportButton");
-                            visibleElement("resultTableRow");
-                            let tbody = document.getElementById("resultTbody");
-
-                            for (let i = 0; i < data.length; i++) {
-                                let temp = data[i];
-                                let tr = document.createElement("tr");
-                                tr.innerHTML = `<td>` + temp.bwCode + `</td>`
-                                    + `<td>` + temp.lot + `</td>`
-                                    + `<td>` + temp.loadAmount + `</td>`
-                                    + `<td>` + temp.quantity + `</td>`
-                                    + `<td>` + Math.ceil(temp.quantity / temp.loadAmount) + `</td>`;
-                                tbody.append(tr);
-                            }
-                        }
-                    }
-
-                    function openReport() {
-                        window.open(`https://es-qms.borgwarner.com/qms/payment_card2.main?p_companycd=00&p_vendcd=${orderInfo.companyCode}&p_plant=${orderInfo.plantCode}&p_income_date=${orderInfo.date}&p_sno=${orderInfo.orderSeq}`)
-                    }
-
-                    async function  onclickInput(element) {
-                        let tr = element.parentNode.parentNode.parentNode;
-                        let tdList = tr.childNodes;
-                        let bwCode = tdList[0].innerText;
-
-                        const url = "/api/task/part-stock/inventory/" + bwCode;
-                        let response = await fetch(url);
-                        if (response.status == 200) {
-                            let data = await response.json();
-                            let message = "";
-                            for (let i = 0; i<data.length; i++){
-                                let temp = data[i]
-                                message += `로트 : ${temp.lot}, 적입량 : ${temp.loadAmount}, 수량 : ${temp.stock}, 박스량 : ${temp.stock/temp.loadAmount}\n`
-                            }
-                            let amount = prompt(message, "")
-                            element.value = amount;
-                        }
-
-                    }
                 </script>
             </div>
             <!-- /.container-fluid -->

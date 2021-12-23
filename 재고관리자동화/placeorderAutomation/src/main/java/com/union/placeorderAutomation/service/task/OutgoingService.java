@@ -31,94 +31,91 @@ public class OutgoingService {
     private final CommonService commonService;
     private final PartLogService partLogService;
     private final PartRepository partRepo;
+    private final BomRepository bomRepo;
 
 //    @Transactional(readOnly = true)
 //    public int findPartStock(String bwCode) {
 //        int partStock = partRepo.findByBwCode(bwCode).get().getStock();
 //        return partStock;
 //    }
-//
-//    //일반 납품
-//    @Transactional(readOnly = true)
-//    public List<ProductPlanDto> findPlanAndInventory(String companyCode, String plantCode) {
-//        // 재고 찾기(공장) -> 회사 전체 부품으로 걸러냄
-//        HashMap<String, PartInventoryDto> partInvenMap = restTemplateService.getPartInventory(companyCode, plantCode);
-//        List<Part> findPartList = partRepo.findPartByCompany(companyCode);
-//        HashMap<String, PartInventoryDto> partInvenResult = new HashMap<>();
-//        for (Part part : findPartList) {
-//            String bwCode = part.getBwCode();
-//            if (partInvenMap.containsKey(bwCode)) {
-//                PartInventoryDto partInventoryDto = partInvenMap.get(bwCode);
-//                partInventoryDto.setLoadAmount(part.getLoadAmount());
-//                partInventoryDto.setStock(findPartStock(bwCode));
-//                partInvenResult.put(bwCode, partInventoryDto);
-//            } else {
-//                PartInventoryDto partInventoryDto = new PartInventoryDto();
-//                partInventoryDto.setPartBwCode(bwCode);
-//                partInventoryDto.setLoadAmount(part.getLoadAmount());
-//                partInventoryDto.setStock(findPartStock(bwCode));
-//                partInvenResult.put(bwCode, partInventoryDto);
-//            }
-//        }
-//
-//        // 생산계획(BOM) 찾기(공장, 라인으로 검색)
-//        List<ProductPlanDto> planList = new ArrayList<>();
-//        planList.addAll(restTemplateService.getProductPlanning(companyCode, plantCode, "CS"));
-//        planList.addAll(restTemplateService.getProductPlanning(companyCode, plantCode, "CP"));
-//        planList.addAll(restTemplateService.getProductPlanning(companyCode, plantCode, "MC"));
-//        // 회사 제품이 들어간 BOM 필터링
-//        List<Bom> findBomList = bomRepo.findByCompanyCode(Company.builder().companyCode(companyCode).build());
-//        HashMap<String, Bom> bomMap = new HashMap<>();
-//        for (Bom bom : findBomList) {
-//            bomMap.put(bom.getBwCode(), bom);
-//        }
-//        for (ProductPlanDto plan : planList) {
-//            String bomBwCode = plan.getBomBwCode();
-//            if (bomMap.containsKey(bomBwCode)) {
-//                List<BomPart> bomParts = bomMap.get(bomBwCode).getBomParts();
-//                List<PartInventoryDto> partInventory = new ArrayList<>();
-//                for (BomPart bomPart : bomParts) {
-//                    String partBwCode = bomPart.getPart().getBwCode();
-//                    int usage = bomPart.getAmount();
-//                    if (partInvenResult.containsKey(partBwCode)) {
-//                        PartInventoryDto partInventoryDto = partInvenResult.get(partBwCode);
-//                        partInventoryDto.setUsage(usage);
-//                        partInventory.add(partInventoryDto);
-//                    }
-//                }
-//                plan.setPartInventory(partInventory);
-//            }
-//        }
-//        return planList;
-//    }
-//
-//    //선택품 찾기
-//    @Transactional(readOnly = true)
-//    public List<PartInventoryDto> findSelectPartInventory(String companyCode, String plantCode) {
-//        // 재고 찾기(공장) -> 회사 전체 부품으로 걸러냄
-//        HashMap<String, PartInventoryDto> partInvenMap = restTemplateService.getPartInventory(companyCode, plantCode);
-//        List<Part> findPartList = partRepo.findSelectPartByCompany(companyCode);
-//        List<PartInventoryDto> partInvenResult = new ArrayList<>();
-//        for (Part part : findPartList) {
-//            String bwCode = part.getBwCode();
-//            if (partInvenMap.containsKey(bwCode)) {
-//                PartInventoryDto partInventoryDto = partInvenMap.get(bwCode);
-//                partInventoryDto.setSpCode(part.getSpCode());
-//                partInventoryDto.setPartBwCode(bwCode);
-//                partInventoryDto.setLoadAmount(part.getLoadAmount());
-//                partInventoryDto.setStock(findPartStock(bwCode));
-//                partInvenResult.add(partInventoryDto);
-//            } else {
-//                PartInventoryDto partInventoryDto = new PartInventoryDto();
-//                partInventoryDto.setSpCode(part.getSpCode());
-//                partInventoryDto.setPartBwCode(bwCode);
-//                partInventoryDto.setLoadAmount(part.getLoadAmount());
-//                partInventoryDto.setStock(findPartStock(bwCode));
-//                partInvenResult.add(partInventoryDto);
-//            }
-//        }
-//        return partInvenResult;
-//    }
+
+    //일반 납품
+    @Transactional(readOnly = true)
+    public List<ProductPlanDto> findPlanAndInventory(String companyCode, String plantCode) {
+        // 재고 찾기(공장) -> 회사 전체 부품으로 걸러냄
+        HashMap<String, PartInventoryDto> partInvenMap = restTemplateService.getPartInventory(companyCode, plantCode);
+        List<Part> findPartList = partRepo.findPartByCompany(companyCode);
+        HashMap<String, PartInventoryDto> partInvenResult = new HashMap<>();
+        for (Part part : findPartList) {
+            String bwCode = part.getBwCode();
+            if (partInvenMap.containsKey(bwCode)) {
+                PartInventoryDto partInventoryDto = partInvenMap.get(bwCode);
+                partInventoryDto.setLoadAmount(part.getLoadAmount());
+                partInvenResult.put(bwCode, partInventoryDto);
+            } else {
+                PartInventoryDto partInventoryDto = new PartInventoryDto();
+                partInventoryDto.setPartBwCode(bwCode);
+                partInventoryDto.setLoadAmount(part.getLoadAmount());
+                partInvenResult.put(bwCode, partInventoryDto);
+            }
+        }
+
+        // 생산계획(BOM) 찾기(공장, 라인으로 검색)
+        List<ProductPlanDto> planList = new ArrayList<>();
+        planList.addAll(restTemplateService.getProductPlanning(companyCode, plantCode, "CS"));
+        planList.addAll(restTemplateService.getProductPlanning(companyCode, plantCode, "CP"));
+        planList.addAll(restTemplateService.getProductPlanning(companyCode, plantCode, "MC"));
+        // 회사 제품이 들어간 BOM 필터링
+        List<Bom> findBomList = bomRepo.findByCompanyCode(Company.builder().companyCode(companyCode).build());
+        HashMap<String, Bom> bomMap = new HashMap<>();
+        for (Bom bom : findBomList) {
+            bomMap.put(bom.getBwCode(), bom);
+        }
+        for (ProductPlanDto plan : planList) {
+            String bomBwCode = plan.getBomBwCode();
+            if (bomMap.containsKey(bomBwCode)) {
+                List<BomPart> bomParts = bomMap.get(bomBwCode).getBomParts();
+                List<PartInventoryDto> partInventory = new ArrayList<>();
+                for (BomPart bomPart : bomParts) {
+                    String partBwCode = bomPart.getPart().getBwCode();
+                    int usage = bomPart.getAmount();
+                    if (partInvenResult.containsKey(partBwCode)) {
+                        PartInventoryDto partInventoryDto = partInvenResult.get(partBwCode);
+                        partInventoryDto.setUsage(usage);
+                        partInventory.add(partInventoryDto);
+                    }
+                }
+                plan.setPartInventory(partInventory);
+            }
+        }
+        return planList;
+    }
+
+    //선택품 찾기
+    @Transactional(readOnly = true)
+    public List<PartInventoryDto> findSelectPartInventory(String companyCode, String plantCode) {
+        // 재고 찾기(공장) -> 회사 전체 부품으로 걸러냄
+        HashMap<String, PartInventoryDto> partInvenMap = restTemplateService.getPartInventory(companyCode, plantCode);
+        List<Part> findPartList = partRepo.findSelectPartByCompany(companyCode);
+        List<PartInventoryDto> partInvenResult = new ArrayList<>();
+        for (Part part : findPartList) {
+            String bwCode = part.getBwCode();
+            if (partInvenMap.containsKey(bwCode)) {
+                PartInventoryDto partInventoryDto = partInvenMap.get(bwCode);
+                partInventoryDto.setSpCode(part.getSpCode());
+                partInventoryDto.setPartBwCode(bwCode);
+                partInventoryDto.setLoadAmount(part.getLoadAmount());
+                partInvenResult.add(partInventoryDto);
+            } else {
+                PartInventoryDto partInventoryDto = new PartInventoryDto();
+                partInventoryDto.setSpCode(part.getSpCode());
+                partInventoryDto.setPartBwCode(bwCode);
+                partInventoryDto.setLoadAmount(part.getLoadAmount());
+                partInvenResult.add(partInventoryDto);
+            }
+        }
+        return partInvenResult;
+    }
 //
 //    public List<CreateDeliveryDto> submitPart(OutgoingSubmitDto submitDto) {
 //        List<CreateDeliveryDto> deliveryList = createDeliveryCard(submitDto);
@@ -142,13 +139,12 @@ public class OutgoingService {
 //        return deliveryList;
 //    }
 
-
     public List<CreateDeliveryDto> submitManualPart(OutgoingManualDto manualDto) {
         List<CreateDeliveryDto> deliveryList = createManualDeliveryCard(manualDto);
         OutgoingSubmitDto submitDto = new OutgoingSubmitDto(manualDto);
-//        restTemplateService.createDeliveryCard(submitDto, convertForCreateDeliverCard(deliveryList));
+        restTemplateService.createDeliveryCard(submitDto, convertForCreateDeliverCard(deliveryList));
         log.info("납입카드 성공");
-//        restTemplateService.registryDelivery(submitDto, deliveryList);
+        restTemplateService.registryDelivery(submitDto, deliveryList);
         log.info("재고 등록 성공");
         partLogService.createOutcomeLogs(submitDto, deliveryList);
         log.info("로그 생성 성공");

@@ -105,9 +105,9 @@ public class RestTemplateService {
         body.add("p_time", submitDto.getTime());
 
         for (CreateDeliveryDto delivery : deliveryList) {
-            if ((!delivery.getInventoryBwCode().equals("") || delivery.getInventoryBwCode() != null) ||
-                    (plantCode.equals("5300") && (delivery.getPoCode1() != null || delivery.getPoCode1() != "")) ||
-                    (plantCode.equals("5330") && (delivery.getPoCode2() != null || delivery.getPoCode2() != ""))) {
+            if ((!"".equals(delivery.getInventoryBwCode()) && delivery.getInventoryBwCode() != null) && (
+                    (plantCode.equals("5300") && (delivery.getPoCode1() != null || !"".equals(delivery.getPoCode1()))) ||
+                    (plantCode.equals("5330") && (delivery.getPoCode2() != null || !"".equals(delivery.getPoCode2()))))) {
                 body.add("p_partno", delivery.getInventoryBwCode());
                 body.add("p_menge", Integer.toString(delivery.getQuantity()));
                 body.add("p_lgpbe", delivery.getLot());

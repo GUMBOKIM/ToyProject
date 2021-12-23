@@ -208,17 +208,20 @@
                         let tdList = tr.childNodes;
 
                         let id = tr.id;
-                        let changeAmount = prompt("변경할 수량을 입력하세요", "") * 1;
+                        let changeAmount = prompt("변경할 수량을 입력하세요", "");
                         if(typeof(changeAmount) === "number" && changeAmount < 0){
                             alert("잘못 입력하셨습니다")
-                        } else {
+                        } else if (changeAmount == ""){
+                            alert("다시 입력하세요")
+                        }
+                        else {
                             const url = `/api/task/order-history/order-detail/${id}` ;
                             let response = await fetch(url, {
                                 method: "POST",
                                 headers: {
                                     "Content-Type": "application/json",
                                 },
-                                body: changeAmount
+                                body: changeAmount * 1
                             });
                             if (response.status == 200) {
                                 let data = await response.json();

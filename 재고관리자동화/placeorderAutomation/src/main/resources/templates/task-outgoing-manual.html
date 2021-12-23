@@ -118,6 +118,7 @@
                     let excelOrderInfo = {};
                     let excelMemory = new Array();
 
+                    let check = true;
 
                     window.onload = function () {
                         let today = new Date();
@@ -225,6 +226,7 @@
                                     tr.className = "table-success";
                                 } else {
                                     tr.className = "table-danger";
+                                    check = false;
                                 }
                             }
                             tbody.append(tr);
@@ -253,8 +255,10 @@
                         if (response.status == 200) {
                             findData = await response.json();
                             createExcelTbody(findData);
-                            visibleElement("sendButton");
                             disableElement("checkButton");
+                            if(check){
+                                visibleElement("sendButton");
+                            }
                         }
                     }
 

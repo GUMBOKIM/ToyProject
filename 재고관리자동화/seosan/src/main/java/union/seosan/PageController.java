@@ -13,9 +13,8 @@ public class PageController {
         return new ResponseEntity("정원겸 병신", HttpStatus.OK);
     }
 
-    @RequestMapping("/barcode")
+    @RequestMapping("/task/income")
     public String barcodePage() {
-
-        return "task/barcode";
+        return "task/income";
     }
 }

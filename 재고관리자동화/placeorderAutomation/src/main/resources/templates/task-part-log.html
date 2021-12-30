@@ -104,8 +104,14 @@
                             td1.innerText = temp.partBwCode;
                             let td2 = document.createElement("td");
                             td2.innerText = temp.spCode;
+                            let td3 = document.createElement("td");
+                            td3.innerText = temp.stock;
+                            let td4 = document.createElement("td");
+                            td4.innerText = temp.loadAmount;
+                            let td5 = document.createElement("td");
+                            td5.innerText = (temp.stock / temp.loadAmount).toFixed(1);
 
-                            tr.append(td1, td2);
+                            tr.append(td1, td2, td3, td4, td5);
 
                             createIncomeAndModifyRow(tr, temp.incomeLog);
                             createIncomeAndModifyRow(tr, temp.modifyLog);
@@ -205,7 +211,7 @@
                     <table class="table table-bordered text-center" id="partLogTable">
                         <thead>
                         <tr>
-                            <th colspan="2"></th>
+                            <th colspan="5"></th>
                             <th colspan="5" class="table-info">입고</th>
                             <th colspan="5" class="table-warning">보정</th>
                             <th colspan="20" class="table-success">1공장</th>
@@ -215,6 +221,9 @@
                         <tr>
                             <th style="white-space: nowrap">보그워너 품번</th>
                             <th style="white-space: nowrap">공급업체 품번</th>
+                            <th style="white-space: nowrap">현재고</th>
+                            <th style="white-space: nowrap">적입량</th>
+                            <th style="white-space: nowrap">박스수</th>
                             <!-- 입고 -->
                             <th class="table-info" style="white-space: nowrap">용차</th>
                             <th class="table-info">1</th>

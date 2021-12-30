@@ -35,7 +35,7 @@ public class TaskPartStatusService {
         partList.addAll(partRepo.findPartByCompany(companyCode));
         partList.addAll(partRepo.findSelectPartByCompany(companyCode));
         for (Part part : partList) {
-            PartLogDto partLogDto = new PartLogDto(part.getBwCode(), part.getSpCode());
+            PartLogDto partLogDto = new PartLogDto(part);
             //입고
             partLogDto.setIncomeLog(incomeLogRepo.sumQuantityByPartLog(part, date));
             //보정

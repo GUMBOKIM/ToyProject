@@ -168,7 +168,7 @@
                             let tr = document.createElement("tr");
                             let boxQTY;
                             if (temp.rop != 0) {
-                                boxQTY = (temp.stockQTY / temp.rop).toFixed(1);
+                                boxQTY = (temp.stockQTY / temp.loadAmount).toFixed(1);
                             } else {
                                 boxQTY = '-'
                             }
@@ -182,7 +182,7 @@
                             let html = `<td>` + temp.partBwCode + `</td>`
                                 + `<td>` + temp.rop + `</td>`
                                 + `<td>` + temp.stockQTY + `</td>`
-                                + `<td>` + temp.loadAmount + `(${boxQTY})` + `</td>`
+                                + `<td>` +  temp.loadAmount + `(${boxQTY})` + `</td>`
                                 + `<td>` + temp.usage + `</td>`
                             tr.innerHTML = html;
                             tbody.append(tr);

@@ -1,10 +1,10 @@
 package union.seosan.entity;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import union.seosan.dto.barcode.DeliveryPartCardInput;
 
 import javax.persistence.*;
 
@@ -30,25 +30,27 @@ public class DeliveryPartCard extends BaseTimeEntity {
     private String lot;
 
     @Column(nullable = false)
-    private int cardStock;
+    private int cardAmount;
 
     @Column(nullable = false)
-    private int stock;
+    private int amount;
 
     @ColumnDefault("Y")
     private String differenceYn;
 
-    @Builder
-    public DeliveryPartCard(String partBarcode, DeliveryCard deliveryCard, Part part, String lot, int cardStock, int stock) {
-        this.partBarcode = partBarcode;
-        this.deliveryCard = deliveryCard;
-        this.part = part;
-        this.lot = lot;
-        this.cardStock = cardStock;
-        this.stock = stock;
-    }
-
     public void confirmDifference(){
         this.differenceYn = "N";
+    }
+
+    public void setDeliveryCard(DeliveryCard deliveryCard){
+        this.deliveryCard = deliveryCard;
+    }
+
+    public DeliveryPartCard(DeliveryPartCardInput dcDto) {
+        this.partBarcode = dcDto.getPartBarcode();
+        this.part = Part.builder().partCode(dcDto.getPartCode()).build();
+        this.lot = dcDto.getLot();
+        this.cardAmount = dcDto.getCardAmount();
+        this.amount = dcDto.getAmount();
     }
 }

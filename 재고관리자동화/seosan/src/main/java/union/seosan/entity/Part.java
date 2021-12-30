@@ -26,7 +26,7 @@ public class Part extends BaseTimeEntity {
     private int loadAmount;
 
     @OneToMany(mappedBy = "part", fetch = FetchType.LAZY)
-    private List<PartInventory> partInventories = new ArrayList<>();
+    private List<Inventory> inventories = new ArrayList<>();
 
     @Builder
     public Part(String partCode, String partName, int loadAmount) {

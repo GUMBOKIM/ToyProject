@@ -26,9 +26,13 @@ public class DeliveryCard extends BaseTimeEntity {
     @OneToMany(mappedBy = "deliveryCard", fetch = FetchType.LAZY)
     private List<DeliveryPartCard> deliveryPartCards = new ArrayList<>();
 
-    @Builder
     public DeliveryCard(String deliveryBarcode) {
         this.deliveryBarcode = deliveryBarcode;
+    }
+
+    public void addDeliveryPartCard(DeliveryPartCard deliveryPartCard){
+        deliveryPartCard.setDeliveryCard(this);
+        deliveryPartCards.add(deliveryPartCard);
     }
 
     public void confirmDifference(){

@@ -17,7 +17,7 @@ public class InventoryService {
 
     private InventoryResult increaseStock(Part part, String lot, int amount) {
         InventoryResult result = new InventoryResult(part.getPartCode(), lot, amount);
-        Optional<Inventory> inventoryOpt = inventoryRepo.selectInventoryByPartAndLot(part, lot);
+        Optional<Inventory> inventoryOpt = inventoryRepo.findInventoryByPartAndLot(part, lot);
         if (inventoryOpt.isEmpty()) {
             result.setBeforeStock(0);
 
@@ -44,7 +44,7 @@ public class InventoryService {
     private InventoryResult decreaseStock(Part part, String lot, int amount) {
         InventoryResult result = new InventoryResult(part.getPartCode(), lot, amount);
 
-        Optional<Inventory> inventoryOpt = inventoryRepo.selectInventoryByPartAndLot(part, lot);
+        Optional<Inventory> inventoryOpt = inventoryRepo.findInventoryByPartAndLot(part, lot);
         if (inventoryOpt.isEmpty()) {
             result.setBeforeStock(0);
             result.setAfterStock(0);

@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
-    Optional<Inventory> selectInventoryByPartAndLot(Part part, String lot);
+    Optional<Inventory> findInventoryByPartAndLot(Part part, String lot);
 }

@@ -1,10 +1,8 @@
 package union.seosan.entity;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -20,8 +18,8 @@ public class DeliveryCard extends BaseTimeEntity {
     @Column
     private String deliveryBarcode;
 
-    @ColumnDefault("Y")
-    private String differenceYn;
+    @Column
+    private String differenceYn = "Y";
 
     @OneToMany(mappedBy = "deliveryCard", fetch = FetchType.LAZY)
     private List<DeliveryPartCard> deliveryPartCards = new ArrayList<>();
@@ -30,12 +28,12 @@ public class DeliveryCard extends BaseTimeEntity {
         this.deliveryBarcode = deliveryBarcode;
     }
 
-    public void addDeliveryPartCard(DeliveryPartCard deliveryPartCard){
+    public void addDeliveryPartCard(DeliveryPartCard deliveryPartCard) {
         deliveryPartCard.setDeliveryCard(this);
         deliveryPartCards.add(deliveryPartCard);
     }
 
-    public void confirmDifference(){
+    public void confirmDifference() {
         this.differenceYn = "N";
     }
 }

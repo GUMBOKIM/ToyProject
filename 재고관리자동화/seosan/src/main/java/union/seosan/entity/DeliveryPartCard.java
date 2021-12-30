@@ -3,7 +3,6 @@ package union.seosan.entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import union.seosan.dto.barcode.DeliveryPartCardInput;
 
 import javax.persistence.*;
@@ -35,14 +34,14 @@ public class DeliveryPartCard extends BaseTimeEntity {
     @Column(nullable = false)
     private int amount;
 
-    @ColumnDefault("Y")
-    private String differenceYn;
+    @Column
+    private String differenceYn = "Y";
 
-    public void confirmDifference(){
+    public void confirmDifference() {
         this.differenceYn = "N";
     }
 
-    public void setDeliveryCard(DeliveryCard deliveryCard){
+    public void setDeliveryCard(DeliveryCard deliveryCard) {
         this.deliveryCard = deliveryCard;
     }
 

@@ -30,6 +30,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 //    testImplementation 'org.springframework.security:spring-security-test'
     implementation 'org.springframework.mobile:spring-mobile-device:1.1.5.RELEASE'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.9'
 }
 
 test {

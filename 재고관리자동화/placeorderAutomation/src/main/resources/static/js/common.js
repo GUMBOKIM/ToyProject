@@ -26,6 +26,7 @@ function disableElement(id) {
 function visibleElement(id){
     document.getElementById(id).style.visibility = "visible";
 }
+
 function invisibleElement(id){
     document.getElementById(id).style.visibility = "hidden";
 }

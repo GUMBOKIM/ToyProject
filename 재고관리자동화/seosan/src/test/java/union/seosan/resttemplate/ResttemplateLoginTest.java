@@ -57,10 +57,10 @@ public class ResttemplateLoginTest {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.set("Connection", "keep-alive");
-        headers.set("Cookie", "SCOUTER=z6q1o5cf52ml73; JSESSIONID=12C636F8D0A4FD57EAA9EC1EDADDAF48");
+        headers.set("Cookie", "SCOUTER=x3ijmr292fsi02; JSESSIONID=EC2E126AF581C7FC7EBB2872C6A826F5");
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("_csrf", "18087613-3036-4483-aff9-1f6eec1f117b");
+        map.add("_csrf", "08433267-f364-456d-8f0d-c75c26d7ac83");
         map.add("userId", "T008002");
         map.add("dupCheck", "");
         map.add("password", "audCJS88!");
@@ -81,7 +81,7 @@ public class ResttemplateLoginTest {
         RestTemplate restTemplate = new RestTemplate();
         String url = "https://lo-tgps.hyundai-transys.com/loginSuccess.do";
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Cookie", "JSESSIONID=EFC573E078B4D353DBFB8E72D591A71A");
+        headers.set("Cookie", "JSESSIONID=C79D47507BF6013FDD1C7DD65A3B764B");
         headers.set("Connection", "keep-alive");
         headers.set("Cache-Control","max-age=0");
         headers.set("Upgrade-Insecure-Requests","1");
@@ -151,6 +151,24 @@ public class ResttemplateLoginTest {
         hashMap.put("map", innerMap);
 
         HttpEntity<String> request = new HttpEntity<>(objectMapper.writeValueAsString(hashMap), headers);
+        System.out.println("request.getBody() = " + request.getBody());
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+        System.out.println("response = " + response.getBody());
+        assertThat(response.getStatusCode().equals(HttpStatus.OK));
+    }
+
+
+    @Test
+    void 납입카드_발행전0() {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://lo-tgps.hyundai-transys.com/center/lo/em/WLOEMDL010/selectWLOEMDL010Popup.do?modalId=ax5-modal-143&callBack=modalCallback&workLine=A&coporateCd=1000&plantCd=&vendorCd=&partCd=";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Cookie", "SCOUTER=x64ko7piqv51l2; JSESSIONID=EFC573E078B4D353DBFB8E72D591A71A");
+        headers.set("X-CSRF-TOKEN", "610407b5-684b-4683-a358-b894ace5c727");
+        String str = "{\"map\":{\"coporateCd\":\"1000\",\"plantCd\":\"1101\",\"cntrCd\":\"IN02\"}}";
+
+        HttpEntity<String> request = new HttpEntity<>(str, headers);
         System.out.println("request.getBody() = " + request.getBody());
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
         System.out.println("response = " + response.getBody());

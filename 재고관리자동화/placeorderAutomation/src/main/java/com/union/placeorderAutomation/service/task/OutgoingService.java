@@ -142,10 +142,10 @@ public class OutgoingService {
     public List<CreateDeliveryDto> submitManualPart(OutgoingManualDto manualDto) {
         List<CreateDeliveryDto> deliveryList = createManualDeliveryCard(manualDto);
         OutgoingSubmitDto submitDto = new OutgoingSubmitDto(manualDto);
-        restTemplateService.createDeliveryCard(submitDto, convertForCreateDeliverCard(deliveryList));
+        restTemplateService.createDeliveryCard(submitDto, deliveryList);
         log.info("납입카드 성공");
-        restTemplateService.registryDelivery(submitDto, deliveryList);
-        log.info("재고 등록 성공");
+//        restTemplateService.registryDelivery(submitDto, deliveryList);
+//        log.info("재고 등록 성공");
         partLogService.createOutcomeLogs(submitDto, deliveryList);
         log.info("로그 생성 성공");
         commonService.addCompanyOrderHistory(

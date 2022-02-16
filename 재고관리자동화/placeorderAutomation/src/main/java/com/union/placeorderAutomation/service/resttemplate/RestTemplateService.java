@@ -32,12 +32,16 @@ public class RestTemplateService {
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("p_companycd", "00");
+        body.add("p_time","");
         body.add("p_dml_gubun", "1");
         body.add("p_vendcd", companyCode);
         body.add("p_plant", plantCode);
-        body.add("p_sno", Integer.toString(submitDto.getOrderSeq()));
-        body.add("P_descr", deliveryList.size() + " 품목");
         body.add("p_income_date", submitDto.getDate());//20210201 양식
+        body.add("p_sno", Integer.toString(submitDto.getOrderSeq()));
+        body.add("p_bw_lotno", "");
+        body.add("p_delivery_no", "");
+        body.add("P_descr", deliveryList.size() + " 품목");
+
 
 
         for (CreateDeliveryDto delivery : deliveryList) {
@@ -56,6 +60,8 @@ public class RestTemplateService {
             body.add("p_qty_per_box", Integer.toString(delivery.getLoadAmount()));
             body.add("p_qty_box", Integer.toString((int) Math.ceil(Double.valueOf(delivery.getQuantity()) / Double.valueOf(delivery.getLoadAmount()))));
         }
+
+        body.add("p_pseqno", "");
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, httpHeaders);
 
@@ -358,8 +364,9 @@ public class RestTemplateService {
         httpHeaders.set("accept-encoding", "gzip, deflate, br");
         httpHeaders.set("accept-language", "en,ko;q=0.9,fr;q=0.8");
         httpHeaders.set("cache-control", "max-age=0");
+        httpHeaders.set("content-type", "multipart/form-data");
         httpHeaders.set("cookie", "SYSLANG=KO; SYSTYPE=1; SYSCOMP=00; SYSID=" + companyCode + "; CCODE=" + companyCode);
-        httpHeaders.set("content-type", "multipart/form-data; boundary=----WebKitFormBoundaryea1qGVBFGzKiRrEa");
+        httpHeaders.set("origin", "https://es-qms.borgwarner.com"); // url이랑 동일
         httpHeaders.set("referer", "https://es-qms.borgwarner.com/qms/kqis91101.crRec?p_companycd=00"); // url이랑 동일
         httpHeaders.set("sec-ch-ua", "\"Chromium\";v=\"94\", \"Google Chrome\";v=\"94\", \";Not A Brand\";v=\"99\"");
         httpHeaders.set("sec-ch-ua-mobile", "?0");
@@ -369,6 +376,7 @@ public class RestTemplateService {
         httpHeaders.set("sec-fetch-site", "same-origin");
         httpHeaders.set("sec-fetch-user", "?1");
         httpHeaders.set("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36");
+        httpHeaders.set("upgrade-insecure-requests", "1");
     }
 
 }

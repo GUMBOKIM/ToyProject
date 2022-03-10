@@ -49,7 +49,7 @@ public class TestClass {
 //        body.add("p_dml_gubun", "1");
 //        body.add("p_vendcd", "106076");
 //        body.add("p_plant", "5300");
-//        body.add("p_income_date", "20220220");
+//        body.add("p_income_date", "20220313");
 //        body.add("p_sno", "");
 //        body.add("p_bw_lotno", "");
 //        body.add("p_delivery_no", "");
@@ -58,24 +58,15 @@ public class TestClass {
 //        body.add("p_partno", "K171103A");
 //        body.add("p_partnm", "SP");
 //        body.add("p_order_no", "5500009744");
-//        body.add("p_lotno", "QJK.L");
+//        body.add("p_lotno", "AAA");
 //        body.add("p_qty", "60");
 //        body.add("p_qty_per_box", "60");
 //        body.add("p_qty_box", "1");
 //        body.add("p_remarks", "ROLI-1");
 //
-//        body.add("p_pseqno", "");
 //
-////
-////        body.add("p_partno", "K171104A");
-////        body.add("p_partnm", "SP");
-////        body.add("p_order_no", "5500009746");
-////        body.add("p_lotno", "QJI");
-////        body.add("p_qty", "60");
-////        body.add("p_qty_per_box", "60");
-////        body.add("p_qty_box", "1");
-////        body.add("p_remarks", "ROLI-1");
-////
+//        body.add("p_barcode", "");
+//        body.add("p_pseqno", "");
 //
 //        System.out.println("httpHeaders = " + httpHeaders);
 //        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, httpHeaders);

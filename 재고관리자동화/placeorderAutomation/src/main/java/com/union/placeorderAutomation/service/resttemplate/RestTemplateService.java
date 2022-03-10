@@ -61,6 +61,7 @@ public class RestTemplateService {
             body.add("p_qty_box", Integer.toString((int) Math.ceil(Double.valueOf(delivery.getQuantity()) / Double.valueOf(delivery.getLoadAmount()))));
         }
 
+        body.add("p_barcode", "");
         body.add("p_pseqno", "");
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, httpHeaders);

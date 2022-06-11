@@ -11,6 +11,7 @@ const LayoutContainer = styled.div`
 
 const LayoutHeader = styled.div`
   width: 100%;
+  min-width: 350px;
   height: 60px;
   position: fixed;
   top: 0;
@@ -21,14 +22,12 @@ const LayoutHeader = styled.div`
 const LayoutBody = styled.div`
   top: 60px;
   position: absolute;
-  
   width: 100%;
   min-height: calc(100vh - 60px);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-
   div:last-child {
     margin-top: auto;
   }

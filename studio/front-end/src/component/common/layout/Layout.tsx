@@ -3,7 +3,6 @@ import {Outlet, useNavigate} from "react-router-dom";
 import {GetCookie} from "../../../util/Cookie";
 import styled from "styled-components";
 import GNB from "./GNB";
-import FNB from "./FNB";
 
 const LayoutContainer = styled.div`
   width: 100vw;
@@ -12,7 +11,7 @@ const LayoutContainer = styled.div`
 const LayoutHeader = styled.div`
   width: 100%;
   min-width: 350px;
-  height: 60px;
+  height: 80px;
   position: fixed;
   top: 0;
   z-index: 100;
@@ -20,7 +19,7 @@ const LayoutHeader = styled.div`
 `
 
 const LayoutBody = styled.div`
-  top: 60px;
+  top: 80px;
   position: absolute;
   width: 100%;
   min-height: calc(100vh - 60px);
@@ -28,9 +27,6 @@ const LayoutBody = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  > div:last-child {
-    margin-top: auto;
-  }
 `;
 
 const LayoutContent = styled.div`
@@ -58,7 +54,6 @@ const Layout: React.FC = () => {
                 <LayoutContent>
                     <Outlet/>
                 </LayoutContent>
-                <FNB/>
             </LayoutBody>
         </LayoutContainer>
     )

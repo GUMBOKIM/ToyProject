@@ -25,3 +25,15 @@ J
 studio/front-end/README.md,d/a/da99b6660f55a49607fd0d54c093642cafbd9c77
 W
 'studio/front-end/src/reportWebVitals.ts,9/5/958bce73ad3730b40de548d9562151884b8264f9
+N
+studio/front-end/src/index.tsx,e/8/e8966cd5568b8a0b7ac7543b10f7a4f73f0308bd
+R
+"studio/front-end/public/index.html,9/6/9664f8bc66aba8f36b62971a91ba74f52e9bd878
+k
+;studio/front-end/src/component/asset/icon/HamburgerIcon.tsx,d/8/d87e9d94e4c677cc4f2b33f274a5262d984e3d77
+L
+studio/front-end/src/App.tsx,b/9/b917a87e5bb295553fa2263aa2a31e5c1a78722e
+d
+4studio/front-end/src/component/pages/ContactPage.tsx,4/6/468d55cb61628fb66203f18541bfc5779fbd7ad6
+a
+1studio/front-end/src/component/pages/MainPage.tsx,a/b/ab58938d633aa65e87f66dd69ca0518f5de58143

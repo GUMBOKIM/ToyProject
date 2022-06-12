@@ -6,23 +6,24 @@ import {useNavigate} from "react-router-dom";
 const GNBContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 60px;
+  height: 80px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   z-index: 101;
-  
+
   padding: 0 26px;
   @media (max-width: 600px) {
     padding: 0 10px;
   }
 `
 
-const GNBLeft = styled.div``;
+const GNBLeft = styled.div`
+`;
 
 const GNBCenter = styled.div`
   position: absolute;
-  top: 50%;
+  top: calc(50%);
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
 `;
@@ -32,6 +33,7 @@ const GNBRight = styled.div``
 const GNBLogo = styled.div`
   font-size: x-large;
   font-weight: bold;
+
   :hover {
     cursor: pointer;
   }
@@ -139,6 +141,8 @@ const GNB: React.FC = () => {
                         <GNBMenuItem onClick={link('/board/viral')}>Viral</GNBMenuItem>
                         <GNBMenuItem onClick={link('/board/commerce')}>Commerce</GNBMenuItem>
                         <GNBMenuItem onClick={link('/board/photo')}>Photo</GNBMenuItem>
+                        <GNBMenuItem onClick={link('/about')}>About</GNBMenuItem>
+                        <GNBMenuItem onClick={link('/contact')}>Contact</GNBMenuItem>
                     </GNBMenuList>
                     {/*모바일 부분*/}
                     <GNBHamburger onClick={() => setIsDDOpen(!isDDOpen)}>
@@ -150,8 +154,6 @@ const GNB: React.FC = () => {
                 </GNBCenter>
                 <GNBRight>
                     <GNBMenuList>
-                        <GNBMenuItem onClick={link('/about')}>About</GNBMenuItem>
-                        <GNBMenuItem onClick={link('/contact')}>Contact</GNBMenuItem>
                     </GNBMenuList>
                 </GNBRight>
             </GNBContainer>

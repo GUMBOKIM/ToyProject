@@ -10,6 +10,8 @@ const HomeContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  background: url("https://picsum.photos/1000/500");
+  background-size: cover;
 `
 
 const EnterButton = styled.div`

@@ -28,22 +28,26 @@ const LayoutBody = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  div:last-child {
+  > div:last-child {
     margin-top: auto;
   }
 `;
 
 const LayoutContent = styled.div`
   width: 100%;
-  padding: 0 26px 0 26px;
+  padding: 26px;
+  @media (max-width: 600px) {
+    padding: 10px;
+  }
 `
 
 const Layout: React.FC = () => {
     // 첫 페이지 방문 안했을 시, 첫 페이지로
     const navigate = useNavigate();
+
     useEffect(() => {
         if (!GetCookie('visited')) navigate('/')
-    }, [])
+    }, [navigate])
 
     return (
         <LayoutContainer>

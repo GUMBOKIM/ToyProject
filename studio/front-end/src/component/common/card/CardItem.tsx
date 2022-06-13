@@ -1,103 +1,46 @@
-import React from "react";
-import styled from "styled-components";
+import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
-
-export interface CardItemProps {
-    id: number;
-    title: string;
-    imgUrl: string;
-    size: 'half' | 'full';
-}
-
-const CardItemWrapper = styled.div<{ size: 'half' | 'full' }>`
-  position: relative;
-  width: calc(${
-          props => {
-            if (props.size === 'half') {
-              return '50% - 13px';
-            } else {
-              return '100%'
-            }
-          }
-  });
-  padding-bottom: calc(${
-          props => {
-            if (props.size === 'half') {
-              return '50% - 13px';
-            } else { 
-              return '100% / 2'
-            }
-          }
-  });
-  margin-bottom: 26px;
-  @media (max-width: 600px) {
-    width: calc(${
-            props => {
-              if (props.size === 'half') {
-                return '50% - 5px';
-              } else {
-                return '100%'
-              }
-            }
-    });
-    padding-bottom: calc(${
-            props => {
-              if (props.size === 'half') {
-                return '50% - 5px';
-              } else {
-                return '100% / 2'
-              }
-            }
-    });
-    margin-bottom: 10px;
-  }
-  @media (max-width: 350px) {
-    width: 100%;
-    padding-bottom: calc(${
-            props => {
-              if (props.size === 'half') {
-                return '100%';
-              } else {
-                return '50%'
-              }
-            }
-    });
-    margin-bottom: 10px;
-  }
-`
-
-const CardItemImage = styled.div<{ imgUrl: string }>`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  background: url(${props => props.imgUrl});
-  opacity: 0.2;
-  background-size: cover;
-  
-  :hover {
-    transition: opacity 1s;
-    opacity: 1;
-    cursor: pointer;
-  }
-`
-
-const CardItemTitle = styled.div`
-  position: absolute;
-  text-align: center;
-  font-size: x-large;
-  width: 100%;
-  top: 60%;
-`
+import {CardItemProps, CardType} from "./CardItemData";
+import {
+    CardItemFullContainer,
+    CardItemHalfContainer,
+    CardItemImage,
+    CardItemText,
+    CardItemTitle,
+    CardVimeoItem
+} from "./CardItem.style";
 
 const CardItem: React.FC<{ card: CardItemProps }> = ({card}) => {
+    const [isHover, setIsHover] = useState(false);
     const navigate = useNavigate();
-    return (
-        <CardItemWrapper size={card.size} onClick={() => navigate(`/post/${card.id}`)}>
-            <CardItemImage imgUrl={card.imgUrl}>
-                <CardItemTitle>{card.title}</CardItemTitle>
-            </CardItemImage>
 
-        </CardItemWrapper>
+    const linkPost = () => {
+        if (card.type !== CardType.Text) navigate(`post/${card.id}`);
+    }
+    return (<>
+            {
+                card.size === 'full'
+                &&
+                <CardItemFullContainer onClick={linkPost}
+                                       onMouseOver={() => setIsHover(true)}
+                                       onMouseLeave={() => setIsHover(false)}>
+                    {card.type === CardType.Image && <CardItemImage imgUrl={card.url!}/>}
+                    {card.type === CardType.Video && <CardVimeoItem videoUrl={card.url!} isHover={isHover}/>}
+                    {isHover && <CardItemTitle >{card.title}</CardItemTitle>}
+                </CardItemFullContainer>
+            }
+            {
+                card.size === 'half'
+                &&
+                <CardItemHalfContainer onClick={linkPost}
+                                       onMouseOver={() => setIsHover(true)}
+                                       onMouseLeave={() => setIsHover(false)}>
+                    {card.type === CardType.Image && <CardItemImage imgUrl={card.url!}/>}
+                    {card.type === CardType.Text && <CardItemText>{card.content}</CardItemText>}
+                    {isHover && <CardItemTitle >{card.title}</CardItemTitle>}
+                </CardItemHalfContainer>
+            }
+        </>
     );
 }
 

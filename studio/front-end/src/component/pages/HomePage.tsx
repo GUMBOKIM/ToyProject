@@ -6,7 +6,6 @@ import {SetCookie} from "../../util/Cookie";
 const HomeContainer = styled.div`
   width: 100vw;
   height: 100vh;
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -23,7 +22,6 @@ const EnterButton = styled.div`
   justify-content: center;
   align-items: center;
   
-  background-color: red;
   font-size: 1rem;
 
   :hover {

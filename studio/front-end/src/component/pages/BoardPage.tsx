@@ -3,11 +3,11 @@ import {useParams} from "react-router-dom";
 import CardItemList from "../common/card/CardItemList";
 
 const BoardPage: React.FC = () => {
-    const {boardName} = useParams();
+    const {boardId} = useParams();
     return (
         <>
             <CardItemList/>
-            <div>Hello BoardPage : {boardName}</div>
+            <div>Hello BoardPage : {boardId}</div>
         </>
     );
 }

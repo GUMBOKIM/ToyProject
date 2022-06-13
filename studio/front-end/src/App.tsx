@@ -19,7 +19,9 @@ function App() {
                     <Route path='main' element={<MainPage/>}/>
                     <Route path='about' element={<AboutPage/>}/>
                     <Route path='contact' element={<ContactPage/>}/>
-                    <Route path='board/:boardName' element={<BoardPage/>}/>
+                    <Route path='archive' element={<ContactPage/>}/>
+                    <Route path='sketch' element={<ContactPage/>}/>
+                    <Route path='board/:boardId' element={<BoardPage/>}/>
                     <Route path='post/:postId' element={<PostPage/>}/>
                 </Route>
                 <Route path='*' element={<Navigate replace to={'/main'}/>}/>

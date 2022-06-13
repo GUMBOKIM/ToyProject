@@ -2,6 +2,7 @@ import styled from "styled-components";
 import React, {useState} from "react";
 import HamburgerIcon from "../../asset/icon/HamburgerIcon";
 import {useNavigate} from "react-router-dom";
+import {MenuInfo} from "./GNBData";
 
 const GNBContainer = styled.div`
   position: relative;
@@ -31,8 +32,11 @@ const GNBCenter = styled.div`
 const GNBRight = styled.div``
 
 const GNBLogo = styled.div`
-  font-size: x-large;
-  font-weight: bold;
+  width: 100px;
+  height: 50px;
+  background: url('img/logo.png') no-repeat center;
+  background-size: contain;
+  z-index: 103;
 
   :hover {
     cursor: pointer;
@@ -70,102 +74,78 @@ const GNBMenuItem = styled.div`
   }
 `;
 
-const GNBHamburger = styled.div`
-  height: 100%;
-  width: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  @media (min-width: 600px) {
-    display: none;
-  }
-`
-
 const GNBDropDown = styled.div`
   position: absolute;
-  top: 60px;
+  top: 80px;
   width: 100%;
   display: flex;
   flex-direction: column;
   background-color: white;
-  animation: moveDown 1s;
   z-index: 99;
-  @keyframes moveDown {
-    from {
-      opacity: 0.5;
-      transform: translate3d(0, -100%, 0);
-    }
-    to {
-      opacity: 1;
-      transform: translateZ(0);
-    }
-  }
-  @media (min-width: 600px) {
-    display: none;
-  }
+  padding: 10px 26px;
 `
 
 const GNBDropDownItem = styled.div`
-  padding-left: 10px;
   height: 30px;
-  font-size: medium;
+  font-size: small;
   color: black;
   display: flex;
   align-items: center;
 
   :hover {
-    font-weight: bold;
+    font-weight: 500;
     cursor: pointer;
-  }
-
-  @media (min-width: 600px) {
-    display: none;
   }
 `
 
 const GNB: React.FC = () => {
-    const [isDDOpen, setIsDDOpen] = useState(false);
+    const [selectMenu, setSelectMenu] = useState(0);
     const navigate = useNavigate();
-    const link = (link: string) => {
-        return () => {
-            navigate(link);
-            isDDOpen && setIsDDOpen(false);
-        }
-    }
 
     return (
         <>
             <GNBContainer>
                 <GNBLeft>
                     <GNBMenuList>
-                        <GNBMenuItem onClick={link('/board/viral')}>Viral</GNBMenuItem>
-                        <GNBMenuItem onClick={link('/board/commerce')}>Commerce</GNBMenuItem>
-                        <GNBMenuItem onClick={link('/board/photo')}>Photo</GNBMenuItem>
-                        <GNBMenuItem onClick={link('/about')}>About</GNBMenuItem>
-                        <GNBMenuItem onClick={link('/contact')}>Contact</GNBMenuItem>
+                        {
+                            MenuInfo.map(item =>
+                                <GNBMenuItem key={item.id}
+                                             onMouseOver={() => setSelectMenu(item.id)}
+                                >
+                                    {item.menu}
+                                </GNBMenuItem>)
+                        }
+                        <GNBMenuItem onMouseOver={() => setSelectMenu(0)}
+                                     onClick={() => navigate("/sketch")}
+                        >Sketch</GNBMenuItem>
+                        <GNBMenuItem onMouseOver={() => setSelectMenu(0)}
+                                     onClick={() => navigate("/archive")}
+                        >Archive</GNBMenuItem>
+                        <GNBMenuItem onMouseOver={() => setSelectMenu(0)}
+                                     onClick={() => navigate("/about")}
+                        >About</GNBMenuItem>
+                        <GNBMenuItem onMouseOver={() => setSelectMenu(0)}
+                                     onClick={() => navigate("/contact")}
+                        >Contact</GNBMenuItem>
                     </GNBMenuList>
-                    {/*모바일 부분*/}
-                    <GNBHamburger onClick={() => setIsDDOpen(!isDDOpen)}>
-                        <HamburgerIcon/>
-                    </GNBHamburger>
                 </GNBLeft>
                 <GNBCenter>
-                    <GNBLogo onClick={link('/main')}>ART STUDIO</GNBLogo>
+                    <GNBLogo onClick={() => navigate("/main")}/>
                 </GNBCenter>
                 <GNBRight>
                     <GNBMenuList>
                     </GNBMenuList>
                 </GNBRight>
             </GNBContainer>
-            {/*모바일 부분*/}
-            {isDDOpen
-                &&
-                <GNBDropDown>
-                    <GNBDropDownItem onClick={link('/board/viral')}>Viral</GNBDropDownItem>
-                    <GNBDropDownItem onClick={link('/board/commerce')}>Commerce</GNBDropDownItem>
-                    <GNBDropDownItem onClick={link('/board/photo')}>Photo</GNBDropDownItem>
-                    <GNBDropDownItem onClick={link('/about')}>About</GNBDropDownItem>
-                    <GNBDropDownItem onClick={link('/contact')}>Contact</GNBDropDownItem>
+            {
+                selectMenu !== 0 &&
+                <GNBDropDown onMouseLeave={() => setSelectMenu(0)}>
+                    {
+                        MenuInfo.find(menu => menu.id === selectMenu)?.subMenu?.map(item =>
+                            <GNBDropDownItem key={item.id} onClick={() => navigate(`/board/${item.id}`)}>
+                                {item.menu}
+                            </GNBDropDownItem>)
+                    }
                 </GNBDropDown>
             }
         </>

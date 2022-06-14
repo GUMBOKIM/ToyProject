@@ -4,7 +4,7 @@ import {CardItemProps, CardType} from "./CardItemData";
 import {
     CardItemFullContainer,
     CardItemHalfContainer,
-    CardItemImage,
+    CardItemImage, CardItemOpacity,
     CardItemText,
     CardItemTitle,
     CardVimeoItem
@@ -27,6 +27,7 @@ const CardItem: React.FC<{ card: CardItemProps }> = ({card}) => {
                     {card.type === CardType.Image && <CardItemImage imgUrl={card.url!}/>}
                     {card.type === CardType.Video && <CardVimeoItem videoUrl={card.url!} isHover={isHover}/>}
                     {isHover && <CardItemTitle >{card.title}</CardItemTitle>}
+                    <CardItemOpacity/>
                 </CardItemFullContainer>
             }
             {
@@ -38,6 +39,7 @@ const CardItem: React.FC<{ card: CardItemProps }> = ({card}) => {
                     {card.type === CardType.Image && <CardItemImage imgUrl={card.url!}/>}
                     {card.type === CardType.Text && <CardItemText>{card.content}</CardItemText>}
                     {isHover && <CardItemTitle >{card.title}</CardItemTitle>}
+                    <CardItemOpacity/>
                 </CardItemHalfContainer>
             }
         </>

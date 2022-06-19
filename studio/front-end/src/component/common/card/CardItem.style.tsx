@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import React from "react";
 
-
 // wPh -> 가로세로 비율
 export const CardItemFullContainer = styled.div<{ wPh?: number }>`
   overflow: hidden;
@@ -46,7 +45,7 @@ export const CardItemOpacity = styled.div`
   z-index: 99;
   
   :hover {
-    transition: opacity 1s linear;
+    transition: opacity 0.5s linear;
     opacity: 0;
   }
   
@@ -80,7 +79,7 @@ const CardItemVimeoWrapper = styled.div`
 export const CardVimeoItem: React.FC<{ videoUrl: string, isHover: boolean }> = ({videoUrl, isHover}) => {
     return (
         <CardItemVimeoWrapper>
-            <iframe title="vimeo-player" src={videoUrl + '&background=1' + '&autoplay=' + (isHover ? 1 : 0)}
+            <iframe title="vimeo-player" src={videoUrl + '&background=1' + '&autoplay=' + (isHover ? 1 : 0) }
                     width={'100%'} height={'100%'}/>
         </CardItemVimeoWrapper>
     );
@@ -89,11 +88,12 @@ export const CardVimeoItem: React.FC<{ videoUrl: string, isHover: boolean }> = (
 export const CardItemTitle = styled.div`
   position: absolute;
   text-align: center;
-  font-size: x-large;
-  height: 60px;
+  font-size: medium;
+  height: 30px;
   width: 100%;
   bottom: 0;
-  background-color: grey;
+  opacity: 0.7;
+  background-color: #fbf3e2;
 
   display: flex;
   justify-content: center;

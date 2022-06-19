@@ -1,6 +1,5 @@
-import React, {useEffect} from "react";
-import {Outlet, useNavigate} from "react-router-dom";
-import {GetCookie} from "../../../util/Cookie";
+import React from "react";
+import {Outlet} from "react-router-dom";
 import styled from "styled-components";
 import GNB from "./GNB";
 
@@ -31,20 +30,13 @@ const LayoutBody = styled.div`
 
 const LayoutContent = styled.div`
   width: 100%;
-  padding: 26px;
+  padding: 0 26px;
   @media (max-width: 600px) {
     padding: 10px;
   }
 `
 
 const Layout: React.FC = () => {
-    // 첫 페이지 방문 안했을 시, 첫 페이지로
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        if (!GetCookie('visited')) navigate('/')
-    }, [navigate])
-
     return (
         <LayoutContainer>
             <LayoutHeader>

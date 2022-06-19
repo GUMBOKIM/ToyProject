@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import React, {useState} from "react";
-import HamburgerIcon from "../../asset/icon/HamburgerIcon";
 import {useNavigate} from "react-router-dom";
 import {MenuInfo} from "./GNBData";
 
@@ -47,6 +46,7 @@ const GNBMenuList = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-top: 25px;
 
   div:first-of-type {
     margin-left: 0;
@@ -65,6 +65,8 @@ const GNBMenuItem = styled.div`
   height: 100%;
   margin: 0 10px;
   font-size: small;
+  letter-spacing: 0.06rem;
+  
   @media (max-width: 800px) {
     margin: 0 5px;
   }

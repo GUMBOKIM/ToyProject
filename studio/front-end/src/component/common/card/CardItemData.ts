@@ -30,7 +30,7 @@ export const CardDataList: CardItemProps[] = [
         id: 3,
         type: CardType.Video,
         title: 'Hello MotherFather',
-        url: 'https://player.vimeo.com/video/719721362?h=30ae47c2e2',
+        url: 'https://player.vimeo.com/video/719722319?h=22897be7c3',
         size: 'full'
     },
     {

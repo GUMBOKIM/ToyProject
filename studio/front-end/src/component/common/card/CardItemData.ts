@@ -54,7 +54,7 @@ export const CardDataList: CardItemProps[] = [
         size: 'half'
     },
     {
-        id: 5,
+        id: 10,
         type: CardType.Image,
         title: 'Hello Mother',
         url: 'img/test/5.jpg',

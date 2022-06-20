@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import React from "react";
+import Vimeo from "@u-wave/react-vimeo";
 
 // wPh -> 가로세로 비율
 export const CardItemFullContainer = styled.div<{ wPh?: number }>`
@@ -79,7 +80,14 @@ const CardItemVimeoWrapper = styled.div`
 export const CardVimeoItem: React.FC<{ videoUrl: string, isHover: boolean }> = ({videoUrl, isHover}) => {
     return (
         <CardItemVimeoWrapper>
-            <iframe title="vimeo-player" src={videoUrl + '&background=1' + '&autoplay=' + (isHover ? 1 : 0) }
+            <iframe title="vimeo-player"
+                    allow="autoplay"
+                    data-ready="true"
+                    src={videoUrl
+                        + '&background=1'
+                        + '&autoplay=' + (isHover ? 1 : 0)
+                        + '$muted=0'
+                    }
                     width={'100%'} height={'100%'}/>
         </CardItemVimeoWrapper>
     );

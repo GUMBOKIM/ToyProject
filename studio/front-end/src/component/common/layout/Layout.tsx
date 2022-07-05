@@ -18,7 +18,7 @@ const LayoutHeader = styled.div`
 `
 
 const LayoutBody = styled.div`
-  top: 80px;
+  top: 120px;
   position: absolute;
   width: 100%;
   min-height: calc(100vh - 60px);
@@ -35,12 +35,44 @@ const LayoutContent = styled.div`
     padding: 10px;
   }
 `
+const MainHeader = styled.div`
+  position: absolute;
+  top: 78px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+`
+
+const DivdeBar = styled.div`
+  margin-bottom: 10px;
+  width: 66px;
+  height: 1px;
+  background-color: black;
+`
+
+const MenuName = styled.div`
+  font-size: large;
+  font-weight: 500;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  letter-spacing: .3rem;
+`
+
 
 const Layout: React.FC = () => {
     return (
         <LayoutContainer>
             <LayoutHeader>
                 <GNB/>
+                {/*TODO: 이거 메인 메뉴 쪽은 안나오게*/}
+                <MainHeader>
+                    <DivdeBar/>
+                    <MenuName>Interview</MenuName>
+                </MainHeader>
             </LayoutHeader>
             <LayoutBody>
                 <LayoutContent>

@@ -76,9 +76,9 @@ export const GNBDropDown = styled.div`
   padding: 10px 26px;
 `
 
-export const GNBDropDownItem = styled.div<{isSelected?: boolean}>`
+export const GNBDropDownMainItem = styled.div<{isSelected?: boolean}>`
   height: 30px;
-  font-size: small;
+  font-size: medium;
   color: black;
   display: flex;
   align-items: center;
@@ -97,10 +97,22 @@ export const GNBDropDownItem = styled.div<{isSelected?: boolean}>`
 }
 `
 
+export const GNBDropDownSubItem = styled.div`
+  height: 30px;
+  font-size: small;
+  color: black;
+  display: flex;
+  align-items: center;
+  :hover {
+    font-weight: 500;
+    cursor: pointer;
+  }
+`
+
 export const GNBDropDownLeft = styled.div`
   display: flex;
   flex-direction: column;
-  width: 30%;
+  width: 100%;
   height: 100%;
 `
 

@@ -2,8 +2,19 @@ import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {MenuInfo} from "./GNBData";
 
-import {GNBCenter, GNBContainer, GNBDropDown,
-    GNBDropDownItem, GNBDropDownLeft, GNBDropDownRight, GNBLeft, GNBLogo, GNBMenuItem, GNBMenuList, GNBRight } from "./Layout.style";
+import {
+    GNBCenter,
+    GNBContainer,
+    GNBDropDown,
+    GNBDropDownMainItem,
+    GNBDropDownLeft,
+    GNBLeft,
+    GNBLogo,
+    GNBMenuItem,
+    GNBMenuList,
+    GNBRight,
+    GNBDropDownSubItem
+} from "./Layout.style";
 
 const subMenuList = (menuId:number) => {
     return MenuInfo.find(menu => menu.id === menuId)?.subMenu;
@@ -12,7 +23,6 @@ const subMenuList = (menuId:number) => {
 const GNB: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [openMenu, setOpenMenu] = useState(0);
-    const [openSubMenu, setOpenSubMenu] = useState(0);
     const navigate = useNavigate();
 
     return (
@@ -22,9 +32,6 @@ const GNB: React.FC = () => {
                     <GNBMenuList>
                         <GNBMenuItem onMouseOver={() => setIsMenuOpen(true)}>
                             PortPolio
-                        </GNBMenuItem>
-                        <GNBMenuItem onClick={() => navigate("/sketch")}>
-                            Sketch
                         </GNBMenuItem>
                         <GNBMenuItem onClick={() => navigate("/archive")}>
                             Archive
@@ -48,29 +55,28 @@ const GNB: React.FC = () => {
                 <GNBDropDown onMouseLeave={() => setIsMenuOpen(false)}>
                     <GNBDropDownLeft>
                     {MenuInfo.map(menu =>
-                        <GNBDropDownItem key={`menu-${menu.id}`}
-                                         isSelected={menu.id === openMenu}
-                                         onClick={() => setOpenMenu(menu.id)}>
+                        <>
+                        <GNBDropDownMainItem style={{fontSize : "medium"}}
+                                             key={`menu-${menu.id}`}
+                                             isSelected={menu.id === openMenu}
+                                             onClick={() => setOpenMenu(menu.id)}>
                             {menu.menu}
-                        </GNBDropDownItem>
+                        </GNBDropDownMainItem>
+                            { openMenu === menu.id &&
+                                subMenuList(openMenu)?.map(subMenu =>
+                                    <GNBDropDownSubItem key={`subMenu-${subMenu.id}`}
+                                                         onClick={() => {
+                                                             navigate(`/board/${subMenu.id}`)
+                                                             setIsMenuOpen(false);
+                                                         }}
+                                    >
+                                        • {subMenu.menu}
+                                    </GNBDropDownSubItem>
+                                )
+                            }
+                        </>
                     )}
                     </GNBDropDownLeft>
-                    <GNBDropDownRight>
-                        {
-                            subMenuList(openMenu)?.map(subMenu =>
-                                <GNBDropDownItem key={`subMenu-${subMenu.id}`}
-                                                 isSelected={subMenu.id === openSubMenu}
-                                                 onClick={() => {
-                                                     setOpenSubMenu(subMenu.id);
-                                                     navigate(`/board/${subMenu.id}`);
-                                                     setIsMenuOpen(false);
-                                                 }}
-                                >
-                                    {subMenu.menu}
-                                </GNBDropDownItem>
-                            )
-                        }
-                    </GNBDropDownRight>
                 </GNBDropDown>
             }
         </>

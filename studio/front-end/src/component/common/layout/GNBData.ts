@@ -96,4 +96,9 @@ export const MenuInfo: MenuProps[] = [
             }
         ]
     },
+    {
+        id: 18,
+        order: 6,
+        menu: 'Sketch'
+    },
 ]

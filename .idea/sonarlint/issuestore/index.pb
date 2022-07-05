@@ -33,3 +33,15 @@ U
 %studio/front-end/public/manifest.json,5/e/5e1a98881ff8d25144ad53af1c1f86f697eb0148
 R
 "studio/front-end/public/index.html,9/6/9664f8bc66aba8f36b62971a91ba74f52e9bd878
+a
+1studio/front-end/src/component/pages/MainPage.tsx,a/b/ab58938d633aa65e87f66dd69ca0518f5de58143
+d
+4studio/front-end/src/component/pages/ContactPage.tsx,4/6/468d55cb61628fb66203f18541bfc5779fbd7ad6
+b
+2studio/front-end/src/component/pages/AboutPage.tsx,1/6/163af87678c290de88917280e45e8a41fe35db59
+d
+4studio/front-end/src/component/common/layout/FNB.tsx,4/d/4d2e9a0da2a76b6b867a471df2bda157e2588ad3
+J
+studio/front-end/yarn.lock,7/b/7b512aa273789cdd62e4ddd4c7bb5f0b1224465b
+k
+;studio/front-end/src/component/common/card/CardItemList.tsx,b/4/b4465311e0c303d56931946c35b75726d9949b77
